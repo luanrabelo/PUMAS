@@ -4,25 +4,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
-        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
-        integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://kit.fontawesome.com/7d94912b47.js" crossorigin="anonymous"></script>
-    <script src="https://luanrabelo.github.io/SynGenes/json.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>PUMAS</title>
     <meta name="title" content="PUMAS" />
     <meta name="description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
@@ -31,16 +21,15 @@
     <meta property="og:url" content="https://luanrabelo.github.io/PUMAS/" />
     <meta property="og:title" content="PUMAS" />
     <meta property="og:description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
-    <meta property="og:image"
-        content="https://raw.githubusercontent.com/luanrabelo/PUMAS/stable/docs/assets/PUMASsm.png" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/stable/docs/assets/PUMASsm.png" />
 
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://luanrabelo.github.io/SyBA/" />
     <meta property="twitter:title" content="SyBA" />
     <meta property="twitter:description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
-    <meta property="twitter:image"
-        content="https://raw.githubusercontent.com/luanrabelo/PUMAS/stable/docs/assets/PUMASsm.png" />
+    <meta property="twitter:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/stable/docs/assets/PUMASsm.png" />
 </head>
+
 <style type="text/css">
     * {
         font-family: "Montserrat", sans-serif;
@@ -189,9 +178,43 @@
         color: #EEEEEE;
         text-decoration: none;
     }
+    hr {
+        border: 0;
+        clear: both;
+        display: block;
+        width: 100%;
+        background-color: #202020;
+        height: 2.5px;
+        opacity: 0.25;
+        
+    }
+    .form-check-label {
+        font-size: 1.25em;
+        padding: 0 10px 10px 10px;
+    }
+    .form-check-input:checked {
+        background-color: #9DDE8B;
+        border-color: #9DDE8B;
+        width: 2.5em;
+        height: 1.5em;
+        vertical-align: middle;
+    }
+    .form-check-input:not(:checked) {
+        background-color: #FF7F3E;
+        border-color: #FF7F3E;
+        width: 2.5em;
+        height: 1.5em;
+        vertical-align: middle;
+    }
+    .progress-bar {
+        background-color: #FF9800;
+        color: #000000;
+        font-size: 1.5em;
+    }
 </style>
 
 <body class="bg-light container-fluid">
+    
     <!-- Modal -->
     <div class="modal fade" id="LoadingPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -199,19 +222,12 @@
             <div class="modal-content">
                 <div class="modal-header h3 bg-dark text-white">PUMAS</div>
                 <div class="modal-body text-center">
-                    <div class="loadingio-spinner-bean-eater-2by998twmg9">
-                        <div class="ldio-yzaezf3dcml">
-                            <div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                            <div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        </div>
+                    <figure class="figure">
+                        <img src="assets/PUMAS.png" class="figure-img img-fluid rounded" alt="..." width="50%">
+                        <figcaption class="figure-caption"><b>Pu</b>zzle <b>M</b>itochondrial <b>A</b>nalysis <b>S</b>cript</figcaption>
+                    </figure>
+                    <div class="progress">
+                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
                 </div>
                 <div class="modal-footer bg-dark text-white">
@@ -226,69 +242,390 @@
         <div class="display-2 text-center">PUMAS<sup>by Luan Rabelo</sup></div>
         <div class="text-center h3"><b>Pu</b>zzle <b>M</b>itochondrial <b>A</b>nalysis <b>S</b>cript</div>
 
-        <div class="form-floating mt-5 mb-5 mx-auto">
-            <textarea class="form-control" placeholder="Leave a comment here" id="vouchersList"
-                style="height: 25vh"></textarea>
-            <label for="vouchersList">GenBank Vouchers List</label>
-            <small id="exampleVouchers" class="mt-1 text-left text-muted"><i class="fa-solid fa-circle-info"></i> Enter
-                the <b>NCBI - GenBank Mitochondrial Genomes Vouchers</b>, each on a <b>new line without line empty</b>.<button type="button"
-                    id="exampleVouchers" class="btn btn-dark">Click here</button> to see an example.</small>
-            <div class="mt-5 text-center">
+        <div class="mt-5 mb-2 mx-auto container">
+
+            <div class="mb-1">
+                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank voucher genomes</label>
+                <textarea class="form-control" placeholder="" id="vouchersList" style="height: 20vh" spellcheck="false"></textarea>
+                <div id="errorDiv" class="text-danger mt-1"></div>
+                <script>
+                    $(document).ready(function () {
+                        const vouchers = document.getElementById('vouchersList');
+                        const mt = document.getElementById('mt');
+                        const startSearch = document.getElementById('startSearch');
+                        vouchers.focus();
+                        vouchers.addEventListener('input', function () {
+                        const lines         = vouchers.value.split('\n');
+                        var errorLine       = -1;
+                        var errorMessage    = '';
+                        const errorDiv      = document.getElementById('errorDiv');
+                        var charError       = '';
+                        const voucherSet    = new Set();
+                        if (lines.length === 1 && lines[0] === '') {
+                            vouchers.style.backgroundColor = '';
+                            errorDiv.innerHTML = '';
+                        return;
+                        }
+                        for (let i = 0; i < lines.length; i++) {
+                            if (!/^[a-zA-Z0-9_.]+$/.test(lines[i])) {
+                                charError = 'Invalid characters detected';
+                            }
+                            else if (!/\.\d+$/.test(lines[i])) {
+                                charError = 'Line must end with a . followed by a number';
+                            }
+                            else if (voucherSet.has(lines[i])) {
+                                charError = 'Duplicate voucher detected';
+                            } else if (lines[i].length < 5 || lines[i].length > 15) {
+                                charError = 'Invalid voucher length';
+                            }
+                            if (charError) {
+                                errorLine = i + 1;
+                                errorMessage = `Invalid input in line ${errorLine}: ${charError}. Please fix it before proceeding.`;
+                                break;
+                            }
+                                voucherSet.add(lines[i]);
+                        }
+                        if (errorLine !== -1) {
+                            vouchers.style.backgroundColor = '#FF7F3E';
+                            errorDiv.innerHTML = errorMessage;
+                            mt.disabled = true;
+                            startSearch.disabled = true;
+                        } else {
+                            vouchers.style.backgroundColor = '#9DDE8B';
+                            errorDiv.innerHTML = '';
+                            mt.disabled = false;
+                        }
+                    });
+                });
+                </script>
+                
+                <div class="text-left mt-1" style="text-align: justify; line-height: 2.5;">
+                    <p><small id="infoText mt-1" class="text-muted"><i class="fa-solid fa-circle-info"></i> Enter the <strong>NCBI - GenBank Vouchers for Mitochondrial or Chloroplast Genomes</strong> in the space provided above.</small></p>
+                    <p><small id="infoText mt-1" class="text-muted"><i class="fa-solid fa-circle-info"></i> Each voucher should be on a <strong>distinct line without any blank lines in between</strong>.</small></p>
+                    <p>
+                        <small id="infoText mt-1" class="text-muted">
+                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Carangidae Family with <b>148 genomes</b>">Mitochondrial</button><!-- or <button type="button" id="exampleVouchersChloroplast" class="btn btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Rubiaceae Family with <b>264 genomes</b>" disabled>Chloroplast</button>--> to see an example </button> or <button class="btn btn-danger" type="button" id="resetVouchers">Click here</button> to clear the list and start over.
+                        </small>
+                    </p>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        const _vouchersList = document.getElementById('vouchersList');
+                        const exampleMitochondrial = document.getElementById('exampleVouchersMitochondrial');
+                        const resetVouchers = document.getElementById('resetVouchers');
+
+                        resetVouchers.addEventListener('click', function () {
+                            _vouchersList.value = "";
+                            const event = new Event('input', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                });
+                            _vouchersList.dispatchEvent(event);
+                            const mt                = document.getElementById('mt');
+                            const startSearch       = document.getElementById('startSearch');
+                            const cds               = document.getElementById('CDS');
+                            const rRNAs             = document.getElementById('rRNA');
+                            const tRNAs             = document.getElementById('tRNA');
+                            const geneList          = document.getElementById('geneList');
+                            const dropDuplicates    = document.getElementById('dropDuplicates');
+                            const _results          = document.getElementById('PUMASResults');
+                            const svgPlot           = document.getElementById('svgPlot');
+                            
+                            mt.checked = false;
+                            mt.disabled = true;
+                            startSearch.disabled = true;
+                            cds.checked = false;
+                            cds.disabled = true;
+                            rRNAs.checked = false;
+                            rRNAs.disabled = true;
+                            tRNAs.checked = false;
+                            tRNAs.disabled = true;
+                            geneList.disabled = true;
+                            geneList.style.backgroundColor = '';
+                            dropDuplicates.value = 'NaN';
+                            dropDuplicates.disabled = true;
+                            dropDuplicates.style.backgroundColor = '';
+                            _results.style.display = 'none';
+                            svgPlot.innerHTML = '';
+                        });
+
+                        exampleMitochondrial.addEventListener('click', function () {
+                            const _vouchers = ["KM522837.1", "NC_025566.1", "KP408222.1", "NC_037049.1", "KF728081.1", "NC_023524.1", "OR668918.1", "PP231954.1", "NC_086852.1", "AP004444.1", "NC_004405.1", "KM522838.1", "NC_026222.1", "PP032955.1", "NC_087985.1", "KM201334.1", "NC_025644.1", "KX373635.1", "KJ174514.1", "NC_023968.1", "OP057043.2", "MW435597.1", "NC_057648.1", "OP035242.1", "PP032956.1", "OR482497.1", "OP035266.2", "KF649842.1", "NC_022932.1", "OR482464.1", "NC_082556.1", "PP032957.1", "OP035166.1", "AP004445.1", "NC_004406.1", "KF649843.1", "OP035090.1", "OR703830.1", "KT805946.1", "NC_029421.1", "OP035250.1", "PP032962.1", "NC_087990.1", "MT677872.1", "NC_051884.1", "KM986880.1", "NC_026718.1", "KF841444.1", "NC_023458.1", "KJ004518.1", "NC_024556.1", "MT818506.1", "OP459436.1", "OP057048.2", "OP035108.1", "MN711693.1", "MN102718.1", "NC_044650.1", "MN399859.1", "KP677573.1", "KT824759.1", "NC_029880.1", "OR668919.1", "OP035068.2", "OR668920.1", "LC557137.1", "MT922005.1", "NC_054367.1", "OP035229.1", "KM522836.1", "NC_025565.1", "OR703829.1", "OR546204.1", "NC_083043.1", "KJ192332.1", "MZ359280.1", "NC_058961.1", "MZ398237.1", "OP035215.1", "MZ329991.1", "NC_063497.1", "OR668917.1", "KP710215.1", "NC_037050.1", "MW581014.1", "NC_060760.1", "KJ148633.1", "NC_023954.1", "KM522839.1", "KU159666.1", "NC_029184.1", "OR703831.1", "OR575618.1", "OP035063.2", "PP033011.1", "NC_088027.1", "MH211123.1", "AB517558.1", "NC_016870.1", "MZ398238.1", "OR482462.1", "NC_082554.1", "AB517557.1", "NC_016869.1", "MK158068.1", "LC597108.1", "LC597109.1", "MW309823.1", "MW309824.1", "OR482442.1", "AB517556.1", "NC_016868.1", "MK158067.1", "KP733847.1", "KP347126.1", "NC_027183.1", "AB517559.2", "OR482503.1", "OP035199.1", "OR482504.1", "NC_082753.1", "KT591876.1", "NC_028420.1", "KJ184305.1", "NC_024026.1", "KJ556976.1", "NC_024184.1", "OP056886.1", "KF356397.1", "NC_022707.1", "KJ642220.1", "AP003091.1", "AP003092.1", "NC_002813.1", "OP057107.2", "PP533446.1", "OR482443.1", "NC_082545.1", "AB108498.1", "NC_006818.1", "MT410871.1", "OR499749.1", "NC_082849.1", "KM978993.1", "NC_033402.1", "OP057036.2", "KT819204.1", "NC_029488.1"];
+                            _vouchersList.value = "";
+                            _vouchers.forEach((s, i) => setTimeout(() => {
+                            _vouchersList.value += s + (i < _vouchers.length - 1 ? "\n" : "");
+                            }, i * 1));
+                        
+                            setTimeout(() => {
+                                const event = new Event('input', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                });
+                                _vouchersList.dispatchEvent(event);
+                            }, _vouchers.length * 1);
+                        });
+                    });
+                </script>
+
+            </div>
+            <hr class="mt-2">
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4  row-cols-xxl-4">
+
+                <div class="col mt-2">
+                    <label class="h4"><span class="badge text-bg-dark">2</span> - Genome type</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="mt" value="Mitochondrial" disabled>
+                        <label class="form-check-label ml-2 mr-2" for="mt">Mitochondrial</label>
+                    </div>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        const mt = document.getElementById('mt');
+                        const startSearch = document.getElementById('startSearch');
+                        const cds = document.getElementById('CDS');
+                        const rRNA = document.getElementById('rRNA');
+                        const tRNA = document.getElementById('tRNA');
+
+                        mt.addEventListener('change', function () {
+                            if (mt.checked) {
+                                cds.disabled = false;
+                                rRNA.disabled = false;
+                                tRNA.disabled = false;
+                            } else {
+                                startSearch.disabled = true;
+                                cds.disabled = true;
+                                rRNA.disabled = true;
+                                tRNA.disabled = true;
+                            }
+                        });
+                    });
+                </script>
+
+                <div class="col mt-2">
+                    <label class="h4"><span class="badge text-bg-dark">3</span> - Gene types</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="CDS" id="CDS" disabled>
+                        <label class="form-check-label" for="CDS">CDS</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="rRNA" id="rRNA" disabled>
+                        <label class="form-check-label" for="rRNAs">rRNAs</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="tRNA" id="tRNA" disabled>
+                        <label class="form-check-label" for="rRNAs">tRNAs</label>
+                    </div>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        const cds       = document.getElementById('CDS');
+                        const rRNAs     = document.getElementById('rRNA');
+                        const tRNAs     = document.getElementById('tRNA');
+                        const geneList  = document.getElementById('geneList');
+
+                        geneList.disabled = true;
+
+                        const _mtGenes = {
+                            "CDS": ["COI", "COII", "COIII", "CYTB", "ND1", "ND2", "ND3", "ND4", "ND4L", "ND5", "ND6", "ATP6", "ATP8"].sort(),
+                            "rRNA": ["12S", "16S"].sort(),
+                            "tRNA": ["Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Lys", "Met", "Phe", "Pro", "Ser", "Thr", "Trp", "Tyr", "Val"].sort(),
+                        };
+
+                        function updateGeneList() {
+                            $('#geneList').empty();
+                            $('#geneList').append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+                            ['CDS', 'rRNA', 'tRNA'].forEach(function (type) {
+                                if (document.getElementById('CDS').checked || document.getElementById('rRNA').checked || document.getElementById('tRNA').checked) {
+                                    geneList.disabled = false;
+                                    geneList.style.backgroundColor = '';
+                                } else {
+                                    geneList.disabled = true;
+                                    geneList.style.backgroundColor = '';
+
+                                }
+                                if (document.getElementById(type).checked) {
+                                    $('#geneList').append($('<optgroup label="' + type + '">'));
+                                    $.each(_mtGenes[type], function (i, gene) {
+                                        $('#geneList').append($('<option>').text(gene).attr('value', gene));
+                                    });
+                                    $('#geneList').append($('</optgroup>'));
+                                }
+                            });
+                        }
+                        cds.addEventListener('change', updateGeneList);
+                        rRNAs.addEventListener('change', updateGeneList);
+                        tRNAs.addEventListener('change', updateGeneList);
+                    });
+                </script>
+
+                <div class="col mt-2">
+                    <label class="h4"><span class="badge text-bg-dark">4</span> - Start order at:</label>
+                    <select class="form-select form-select-lg" id="geneList" disabled></select>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        const geneList = document.getElementById('geneList');
+                        const dropDuplicates = document.getElementById('dropDuplicates');
+                        geneList.addEventListener('change', function () {
+                            if (geneList.value !== 'NaN') {
+                                //startSearch.disabled = false;
+                                dropDuplicates.disabled = false;
+                                geneList.style.backgroundColor = '#9DDE8B';
+                            } else {
+                                dropDuplicates.disabled = true;
+                                geneList.style.backgroundColor = '#FF7F3E';
+                            }
+                        });
+                    });
+                </script>
+
+                <div class="col mt-2">
+                    <label class="h4"><span class="badge text-bg-dark">5</span> - Drop duplicates</label>
+                    <select class="form-select form-select-lg" id="dropDuplicates" aria-label="" disabled>
+                        <option value="NaN" selected>Choose an option</option>
+                        <option value="No">No - recommended</option>	
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        const dropDuplicates = document.getElementById('dropDuplicates');
+                        const startSearch = document.getElementById('startSearch');
+                        dropDuplicates.addEventListener('change', function () {
+                            if (dropDuplicates.value !== 'NaN') {
+                                startSearch.disabled = false;
+                                dropDuplicates.style.backgroundColor = '#9DDE8B';
+                            } else {
+                                startSearch.disabled = true;
+                                dropDuplicates.style.backgroundColor = '#FF7F3E';
+                            }
+                        });
+                    });
+                </script>
+
+            </div>
+            
+            <div class="mt-2 text-center">
                 <div class="d-grid gap-2 col-xs-12 col-sm-12 col-sm-8 col-lg-6 mx-auto">
-                    <button id="startSearch" class="btn btn-lg btn-dark text-center" type="button">
-                        <i class="fa-solid fa-magnifying-glass"></i> Start PUMAS
-                    </button>
+                    <button id="startSearch" class="btn btn-lg btn-dark text-center" type="button" disabled><i class="fa-solid fa-magnifying-glass"></i> Start PUMAS</button>
                 </div>
             </div>
-        </div>
 
-        <script>
-            $(document).ready(function () {
-                const _vouchersList = document.getElementById('vouchersList');
-                const _exampleVouchers = document.getElementById('exampleVouchers');
-                _exampleVouchers.addEventListener('click', function () {
-                    const _vouchers = [
-                        "MZ675575.1", // Rhinella marina 
-                        "KY962391.1", // Melanophryniscus moreirae
-                        "KR136211.1", // Bufo stejnegeri
-                        "MZ329991.1", // Scomberoides lysan
-                        "OR482464.1", // Caranx latus
-                        "OR668917.1", // Scomberoides tol
-                        "MH329246.1", // Sardina pilchardus
-                        "AP011592.1", // Harengula jaguana
-                        "NC_009582.1", // Ethmalosa fimbriata
-                        "OM328864.1", // Mico humilis
-                    ];
-                    _vouchersList.value = "";
-                    _vouchers.forEach((s, i) => setTimeout(() => {
-                        _vouchersList.value += s + "\n";
-                        $(_vouchersList).trigger('input');
-                    }, i * 500));
-                    setTimeout(() => {
-                        _vouchersList.value = _vouchersList.value.slice(0, -1);
-                        $(_vouchersList).trigger('input');
-                    }, _vouchers.length * 500);
+            <script>
+                $(document).ready(function () {
+                    const startSearch = document.getElementById('startSearch');
+                    startSearch.addEventListener('click', async function () {
+                        const vouchersList  = document.getElementById('vouchersList').value.trim();
+                        const geneStart     = document.getElementById('geneList').value;
+                        const typeGenome    = document.getElementById('mt').checked ? 'MitochondrialGenes' : '';
+                        const genelist      = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
+
+                        if (!vouchersList) {
+                            alert('Enter the GenBank Vouchers');
+                            return;
+                        }
+                        $('#LoadingPumas').modal('show');
+                        const vouchers = vouchersList.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                        const data = await getXML(vouchers, genelist, typeGenome);
+                        $('#LoadingPumas').modal('hide');
+                        if (typeGenome) {
+                            const dataSet   = typeGenome === 'ChloroplastGenes' ? dataChloroplast : dataMitochondrial;
+                            const createSVG = typeGenome === 'ChloroplastGenes' ? ChloroplastSVG : criarSVG;
+
+                            Object.keys(dataSet).forEach((genome) => {
+                                createSVG(
+                                    geneStart,
+                                    dataSet[genome].species,
+                                    dataSet[genome].vouchers,
+                                    dataSet[genome].genes,
+                                    dataSet[genome].strands,
+                                    dataSet[genome].length
+                                );
+                            });
+                            if (typeGenome === 'MitochondrialGenes') {
+                                showResults();
+                            }
+                        } else {
+                            alert('Select the type of genome');
+                        }
+                    });
                 });
-            });
-        </script>
+            </script>
+            
+            
+            
+            <div id="PUMASResults" style="display: none;" class="mt-2">
+                <hr>
+                <label class="h4"><span class="badge text-bg-dark">6</span> - Export Results</label>
+                <div class="row row-cols-2">
 
-        <div class="text-left mt-5 mb-5">
-            <h4>Instructions:</h4>
-            <ul>
-                <li class="mt-2" style="cursor: pointer;">Click on the <strong>+</strong> icon to add a new Puzzle piece
-                </li>
-                <li class="mt-2" style="cursor: pointer;">Click on the <strong>-</strong> icon to remove a Puzzle piece
-                </li>
-                <li class="mt-2" style="cursor: pointer;"><button type="button" id="resetSVG"
-                        class="btn btn-danger">Click here</button> to delete all Puzzles</li>
-                <li class="mt-2" style="cursor: pointer;"><button type="button" id="exportFigure"
-                        class="btn btn-dark">Click here</button> to Export to PNG</li>
-            </ul>
+                    <div class="col">
+                        <label class="h5"><span class="badge text-bg-dark">6.1</span> - Fasta File</label>
+                        <div class="input-group">
+                            <select id="genesToFasta" class="form-select form-select-lg" id="fastaFileExport" aria-label="">
+                            </select>
+                            <button id="downloadFasta" class="btn btn-dark" type="button">Download File</button>
+                        </div>
+                    </div>
+
+                    <script>
+                        $(document).ready(function () {
+                            const downloadFasta = document.getElementById('downloadFasta');
+                            downloadFasta.addEventListener('click', function () {
+                                const genesToFasta = document.getElementById('genesToFasta').value;
+                                const data = Object.keys(dataMitochondrial);
+                                let dataSeq = ''
+                                data.forEach((id) => {
+                                    const seq = dataMitochondrial[id].genesSequence;
+                                    $.each(seq, function (key, value) {
+                                        if (key == genesToFasta) {
+                                            const speciesName = dataMitochondrial[id].species;
+                                            dataSeq += `>${id} ${speciesName}\n${value}\n`;
+                                        }
+                                    });
+                                });
+                            const blob = new Blob([dataSeq], { type: 'text/plain' });
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'PUMAS_' + genesToFasta + '.fasta';
+                            document.body.appendChild(a);
+                            a.click();
+                            });
+                            
+                        });
+                    </script>
+
+                    <div class="col">
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>tool</b> to <b>create an input file</b>"><span class="badge text-bg-dark">6.2</span> - Create an Input File</label>
+                        <div class="input-group">
+                            <select id="createInputFile" class="form-select form-select-lg" aria-label="">
+                                <option value="NaN" selected>Select a tool</option>
+                                <option value="CREx">CREx</option>
+                                <option value="CREx2">CREx2</option>
+                                <option value="TreeREx">TreeREx</option>
+                                <option value="qMGR">qMGR</option>
+                            </select>
+                            <button id="downloadInputFile" class="btn btn-dark" type="button">Download File</button>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
         </div>
 
-        <div id="svgPlot">
 
-        </div>
+        <div id="svgPlot"></div>
 
     </main>
 
@@ -298,9 +635,9 @@
                 <div class="col-12 col-md-3 col-sm-1 verticalDivider">
                     <div class="h4">About:</div>
                     <div class="media">
-                        <img src="assets/PUMAS.png" class="mr-3 mx-auto d-block" alt="??????????" width="35%">
+                        <img src="assets/PUMAS.png" class="mr-3 mx-auto d-block" alt="" width="35%">
                         <div class="media-body text-center">
-                            <p>Puzzle Mitochondrial Analysis Script</p>
+                            <p><b>Pu</b>zzle <b>M</b>itochondrial <b>A</b>nalysis <b>S</b>cript</p>
                         </div>
                     </div>
                 </div>
@@ -378,12 +715,17 @@
                         </div>
                     </div>
                 </div>
-                <small class="text-center bg-white text-black">SyBA Page was created by Luan Rabelo.</small>
+                <small class="text-center bg-white text-black">PUMAS Page was created by Luan Rabelo.</small>
             </div>
         </div>
     </footer>
 
 </body>
 <script src="PUMAS.js"></script>
+<script>
+    $(document).ready(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+</script>
 
 </html>
