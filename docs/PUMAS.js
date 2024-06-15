@@ -205,21 +205,21 @@ async function getXML(ids, genelist, typeGenome, drop) {
 
 
 function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseudoGenes) {
-    const pieceWidth    = 125;
-    const pieceHeight   = pieceWidth / 2;
-    const tRNAWidth     = pieceWidth / 1.25;
-    const safeVoucher   = String(voucher).replace(/\./g, '_');
+    const pieceWidth = 125;
+    const pieceHeight = pieceWidth / 2;
+    const tRNAWidth = pieceWidth / 1.25;
+    const safeVoucher = String(voucher).replace(/\./g, '_');
 
     const preferidos = [geneStart];
     let startGene = preferidos.find(gene => genes.includes(gene));
     if (startGene) {
         const indexInicio = genes.indexOf(startGene);
-        genes       = [...genes.slice(indexInicio), ...genes.slice(0, indexInicio)];
-        strands     = [...strands.slice(indexInicio), ...strands.slice(0, indexInicio)];
+        genes = [...genes.slice(indexInicio), ...genes.slice(0, indexInicio)];
+        strands = [...strands.slice(indexInicio), ...strands.slice(0, indexInicio)];
     }
 
-    const svgNS     = "http://www.w3.org/2000/svg";
-    let svg         = document.querySelector(`#svg-${safeVoucher}`);
+    const svgNS = "http://www.w3.org/2000/svg";
+    let svg = document.querySelector(`#svg-${safeVoucher}`);
     if (!svg) {
         svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("id", `svg-${safeVoucher}`);
@@ -258,12 +258,45 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseud
     italicEspecie.setAttribute("font-style", "italic");
     italicEspecie.textContent = `${nomeEspecie} `;
 
+    //let icon = document.createElementNS(svgNS, "path");
+    //icon.setAttribute("d", "M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z");
+    //icon.setAttribute("x", "10");
+    //icon.setAttribute("y", "70");
+    //icon.setAttribute("fill", "black");
+    //icon.setAttribute("stroke", "black");
+    //icon.setAttribute("stroke-width", "1");
+    //icon.setAttribute("stroke-linejoin", "round");
+    //icon.setAttribute("data-bs-toggle", "tooltip");
+    //icon.setAttribute("data-bs-placement", "bottom");
+    //icon.setAttribute("data-bs-custom-class", "custom-tooltip");
+    //icon.setAttribute("data-bs-html", "true");
+    //icon.setAttribute("title", `View Genome Diagram`);
+
+
     let boldVoucher = document.createElementNS(svgNS, "tspan");
     boldVoucher.setAttribute("font-weight", "bold");
-    boldVoucher.innerHTML = `(<a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucher}" target="_blank">${voucher}</a>)`;
+    boldVoucher.innerHTML = `
+        (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucher}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${voucher}</a>) - View Genome Diagram
+    `;
 
     textEspecie.appendChild(italicEspecie);
     textEspecie.appendChild(boldVoucher);
+    //textEspecie.appendChild(icon);
+    
+    // Adiciona o botão com tooltip
+    //const btn = document.createElementNS(svgNS, "text");
+    //btn.textContent = "View Genome Diagram";
+    //btn.setAttribute("x", "100");
+    //btn.setAttribute("y", "70");
+    //btn.setAttribute("fill", "blue");
+    //btn.setAttribute("font-size", "15px");
+    //btn.setAttribute("cursor", "pointer");
+    //btn.setAttribute("data-bs-toggle", "tooltip");
+    //btn.setAttribute("title", "View Genome Diagram");
+    //btn.onclick = () => window.open(`https://www.ncbi.nlm.nih.gov/nuccore/${voucher}`, '_blank');
+
+    //textEspecie.appendChild(btn);
+
     svg.appendChild(textEspecie);
 
     let currentX = 0;
@@ -308,17 +341,28 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseud
         path.setAttribute("stroke", colorMitochondrial[produto] || "#FFFFFF");
         path.setAttribute("stroke-width", "1");
         path.setAttribute("stroke-linejoin", "round");
-
-        // Tool tip para informar tamanho do gene, nome e fita
-        path.setAttribute("title", `${produto} (${length[index]} bp) - Fita ${strands[index] === '+' ? 'leve' : 'pesada'}`);
+        path.setAttribute("class", "gene-path");
+        path.setAttribute("data-bs-toggle", "tooltip");
+        path.setAttribute("data-bs-placement", "bottom");
+        path.setAttribute("data-bs-custom-class", "custom-tooltip");
+        path.setAttribute("data-bs-html", "true");
+        let len = length[index].toString().replace('-', '');
+        path.setAttribute("title", `Gene: <b>${produto}</b><br>Length: <b>${len} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light</b>' : '<b>heavy</b>'}`);
 
         let text = document.createElementNS(svgNS, "text");
         text.setAttribute("x", (currentX + pieceW / 2).toString());
-        text.setAttribute("y", (80 + pieceH / 2 + 5).toString());
-        text.setAttribute("fill", "black");
+        text.setAttribute("y", (80 + pieceH / 2).toString());
+        text.setAttribute("fill", "#000000");
         text.setAttribute("text-anchor", "middle");
         text.setAttribute("font-weight", "bold");
+        //text.setAttribute("alignment-baseline", "central");
         text.setAttribute("font-size", "15px");
+        //text.setAttribute("class", "gene-text");
+        //text.setAttribute("data-bs-toggle", "tooltip");
+        //text.setAttribute("data-bs-placement", "bottom");
+        //text.setAttribute("data-bs-custom-class", "custom-tooltip");
+        //text.setAttribute("data-bs-html", "true");
+        //text.setAttribute("title", `Gene: <b>${produto}</b><br>Length: <b>${length[index]} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light</b>' : '<b>heavy</b>'}`);
         text.textContent = isTRNA ? produto.replace('tRNA-', '') : produto;
 
         svg.appendChild(path);
@@ -335,9 +379,8 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseud
             asterisk.setAttribute("font-size", "25px");
             asterisk.textContent = "*";
             svg.appendChild(asterisk);
-        }
+    }
 
-        // Adiciona traço superior ou inferior
         let line = document.createElementNS(svgNS, "line");
         line.setAttribute("x1", currentX.toString());
         line.setAttribute("x2", (currentX + pieceW).toString());
@@ -389,18 +432,23 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseud
         container = document.createElement("div");
         container.setAttribute("id", `container-${safeVoucher}`);
         container.classList.add('svg-container');
-        container.style.width           = "100%";
-        container.style.overflowX       = "auto";
-        container.style.marginTop       = "2.5px";
-        container.style.marginBottom    = "2.5px";
+        container.style.width = "100%";
+        container.style.overflowX = "auto";
+        container.style.marginTop = "2.5px";
+        container.style.marginBottom = "2.5px";
         container.appendChild(svg);
         document.getElementById('svgContainer').appendChild(container);
     } else {
         container.appendChild(svg);
     }
 
-    syncScroll(); // Chama a função de sincronização de scroll
+    syncScroll();
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
+
+
 
 
 
