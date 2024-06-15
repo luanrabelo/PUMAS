@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <title>PUMAS</title>
     <meta name="title" content="PUMAS" />
     <meta name="description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
@@ -347,7 +349,7 @@
                             dropDuplicates.disabled = true;
                             dropDuplicates.style.backgroundColor = '';
                             _results.style.display = 'none';
-                            svgPlot.innerHTML = '';
+                            //svgPlot.innerHTML = '';
                         });
 
                         exampleMitochondrial.addEventListener('click', function () {
@@ -489,8 +491,8 @@
                     <label class="h4"><span class="badge text-bg-dark">5</span> - Drop duplicates</label>
                     <select class="form-select form-select-lg" id="dropDuplicates" aria-label="" disabled>
                         <option value="NaN" selected>Choose an option</option>
-                        <option value="No">No - recommended</option>	
-                        <option value="Yes">Yes</option>
+                        <option value="YES">Yes - recommended</option>
+                        <option value="NO">No</option>	
                     </select>
                 </div>
 
@@ -526,6 +528,7 @@
                         const geneStart     = document.getElementById('geneList').value;
                         const typeGenome    = document.getElementById('mt').checked ? 'MitochondrialGenes' : '';
                         const genelist      = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
+                        const dropDuplicates = document.getElementById('dropDuplicates').value;
 
                         if (!vouchersList) {
                             alert('Enter the GenBank Vouchers');
@@ -533,7 +536,7 @@
                         }
                         $('#LoadingPumas').modal('show');
                         const vouchers = vouchersList.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-                        const data = await getXML(vouchers, genelist, typeGenome);
+                        const data = await getXML(vouchers, genelist, typeGenome, dropDuplicates);
                         $('#LoadingPumas').modal('hide');
                         if (typeGenome) {
                             const dataSet   = typeGenome === 'ChloroplastGenes' ? dataChloroplast : dataMitochondrial;
@@ -546,11 +549,13 @@
                                     dataSet[genome].vouchers,
                                     dataSet[genome].genes,
                                     dataSet[genome].strands,
-                                    dataSet[genome].length
+                                    dataSet[genome].length,
+                                    dataSet[genome].pseudoGenes,
                                 );
                             });
                             if (typeGenome === 'MitochondrialGenes') {
-                                showResults();
+                                showResults(dataMitochondrial);
+                                console.log(dataMitochondrial);
                             }
                         } else {
                             alert('Select the type of genome');
@@ -564,28 +569,33 @@
             <div id="PUMASResults" style="display: none;" class="mt-2">
                 <hr>
                 <label class="h4"><span class="badge text-bg-dark">6</span> - Export Results</label>
-                <div class="row row-cols-2">
+                <div class="row row-cols-3">
 
                     <div class="col">
-                        <label class="h5"><span class="badge text-bg-dark">6.1</span> - Fasta File</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create an fasta file</b>"><span class="badge text-bg-dark">6.1</span> - Fasta File</label>
                         <div class="input-group">
-                            <select id="genesToFasta" class="form-select form-select-lg" id="fastaFileExport" aria-label="">
-                            </select>
-                            <button id="downloadFasta" class="btn btn-dark" type="button">Download File</button>
+                            <select id="genesToFasta" class="form-select form-select-lg" id="fastaFileExport" aria-label=""></select>
+                            <button id="downloadFasta" class="btn btn-dark" type="button" disabled>Download File</button>
                         </div>
                     </div>
 
                     <script>
                         $(document).ready(function () {
                             const downloadFasta = document.getElementById('downloadFasta');
+                            const genesToFasta = document.getElementById('genesToFasta');
+
+                            genesToFasta.addEventListener('change', function () {
+                                downloadFasta.disabled = genesToFasta.value === 'NaN';
+                            });
+
                             downloadFasta.addEventListener('click', function () {
-                                const genesToFasta = document.getElementById('genesToFasta').value;
+                                const _genesToFasta = document.getElementById('genesToFasta').value;
                                 const data = Object.keys(dataMitochondrial);
                                 let dataSeq = ''
                                 data.forEach((id) => {
                                     const seq = dataMitochondrial[id].genesSequence;
                                     $.each(seq, function (key, value) {
-                                        if (key == genesToFasta) {
+                                        if (key == _genesToFasta) {
                                             const speciesName = dataMitochondrial[id].species;
                                             dataSeq += `>${id} ${speciesName}\n${value}\n`;
                                         }
@@ -595,7 +605,7 @@
                             const url = window.URL.createObjectURL(blob);
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = 'PUMAS_' + genesToFasta + '.fasta';
+                            a.download = 'PUMAS_' + _genesToFasta + '.fasta';
                             document.body.appendChild(a);
                             a.click();
                             });
@@ -608,14 +618,82 @@
                         <div class="input-group">
                             <select id="createInputFile" class="form-select form-select-lg" aria-label="">
                                 <option value="NaN" selected>Select a tool</option>
-                                <option value="CREx">CREx</option>
-                                <option value="CREx2">CREx2</option>
-                                <option value="TreeREx">TreeREx</option>
+                                <option value="CREx">CREx / CREx2 / TreeREx</option>
+                                <!--<option value="TreeREx">TreeREx</option>-->
                                 <option value="qMGR">qMGR</option>
                             </select>
-                            <button id="downloadInputFile" class="btn btn-dark" type="button">Download File</button>
+                            <button id="downloadInputFile" class="btn btn-dark" type="button" disabled>Download File</button>
                         </div>
 
+                        <script>
+                            $(document).ready(function () {
+                                const downloadInputFile = document.getElementById('downloadInputFile');
+                                const createInputFile = document.getElementById('createInputFile');
+
+                                createInputFile.addEventListener('change', function () {
+                                    downloadInputFile.disabled = createInputFile.value === 'NaN';
+                                });
+
+                                downloadInputFile.addEventListener('click', function () {
+                                    const _createInputFile = document.getElementById('createInputFile').value;
+                                    const data = Object.keys(dataMitochondrial);
+                                    let dataSeq = ''
+                                    data.forEach((id) => {
+                                        if (_createInputFile === 'CREx') {
+                                            const _geneOrder = dataMitochondrial[id].genesOrder.replace(/,/g, ' ').toLowerCase();
+                                            const _geneOrderUnique = [...new Set(_geneOrder.split(' '))].join(' ');
+                                            dataSeq += `>${dataMitochondrial[id].vouchers}_${dataMitochondrial[id].species}\n${_geneOrderUnique}\n`;
+                                        } else if (_createInputFile === 'qMGR'){
+                                            const _geneOrder = dataMitochondrial[id].genesOrder.toLowerCase();
+                                            const _geneOrderUnique = [...new Set(_geneOrder.split(' '))].join(',');
+                                            dataSeq += `>${dataMitochondrial[id].vouchers}_${dataMitochondrial[id].species}\n${_geneOrderUnique}\n`;
+                                        }
+                                    });
+                                    const blob = new Blob([dataSeq], { type: 'text/plain' });
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = 'PUMAS_' + _createInputFile + '.fasta';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                });
+                            });
+                        </script>
+                    </div>
+
+                    <div class="col">
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a plot</b>"><span class="badge text-bg-dark">6.3</span> - Create a Plot</label>
+                        <div class="input-group">
+                            <select id="genesToPlot" class="form-select form-select-lg" aria-label="">
+                                <option value="PNG" selected>PNG</option>
+                                <option value="SVG">SVG</option>
+                                <option value="PDF">PDF</option>
+                            </select>
+                            <button id="downloadPlot" class="btn btn-dark" type="button">Download Plot</button>
+                        </div>
+
+                        <script>
+                            $(document).ready(function () {
+                                const downloadPlot = document.getElementById('downloadPlot');
+                                const genesToPlot = document.getElementById('genesToPlot');
+                                downloadPlot.addEventListener('click', function () {
+                                    if (genesToPlot.value === 'PNG') {
+                                        const svgElements   = Array.from(document.querySelectorAll('.svg-container svg'));
+                                        const maxWidth      = Math.max(...svgElements.map(svg => svg.clientWidth));
+                                        const totalHeight   = svgElements.reduce((sum, svg) => sum + svg.clientHeight, 0);
+                                        mergeSVGsIntoPNG(svgElements, maxWidth, totalHeight);
+                                    } else if (genesToPlot.value === 'SVG') {
+                                        const svgElements   = Array.from(document.querySelectorAll('.svg-container svg'));
+                                        downloadCombinedSVG(svgElements)
+                                    
+                                    } else if (genesToPlot.value === 'PDF') {
+                                        const svgElements = Array.from(document.querySelectorAll('.svg-container svg'));
+                                        mergeSVGsIntoPDF(svgElements);
+
+                                    }
+                             });
+                            });
+                        </script>
 
                     </div>
 
@@ -623,7 +701,6 @@
             </div>
 
         </div>
-
 
         <div id="svgPlot"></div>
 

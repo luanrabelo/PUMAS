@@ -60,7 +60,7 @@ var colorMitochondrial = {
 };
  
 
-async function getXML(ids, genelist, typeGenome) {
+async function getXML(ids, genelist, typeGenome, drop) {
     const _typeGenome = typeGenome;
     let progress = 0;
 
@@ -72,19 +72,24 @@ async function getXML(ids, genelist, typeGenome) {
         progressBar.textContent = `${percentage.toFixed(2)}%`;
     }
 
+    const geneOrders = new Set(); // Conjunto para armazenar as ordens de genes únicas
+
     const promises = ids.map(async (vouchers) => {
         const url = `https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&save=file&log$=seqview&db=nuccore&report=gbc_xml&id=${vouchers}&conwithfeat=on&withparts=on&show-sequence=on&hide-cdd=on`;
         try {
-            const response      = await fetch(url);
-            const data          = await response.text();
-            const parser        = new DOMParser();
-            const xml           = parser.parseFromString(data, "application/xml");
-            const features      = xml.querySelectorAll("INSDFeature");
-            const genes         = [];
-            const strands       = [];
-            const lengths       = [];
-            const sequence      = xml.querySelector("INSDSeq_sequence").textContent;
+            const response = await fetch(url);
+            const data = await response.text();
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(data, "application/xml");
+            const features = xml.querySelectorAll("INSDFeature");
+            const genes = [];
+            const strands = [];
+            const lengths = [];
+            const sequence = xml.querySelector("INSDSeq_sequence").textContent;
             const genesSequence = {};
+            const pseudoGenes = [];
+
+            const geneInfo = {}; // Objeto para armazenar informações sobre os genes para detecção de pseudogenes
 
             features.forEach(feature => {
                 if (genelist.includes(feature.querySelector("INSDFeature_key").textContent)) {
@@ -92,9 +97,9 @@ async function getXML(ids, genelist, typeGenome) {
                     const start = parseInt(feature.querySelector("INSDInterval > INSDInterval_from").textContent) - 1;
                     const end = parseInt(feature.querySelector("INSDInterval > INSDInterval_to").textContent);
 
-                    strands.push(start > end ? '-' : '+');
-                    lengths.push(end - start + 1);
-                    
+                    const strand = start > end ? '-' : '+';
+                    const length = end - start + 1;
+
                     let geneName = null;
 
                     qualifiers.forEach(qualifier => {
@@ -107,7 +112,7 @@ async function getXML(ids, genelist, typeGenome) {
                                         break;
                                     }
                                 }
-                            } 
+                            }
                             genes.push(geneName);
                         }
                     });
@@ -115,28 +120,73 @@ async function getXML(ids, genelist, typeGenome) {
                         if (start < end) {
                             genesSequence[geneName] = sequence.substring(start, end).toUpperCase();
                         } else {
-                            genesSequence[geneName] = sequence.substring(start+1, end-1).toUpperCase();
+                            genesSequence[geneName] = sequence.substring(start + 1, end - 1).toUpperCase();
                         }
                     }
+
+                    if (geneName) {
+                        // Adiciona informações do gene ao geneInfo
+                        if (!geneInfo[geneName]) {
+                            geneInfo[geneName] = [];
+                        }
+                        geneInfo[geneName].push({ length, start, end, strand, geneName });
+                    }
+
+                    strands.push(strand);
+                    lengths.push(length);
                 }
             });
 
+            // Verificar pseudogenes
+            Object.keys(geneInfo).forEach(gene => {
+                if (geneInfo[gene].length > 1 && !['tRNA-Ser', 'tRNA-Leu'].includes(gene)) {
+                    // Ordenar por comprimento e considerar o menor como pseudogene
+                    geneInfo[gene].sort((a, b) => a.length - b.length);
+                    const pseudoGeneInfo = geneInfo[gene][0]; // O menor gene é o pseudogene
+                    pseudoGenes.push({
+                        gene: gene,
+                        pseudoGeneInfo: pseudoGeneInfo
+                    });
+                }
+            });
+
+            if (drop === "YES") {
+                // Construir a ordem dos genes com a strand se for "-"
+                var geneOrderStr = genes.map((gene, index) => {
+                    if (gene.startsWith('tRNA')) {
+                        var _gene = gene.replace('tRNA-', '');
+                    } else {
+                        var _gene = gene;
+                    }
+                    return strands[index] === '-' ? `-${_gene}` : _gene;
+                }).join(',');
+
+                // Verificar se a ordem já existe
+                if (geneOrders.has(geneOrderStr)) {
+                    return; // Se a ordem já existe, não adicionar novamente
+                } else {
+                    geneOrders.add(geneOrderStr); // Adicionar a nova ordem ao conjunto
+                }
+            }
+
             const species = Array.from(xml.querySelectorAll("INSDSeq_organism")).map(org => org.textContent);
-            const vouchers = Array.from(xml.querySelectorAll("INSDSeq_accession-version")).map(voucher => voucher.textContent);
+            const vouchersArr = Array.from(xml.querySelectorAll("INSDSeq_accession-version")).map(voucher => voucher.textContent);
 
             const dataEntry = {
                 species: species,
-                vouchers: vouchers,
+                vouchers: vouchersArr,
                 genes: genes,
                 strands: strands,
                 length: lengths,
                 sequence: sequence,
-                genesSequence: genesSequence
+                genesSequence: genesSequence,
+                genesOrder: geneOrderStr,
+                pseudoGenes: pseudoGenes // Adiciona a lista de pseudogenes ao objeto de dados
             };
 
             if (_typeGenome === 'MitochondrialGenes') {
                 dataMitochondrial[vouchers] = dataEntry;
-            } 
+            }
         } catch (error) {
             console.error(error);
         }
@@ -152,7 +202,9 @@ async function getXML(ids, genelist, typeGenome) {
 
 
 
-function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length) {
+
+
+function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseudoGenes) {
     const pieceWidth    = 125;
     const pieceHeight   = pieceWidth / 2;
     const tRNAWidth     = pieceWidth / 1.25;
@@ -180,19 +232,19 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length) {
     const svgWidth = genes.reduce((acc, produto) => acc + (produto.startsWith('tRNA') ? tRNAWidth : pieceWidth), 0);
     
     svg.setAttribute("width", svgWidth.toString());
-    svg.setAttribute("height", "125");
-    svg.setAttribute("viewBox", `0 50 ${svgWidth} 125`);
+    svg.setAttribute("height", "150");
+    svg.setAttribute("viewBox", `0 50 ${svgWidth} 150`);
 
     function adicionarElemento(index, lado) {
         genes.splice(lado === 'esquerda' ? index : index + 1, 0, '-');
         strands.splice(lado === 'esquerda' ? index : index + 1, 0, '+');
-        criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length);
+        criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseudoGenes);
     }
 
     function removerElemento(index) {
         genes.splice(index, 1);
         strands.splice(index, 1);
-        criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length);
+        criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseudoGenes);
     }
 
     // Adiciona nome da espécie acima das peças do quebra-cabeça
@@ -272,6 +324,19 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length) {
         svg.appendChild(path);
         svg.appendChild(text);
 
+        // Verifica se é pseudogene e adiciona asterisco abaixo do nome
+        const isPseudoGene = pseudoGenes.some(pg => pg.gene === produto);
+        if (isPseudoGene) {
+            let asterisk = document.createElementNS(svgNS, "text");
+            asterisk.setAttribute("x", (currentX + pieceW / 2).toString());
+            asterisk.setAttribute("y", '175'); // Ajuste a posição vertical conforme necessário
+            asterisk.setAttribute("fill", "#202020");
+            asterisk.setAttribute("text-anchor", "middle");
+            asterisk.setAttribute("font-size", "25px");
+            asterisk.textContent = "*";
+            svg.appendChild(asterisk);
+        }
+
         // Adiciona traço superior ou inferior
         let line = document.createElementNS(svgNS, "line");
         line.setAttribute("x1", currentX.toString());
@@ -338,6 +403,7 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length) {
 }
 
 
+
 // Sincroniza o scroll de todos os elementos SVG
 function syncScroll() {
     const containers = document.querySelectorAll('.svg-container');
@@ -359,21 +425,44 @@ function syncScroll() {
 function ListGenes(object) {
     const data = object;
     const _genesToFasta = $('#genesToFasta'); // Usando jQuery para selecionar o elemento
-    const _newListGenes = [];
+    const cdsGenes = new Set();
+    const rrnaGenes = new Set();
+    const trnaGenes = new Set();
+
+    // Definindo as listas de genes para cada categoria
+    const cdsList   = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
+    const rrnaList  = ['12S', '16S'].sort();
+    const trnaList  = ['tRNA-Ala', 'tRNA-Arg', 'tRNA-Asn', 'tRNA-Asp', 'tRNA-Cys', 'tRNA-Gln', 'tRNA-Glu', 'tRNA-Gly', 'tRNA-His', 'tRNA-Ile', 'tRNA-Leu', 'tRNA-Lys', 'tRNA-Met', 'tRNA-Phe', 'tRNA-Pro', 'tRNA-Ser', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Tyr', 'tRNA-Val'].sort();
+
+    _genesToFasta.empty();
     _genesToFasta.append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+
     const mt = Object.keys(data);
     mt.forEach((id) => {
         data[id].genes.forEach((gene) => {
-            if (!_newListGenes.includes(gene)) {
-                _newListGenes.push(gene);
+            if (cdsList.includes(gene)) {
+                cdsGenes.add(gene);
+            } else if (rrnaList.includes(gene)) {
+                rrnaGenes.add(gene);
+            } else if (trnaList.includes(gene)) {
+                trnaGenes.add(gene);
             }
         });
     });
-    _newListGenes.sort();
-    _newListGenes.forEach((gene) => {
-        _genesToFasta.append($('<option>').text(gene).attr('value', gene));
-    });
+
+    function addOptions(groupName, geneSet) {
+        if (geneSet.size > 0) {
+            _genesToFasta.append($('<option>').text(`-- ${groupName} --`).attr('disabled', 'disabled'));
+            Array.from(geneSet).sort().forEach((gene) => {
+                _genesToFasta.append($('<option>').text(gene).attr('value', gene));
+            });
+        }
+    }
+    addOptions('CDS', cdsGenes);
+    addOptions('rRNAs', rrnaGenes);
+    addOptions('tRNAs', trnaGenes);
 }
+
 
 
 
@@ -386,7 +475,165 @@ var svgPlot = document.getElementById('svgPlot');
 
 
 
-function showResults(){
+function showResults(object){
+    ListGenes(object);
     const _Results = document.getElementById('PUMASResults');
     _Results.style.display = 'block';
 }
+
+
+
+function mergeSVGsIntoPNG(svgElements, outputWidth, outputHeight) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    let scale = 1;
+    if (svgElements.length <= 10) {
+        scale = 5;
+    } else if (svgElements.length >= 11 && svgElements.length <= 20) {
+        scale = 4;
+    } else if (svgElements.length >= 21 && svgElements.length <= 30) {
+        scale = 3;
+    } else if (svgElements.length >= 31 && svgElements.length <= 40) {
+        scale = 2;
+    } else if (svgElements.length >= 41 && svgElements.length <= 50) {
+        scale = 1.5;
+    } else if (svgElements.length >= 51) {
+        scale = 1;
+    }
+
+    // Aumentar a resolução
+    canvas.width = outputWidth * scale;
+    canvas.height = outputHeight * scale;
+    context.scale(scale, scale);
+
+    // Preencher o fundo com branco
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width / scale, canvas.height / scale);
+
+    let loadedSVGs = 0;
+
+    svgElements.forEach((svgElement, index) => {
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+        const img = new Image();
+
+        img.onload = () => {
+            context.drawImage(img, 0, index * svgElement.clientHeight); // Ajustar o posicionamento conforme necessário
+            loadedSVGs++;
+            if (loadedSVGs === svgElements.length) {
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'PUMAS.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }, 'image/png');
+            }
+        };
+
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+    });
+}
+
+
+function mergeSVGsIntoSingleSVG(svgElements) {
+    const svgNamespace = "http://www.w3.org/2000/svg";
+    const combinedSVG = document.createElementNS(svgNamespace, "svg");
+
+    let yOffset = 0;
+    const maxWidth = Math.max(...svgElements.map(svg => svg.viewBox.baseVal.width));
+    const totalHeight = svgElements.reduce((sum, svg) => sum + svg.viewBox.baseVal.height, 0);
+
+    combinedSVG.setAttribute("width", maxWidth.toString());
+    combinedSVG.setAttribute("height", totalHeight.toString());
+    combinedSVG.setAttribute("xmlns", svgNamespace);
+
+    svgElements.forEach(svgElement => {
+        const clonedSVG = svgElement.cloneNode(true);
+        const gElement = document.createElementNS(svgNamespace, "g");
+        gElement.setAttribute("transform", `translate(0, ${yOffset})`);
+
+        yOffset += svgElement.viewBox.baseVal.height; // Adjust the positioning as needed
+
+        gElement.appendChild(clonedSVG);
+        combinedSVG.appendChild(gElement);
+    });
+
+    return combinedSVG;
+}
+
+function downloadCombinedSVG(svgElements) {
+    const combinedSVG = mergeSVGsIntoSingleSVG(svgElements);
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(combinedSVG);
+    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'PUMAS.svg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+async function mergeSVGsIntoPDF(svgElements) {
+    const { jsPDF } = window.jspdf;
+
+    // Calcular a largura máxima e a altura total dos SVGs
+    const maxWidth = Math.max(...svgElements.map(svg => svg.clientWidth));
+    const svgHeights = svgElements.map(svg => svg.clientHeight);
+    const maxHeightPerSVG = Math.max(...svgHeights);
+
+    // Configuração do PDF em modo paisagem
+    const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'pt',
+        format: [maxWidth, 10 * maxHeightPerSVG] // Ajusta a altura da página para acomodar 10 SVGs
+    });
+
+    let currentY = 0;
+    let svgCount = 0;
+    const scale = 5; // Aumentar a escala para melhorar a qualidade
+
+    for (let i = 0; i < svgElements.length; i++) {
+        if (svgCount === 10) {
+            pdf.addPage();
+            currentY = 0;
+            svgCount = 0;
+        }
+
+        const svgElement = svgElements[i];
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+        const img = new Image();
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+
+        await new Promise((resolve) => {
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = svgElement.clientWidth * scale;
+                canvas.height = svgElement.clientHeight * scale;
+                context.scale(scale, scale);
+                context.drawImage(img, 0, 0);
+
+                const imgData = canvas.toDataURL('image/png');
+                const xPos = 0;
+                const yPos = currentY;
+
+                pdf.addImage(imgData, 'PNG', xPos, yPos, canvas.width / scale, canvas.height / scale);
+                currentY += canvas.height / scale;
+                svgCount++;
+                resolve();
+            };
+        });
+    }
+
+    pdf.save('PUMAS.pdf');
+}
+
+
+
+
+
