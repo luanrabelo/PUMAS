@@ -88,6 +88,8 @@ async function getXML(ids, genelist, typeGenome, drop) {
             const sequence = xml.querySelector("INSDSeq_sequence").textContent;
             const genesSequence = {};
             const pseudoGenes = [];
+            const _start = []
+            const _end = []
 
             const geneInfo = {}; // Objeto para armazenar informações sobre os genes para detecção de pseudogenes
 
@@ -181,7 +183,9 @@ async function getXML(ids, genelist, typeGenome, drop) {
                 sequence: sequence,
                 genesSequence: genesSequence,
                 genesOrder: geneOrderStr,
-                pseudoGenes: pseudoGenes // Adiciona a lista de pseudogenes ao objeto de dados
+                pseudoGenes: pseudoGenes,
+                geneInfo: geneInfo
+                
             };
 
             if (_typeGenome === 'MitochondrialGenes') {
@@ -196,10 +200,6 @@ async function getXML(ids, genelist, typeGenome, drop) {
 
     await Promise.all(promises);
 }
-
-
-
-
 
 
 
@@ -272,15 +272,26 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseud
     //icon.setAttribute("data-bs-html", "true");
     //icon.setAttribute("title", `View Genome Diagram`);
 
+    let _pseudoGenes = ''
+    if (pseudoGenes.length > 0) {
+        _pseudoGenes = pseudoGenes.map(pseudoGene => {
+            return pseudoGene.gene;
+        }).join(', ');
+        _pseudoGenes = ` - Duplicate genes: ${_pseudoGenes}`;
+    } else {
+        _pseudoGenes = '';
+    }
+
 
     let boldVoucher = document.createElementNS(svgNS, "tspan");
     boldVoucher.setAttribute("font-weight", "bold");
     boldVoucher.innerHTML = `
-        (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucher}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${voucher}</a>) - View Genome Diagram
+        (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucher}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${voucher}</a>)
     `;
 
     textEspecie.appendChild(italicEspecie);
     textEspecie.appendChild(boldVoucher);
+    textEspecie.innerHTML += _pseudoGenes;
     //textEspecie.appendChild(icon);
     
     // Adiciona o botão com tooltip
@@ -448,10 +459,6 @@ function criarSVG(geneStart, nomeEspecie, voucher, genes, strands, length, pseud
     const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
-
-
-
-
 // Sincroniza o scroll de todos os elementos SVG
 function syncScroll() {
     const containers = document.querySelectorAll('.svg-container');
@@ -466,8 +473,6 @@ function syncScroll() {
         };
     });
 }
-
-
 
 
 function ListGenes(object) {
@@ -523,12 +528,218 @@ var svgPlot = document.getElementById('svgPlot');
 
 
 
-function showResults(object){
-    ListGenes(object);
-    const _Results = document.getElementById('PUMASResults');
-    _Results.style.display = 'block';
-}
+    function showResults(object) {
+        ListGenes(object);
+        const _Results = document.getElementById('PUMASResults');
+        _Results.style.display = 'block';
+    
+        const downloadIndivivualPlot = document.getElementById('downloadIndivivualPlot');
+        const individualPlot = document.getElementById('individualPlot');
+        const LinearGenome = document.getElementById('LinearGenome');
+        const ViewGenomeDraw = $('#ViewGenomeDraw'); // jQuery selector
+    
+        const data = Object.keys(object);
+        $('#individualPlot').empty();
+        $('#individualPlot').append($('<option>').text('Choose a species').attr('value', 'NaN'));
+        data.forEach((id) => {
+            $('#individualPlot').append($('<option>').text(`${dataMitochondrial[id].species} - (${dataMitochondrial[id].vouchers})`).attr('value', id));
+        });
+    
+        individualPlot.addEventListener('change', function() {
+            downloadIndivivualPlot.disabled = individualPlot.value === 'NaN';
+        });
+    
+        // Remove old event listeners to avoid duplication
+        $('#ViewPlotColor').off('click');
+        $('#ViewPlotFormat').off('click');
+        $('#ViewPlotDownload').off('click');
+    
+        // Remove previous genomeDraw instance if it exists
+        if (window.genomeDraw) {
+            window.genomeDraw.clear();
+            window.genomeDraw = null;
+        }
+    
+        downloadIndivivualPlot.addEventListener('click', function() {
+            const id = individualPlot.value;
+            console.log(id);
+    
+            // Hide and clear the previous modal content
+            if (ViewGenomeDraw.hasClass('show')) {
+                ViewGenomeDraw.modal('hide');
+            }
+            $('#ViewPlotTitle').empty();
+            $('#ViewPlotFigureCaption').empty();
+            $(LinearGenome).empty();
+    
+            // Show the modal with new content
+            ViewGenomeDraw.modal('show');
+            $('#ViewPlotTitle').append(`Genome diagram for <i>${dataMitochondrial[id].species}</i> <b>(${dataMitochondrial[id].vouchers})</b>`);
+            $('#ViewPlotFigureCaption').append(`<h4>Genome diagram for <i>${dataMitochondrial[id].species}</i> <b>(${dataMitochondrial[id].vouchers})</b></h4><br><h5>The Colors Scheme is adapted for Color Blindness - Wong, B. (2011). Color blindness. <i>Nature Methods</i>, <i>8</i>(6), 441. https://doi.org/10.1038/nmeth.1618</h5>`);
+    
+            // Create a new genomeDraw instance and store it in window object
+            window.genomeDraw = new CGV.Viewer('#LinearGenome', {
+                name: "data_LuanRabelo",
+                id: "data_LuanRabelo",
+                height: screen.height / 1.5,
+                width: screen.width / 1.1,
 
+            });
+    
+            // Clear any previous drawing
+            window.genomeDraw.clear();
+    
+            let dataEntry = generateLinearObject(dataMitochondrial[id]);
+            console.log(dataEntry);
+    
+            window.genomeDraw.io.loadJSON(dataEntry);
+    
+            $('#ViewPlotColor').on('click', function() {
+                window.genomeDraw.invertColors();
+            });
+    
+            $('#ViewPlotFormat').on('click', function() {
+                const format = (window.genomeDraw.format == 'circular') ? 'linear' : 'circular';
+                window.genomeDraw.settings.update({ format: format });
+                window.genomeDraw.draw();
+            });
+    
+            $('#ViewPlotDownload').on('click', function() {
+                const spName = dataMitochondrial[id].species.toString().replace(/\s/g, '_');
+                const height = 4000;
+                const width = window.genomeDraw.width / window.genomeDraw.height * height;
+                window.genomeDraw.io.downloadImage(width, height, `${spName}.png`);
+            });
+    
+            window.genomeDraw.draw();
+        });
+    }
+    
+    
+    
+
+function generateLinearObject(dataEntry) {
+    console.log(dataEntry);
+
+    const Linear = {
+        cgview: {
+            version: "1.6.0",
+            created: "2024-01-11 12:24:26",
+            updated: "2024-01-11 12:24:26",
+            format: "linear",
+            settings: {
+                format: "linear",
+                geneticCode: 2,
+                backgroundColor: "rgba(255,255,255,1)",
+                showShading: false,
+                arrowHeadLength: 0.5,
+                minArcLength: 1,
+                initialMapThicknessProportion: 1.5,
+                maxMapThicknessProportion: 1.5
+            },
+            backbone: {
+                color: "rgba(0,0,0,0.5)",
+                colorAlternate: "rgba(0,0,0,1)",
+                thickness: 1,
+                decoration: "arrow"
+            },
+            ruler: {
+                font: "sans-serif,bold,14",
+                color: "rgba(0,0,0,1)"
+            },
+            annotation: {
+                font: "sans-serif,bold,20",
+                onlyDrawFavorites: false,
+                visible: true
+            },
+            dividers: {
+                slot: {
+                    visible: true,
+                    color: "rgba(0,0,0,0.5)",
+                    thickness: 1,
+                    spacing: 1
+                }
+            },
+            highlighter: {
+                visible: true
+            },
+            legend: {
+                position: "top-right",
+                textAlignment: "left",
+                defaultFont: "sans-serif,plain,10",
+                defaultFontColor: "rgba(0,0,0,1)",
+                backgroundColor: "rgba(255,255,255,1)",
+                items: [
+                    { name: "tRNA", swatchColor: "rgba(0,114,178,1)", decoration: "arrow", font: "sans-serif,bold,20" },
+                    { name: "rRNA", swatchColor: "rgba(0,158,115,1)", decoration: "arrow", font: "sans-serif,bold,20" },
+                    { name: "PCGs", swatchColor: "rgba(230,159,0,1)", decoration: "arrow", font: "sans-serif,bold,20" },
+                    { name: "GC Content", swatchColor: "rgba(0,0,0,1)", decoration: "arc", font: "sans-serif,bold,20" },
+                    { name: "GC Skew+", swatchColor: "rgba(204,121,167,1)", decoration: "arc", font: "sans-serif,bold,20" },
+                    { name: "GC Skew-", swatchColor: "rgba(86,180,233,1)", decoration: "arc", font: "sans-serif,bold,20" }
+                ]
+            },
+            sequence: {
+                font: "sans-serif,plain,20",
+                color: "rgba(0,0,0,1)",
+                contigs: [
+                    {
+                        name: 'LuanRabelo',
+                        orientation: "+",
+                        length: dataEntry.sequence.length,
+                        seq: dataEntry.sequence
+                    }
+                ]
+            },
+            features: [],
+            tracks: [
+                {
+                name: "data_LuanRabelo",
+                separateFeaturesBy: "strand",
+                position: "both",
+                thicknessRatio: 2,
+                dataType: "feature",
+                dataMethod: "source",
+                dataKeys: "data_LuanRabelo"
+                },
+                {"name": "GC Content", "separateFeaturesBy": "strand", "position": "inside", "thicknessRatio": 1, "dataType": "plot", "dataMethod": "sequence", "dataKeys": "gc-content"},
+                {"name": "GC Skew", "separateFeaturesBy": "strand", "position": "inside", "thicknessRatio": 1, "dataType": "plot", "dataMethod": "sequence", "dataKeys": "gc-skew"}
+                ]
+        }
+    };
+        
+    dataEntry.genes.forEach((geneName, index) => {
+        //console.log(dataEntry.geneInfo[geneName][0].start);
+        let type = 'PCGs';
+        if (geneName.includes('tRNA-')) {
+            type = 'tRNA';
+        } else if (['12S', '16S'].includes(geneName)) {
+            type = 'rRNA';
+        }
+
+        let start = dataEntry.geneInfo[geneName][0].start;
+        let end = dataEntry.geneInfo[geneName][0].end;
+
+        //console.log(geneName, start, end);
+
+        if (end < start) {
+            start = dataEntry.geneInfo[geneName][0].end;
+            end = dataEntry.geneInfo[geneName][0].start;
+        }
+
+        Linear.cgview.features.push({
+            name: geneName,
+            type: type,
+            start: start,
+            stop: end,
+            strand: dataEntry.strands[index] === '+' ? +1 : -1,
+            source: "data_LuanRabelo",
+            legend: type,
+            tags: []
+        });
+    });
+
+    return Linear;
+}
 
 
 function mergeSVGsIntoPNG(svgElements, outputWidth, outputHeight) {
@@ -680,8 +891,3 @@ async function mergeSVGsIntoPDF(svgElements) {
 
     pdf.save('PUMAS.pdf');
 }
-
-
-
-
-

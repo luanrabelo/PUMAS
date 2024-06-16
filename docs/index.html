@@ -15,6 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.css">
     <title>PUMAS</title>
     <meta name="title" content="PUMAS" />
     <meta name="description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
@@ -453,9 +456,9 @@
             <div id="PUMASResults" style="display: none;" class="mt-2">
                 <hr>
                 <label class="h4"><span class="badge text-bg-dark">6</span> - Export Results</label>
-                <div class="row row-cols-3">
+                <div class="row row-cols-2">
 
-                    <div class="col">
+                    <div class="col mt-2">
                         <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create an fasta file</b>"><span class="badge text-bg-dark">6.1</span> - Fasta File</label>
                         <div class="input-group">
                             <select id="genesToFasta" class="form-select form-select-lg" id="fastaFileExport" aria-label=""></select>
@@ -497,7 +500,7 @@
                         });
                     </script>
 
-                    <div class="col">
+                    <div class="col mt-2">
                         <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>format</b> to <b>create an Plot</b>"><span class="badge text-bg-dark">6.2</span> - Create an Input File</label>
                         <div class="input-group">
                             <select id="createInputFile" class="form-select form-select-lg" aria-label="">
@@ -545,7 +548,7 @@
                         </script>
                     </div>
 
-                    <div class="col">
+                    <div class="col mt-2">
                         <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a plot</b>"><span class="badge text-bg-dark">6.3</span> - Create a Plot</label>
                         <div class="input-group">
                             <select id="genesToPlot" class="form-select form-select-lg" aria-label="">
@@ -578,6 +581,14 @@
                              });
                             });
                         </script>
+                    </div>
+
+                    <div class="col mt-2">
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a Individual plot</b>"><span class="badge text-bg-dark">6.4</span> - Create a Individual Plot</label>
+                        <div class="input-group">
+                            <select id="individualPlot" class="form-select form-select-lg" aria-label=""></select>
+                            <button id="downloadIndivivualPlot" class="btn btn-dark" type="button" disabled>View Plot</button>
+                        </div>
 
                     </div>
 
@@ -589,6 +600,27 @@
         <div id="svgPlot"></div>
 
     </main>
+
+    <div class="modal fade" id="ViewGenomeDraw" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-fullscreen">
+            <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+            <h5 id="ViewPlotTitle" class="modal-title"></h5>
+        </div>
+        <div class="modal-body">
+            <figure class="figure">
+            <figcaption id="ViewPlotFigureCaption" class="figure-caption"></figcaption>
+        <div id="LinearGenome" class="d-flex justify-content-center align-items-center text-center"></div>
+        </figure>
+        </div>
+        <div class="modal-footer bg-dark">
+        <button type="button" class="btn btn-lg btn-light" id="ViewPlotColor">Invert Map Colors</button>
+        <button type="button" class="btn btn-lg btn-light" id="ViewPlotFormat">Toggle Linear/Circular Format</button>
+        <button type="button" class="btn btn-lg btn-light" id="ViewPlotDownload">Download PNG</button>
+        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button></div>
+        </div>
+        </div>
+    </div>
 
     <footer class="footer text-white bg-dark mt-5">
         <div class="container-fluid">
