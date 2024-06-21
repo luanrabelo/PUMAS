@@ -25,8 +25,7 @@ PUMAS (**Pu**zzle **M**itochondrial **A**nalysis **S**cript ) is an **online too
 
 It was developed using **HTML** and **JavaScript** and employs the **bootstrap framework** to provide a responsive form visualization on any device. Additionally, PUMAS uses SynGenes [^1] for the standardization of gene names.
 
-> [!NOTE]
-> [^1]: Rabelo, L.P., Sodré, D., de Sousa, R.P.C. et al. SynGenes: a Python class for standardizing nomenclatures of mitochondrial and chloroplast genes and a web form for enhancing searches for evolutionary analyses. BMC Bioinformatics 25, 160 (2024). https://doi.org/10.1186/s12859-024-05781-y
+[^1]: Rabelo, L.P., Sodré, D., de Sousa, R.P.C. et al. SynGenes: a Python class for standardizing nomenclatures of mitochondrial and chloroplast genes and a web form for enhancing searches for evolutionary analyses. BMC Bioinformatics 25, 160 (2024). https://doi.org/10.1186/s12859-024-05781-y
 ***  
 &nbsp;  
 # Licence
