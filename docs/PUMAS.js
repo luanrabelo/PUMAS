@@ -19,7 +19,7 @@ const MitochondrialGenes = {
     "ND4L":     ['NADH dehydrogenase subunit 4L', 'NADH dehydrogenase subunit-4L', 'NADH denydrogenase subunit 4L', 'NADH dehydrogenase 4L', 'ND4L', 'NADH dehydrogenase subunits 4L', 'subunit ND4L of the NADH ubiquinone oxidoreductase complex', 'NADH4L protein', 'NADH dehydrogenase subnit 4L', 'NADH4L', 'NADH dehydrogenase subunit 4 L', 'NADH dehydrogenase subunit IV L', 'NADH subunit 4L', 'NADH-ubiquinone oxidoreductase chain 4L', 'NADH-ubiquinone oxidoreductase subunit 4L', 'NADH dehydrogenase, subunit 4L (complex I)', 'NADH 4L', 'NADH dehydrogenase subumit 4L', 'HADH dehydrogenase 4L', 'NADH dehydrogenase subujnit 4L', 'NADH ubiquinone oxidoreductase subunit 4L', 'nicotinamide adenine dinucleotide dehydrogenase subunit 4L', 'NADH dehydrogenase subunit4L'],
     "ND5":      ['NADH dehydrogenase subunit 5', 'NAD dehydrogenase subunit 5', 'NADH dehrogenase subunit 5', 'NADH dehydrogenase subunit-5', 'NADH hehydrogenase subunit 5', 'NADH denydrogenase subunit 5', 'NADH dehydrogenase 5', 'ND5', 'NADH dehydrogenase subunits 5', 'NADH hydrogenase subunit 5', 'subunit 5 of the NADH ubiquinone oxidoreductase complex', 'NADH deydrogenase subunit 5', 'NADH dehydrogenase subnit 5', 'NADH dehydrodenase subunit 5', 'NADH5', 'HADA dehydrogenase subunit 5', 'NADH dehydrogenase subunit V', 'NADH5 protein', 'NADH subunit 5', 'NADH dehydrogenase subunit 5-0', 'NADH-ubiquinone oxidoreductase chain 5', 'NADH-ubiquinone oxidoreductase subunit V', 'NADH dehydrogenase, subunit 5', 'NADH dehydrogenase, subunit 5 complex I', 'NADH 5', 'NADH dehydrogenase subumit 5', 'NADH-ubiquinone oxidoreductase subunit 5', 'NADH ubiquinone oxidoreductase subunit 5', 'nicotinamide adenine dinucleotide dehydrogenase subunit 5', 'truncated NADH dehydrogenase subunit 5', 'NADH dehydrogenase subunit5', 'NADH dehydroghenase subunit 5'],
     "ND6":      ['NADH dehydrogenase subunit 6', 'NAD dehydrogenase subunit 6', 'NADH dehydrogenase subunit-6', 'NADH denydrogenase subunit 6', 'NADH dehydrogenase 6', 'ND6', 'NADH dehydrogenase subunits 6', 'subunit 6 of the NADH ubiquinone oxidoreductase complex', 'NADH deydrogenase subunit 6', 'NADH dehydrogenase subnit 6', 'NADH6', 'NADH dehydrogenase subunit VI', 'NADH6 protein', 'NADH subunit 6', 'truncated NADH dehydrogenase subunit 6', 'NADH dehygrogenase subunit 6', 'NADH dehydrogenease subunit 6', 'NADH-ubiquinone oxidoreductase chain 6', 'NADH dehydrogenase, subunit 6', 'NADH dsehydrogenase subunit 6', 'NADH-ubiquinone oxidoreductase subunit VI', 'NADH 6', 'NADH dehydrogenase subumit 6', 'NADH-ubiquinone oxidoreductase subunit 6', 'NADH ubiquinone oxidoreductase subunit 6', 'nicotinamide adenine dinucleotide dehydrogenase subunit 6', 'NADH dehydrogenase subunit6'],
-    "dloop":    ['Control region', 'non-coding region', 'putative control region', 'control region 1', 'control region ii', 'control region i', 'control region 2', 'noncoding region', 'pseudo control region', 'cr', 'control region (d-loop)', 'd-loop control region', 'similar to control region', 'non coding region', 'conrol region', 'region: control region', 'a+t-rich region', 'putative control region 2', 'd-loop region (= control reagion)', 'pseudo contorl region', 'a+t rich region', 'c-rich region', 'largest non-coding region', 'd-loop', 'd loop', 'control region cr', 'the control region', 'control region c-rich sequence', 'control region coretas sequence', 'putative d-loop/control region', 'd-loop containing region', 'a+t rich', 'at-rich region'],
+    "CR":       ['Control region', 'non-coding region', 'putative control region', 'control region 1', 'control region ii', 'control region i', 'control region 2', 'noncoding region', 'pseudo control region', 'cr', 'control region (d-loop)', 'd-loop control region', 'similar to control region', 'non coding region', 'conrol region', 'region: control region', 'a+t-rich region', 'putative control region 2', 'd-loop region (= control reagion)', 'pseudo contorl region', 'a+t rich region', 'c-rich region', 'largest non-coding region', 'd-loop', 'd loop', 'control region cr', 'the control region', 'control region c-rich sequence', 'control region coretas sequence', 'putative d-loop/control region', 'd-loop containing region', 'a+t rich', 'at-rich region'],
 };
 
 const ChloroplastGenes = {
@@ -126,43 +126,51 @@ const ChloroplastGenes = {
 
 
 var colorMitochondrial = {
-    "-" : "#FFFFFF",
+    "-": "#FFFFFF",
 
-    "COI": "#FF4500", "COII": "#32CD32", "COIII": "#1E90FF",
+    "COI": "#FF6347", "COII": "#4682B4", "COIII": "#FF4500",
+    "tRNA-Met": "#32CD32", "tRNA-Gln": "#DA70D6", "tRNA-Lys": "#7FFF00", "tRNA-Ile": "#FFA07A", "tRNA-Trp": "#BA55D3",
+    "tRNA-Cys": "#4169E1", "tRNA-Tyr": "#8B008B", "tRNA-Leu": "#6A5ACD", "tRNA-Asp": "#20B2AA", "tRNA-His": "#8B4513",
+    "tRNA-Thr": "#1E90FF", "tRNA-Pro": "#B22222", "tRNA-Ser": "#CD5C5C", "tRNA-Val": "#5F9EA0", "tRNA-Gly": "#3CB371",
+    "tRNA-Ala": "#FFD700", "tRNA-Arg": "#483D8B", "tRNA-Asn": "#9ACD32", "tRNA-Glu": "#2E8B57", "tRNA-Phe": "#8A2BE2",
 
-    "tRNA-Met": "#FFD700",
-    "tRNA-Met": "#FFD700", "tRNA-Gln": "#7FFF00", "tRNA-Lys": "#DA70D6", "tRNA-Ile": "#20B2AA", "tRNA-Trp": "#FF6347",
-    "tRNA-Cys": "#DC143C", "tRNA-Tyr": "#8B008B", "tRNA-Leu": "#4B0082", "tRNA-Asp": "#FFA500", "tRNA-His": "#FFD700",
-    "tRNA-Thr": "#4682B4", "tRNA-Pro": "#FF69B4", "tRNA-Ser": "#6A5ACD", "tRNA-Val": "#32CD32", "tRNA-Gly": "#9370DB",
-    "tRNA-Ala": "#FF6347", "tRNA-Arg": "#9ACD32", "tRNA-Asn": "#7CFC00", "tRNA-Glu": "#4682B4", "tRNA-Phe": "#FF4500",
+    "ND1": "#FA8072", "ND2": "#C71585", "ND3": "#FF1493", "ND4": "#9932CC", "ND4L": "#00CED1", "ND5": "#9400D3", "ND6": "#FF00FF",
+    "ATP8": "#8FBC8F", "ATP6": "#6495ED",
+    "16S": "#00FA9A", "12S": "#00BFFF",
+    "CYTB": "#F08080",
+    "CR": "#DB7093",
+    "OL": "#ADFF2F", "OH": "#FFB6C1",
 
-    "ND1": "#00CED1", "ND2": "#FF69B4", "ND3": "#BA55D3", "ND4": "#CD5C5C", "ND4L": "#ADFF2F", "ND5": "#FFA07A", "ND6": "#20B2AA",
-
-    "ATP8": "#5F9EA0", "ATP6": "#4169E1",
-
-    "16S": "#FF7F50", "12S": "#DB7093",
-
-    "CYTB": "#8B0000",
-
-    "dloop": "#FF1493",
-
-    "OL": "#FFD700", "OH": "#00BFFF",
-
-    "accD": "#FFB6C1", "atpA": "#8A2BE2", "atpB": "#00FF7F", "atpE": "#8B4513", "atpF": "#DC143C", "atpH": "#4682B4", "atpI": "#FF4500",
-    "ccsA": "#2E8B57", "cemA": "#D2691E", "chlB": "#1E90FF", "chlL": "#FF1493", "chlN": "#B22222", "clpP": "#FF4500", "clpP1": "#32CD32",
-    "cysA": "#FF4500", "cysT": "#DA70D6", "ftsH": "#8B008B", "infA": "#FF6347", "lhbA": "#4682B4", "matK": "#FFD700", "ndhA": "#20B2AA",
-    "ndhB": "#7CFC00", "ndhC": "#BA55D3", "ndhD": "#CD5C5C", "ndhE": "#9ACD32", "ndhF": "#FFA07A", "ndhG": "#FF69B4", "ndhH": "#ADFF2F",
-    "ndhI": "#9370DB", "ndhJ": "#8A2BE2", "ndhK": "#DC143C", "pafI": "#00CED1", "pafII": "#FFA500", "pbf1": "#4682B4", "petA": "#FF4500",
-    "petB": "#DA70D6", "petD": "#32CD32", "petE": "#8B008B", "petG": "#FF6347", "petL": "#FFD700", "petN": "#4682B4", "psaA": "#FF4500",
-    "psaB": "#8A2BE2", "psaC": "#00FF7F", "psaI": "#8B4513", "psaJ": "#DC143C", "psaM": "#FF6347", "psb30": "#4682B4", "psbA": "#FFD700",
-    "psbB": "#2E8B57", "psbC": "#D2691E", "psbD": "#1E90FF", "psbE": "#FF1493", "psbF": "#B22222", "psbG": "#FF4500", "psbH": "#32CD32",
-    "psbI": "#DA70D6", "psbJ": "#8B008B", "psbK": "#FF6347", "psbL": "#4682B4", "psbM": "#FFD700", "psbN": "#20B2AA", "psbT": "#7CFC00",
-    "psbZ": "#BA55D3", "rbcL": "#CD5C5C", "rpl14": "#9ACD32", "rpl16": "#FFA07A", "rpl2": "#FF69B4", "rpl20": "#ADFF2F", "rpl21": "#9370DB",
-    "rpl22": "#8A2BE2", "rpl23": "#DC143C", "rpl32": "#00CED1", "rpl33": "#FFA500", "rpl36": "#4682B4", "rpoA": "#FF4500", "rpoB": "#DA70D6",
-    "rpoC1": "#32CD32", "rpoC2": "#8B008B", "rps11": "#FF6347", "rps12": "#FFD700", "rps14": "#4682B4", "rps15": "#FF4500", "rps16": "#8A2BE2",
-    "rps18": "#00FF7F", "rps19": "#8B4513", "rps2": "#DC143C", "rps3": "#FF6347", "rps4": "#4682B4", "rps7": "#FFD700", "rps8": "#32CD32",
-    "rrn16S": "#DA70D6", "rrn23S": "#8B008B", "rrn4.5S": "#FF6347", "rrn5S": "#FFD700", "ycf2": "#4682B4", "ycf1": "#FF4500", "ycl2": "#8A2BE2",
+    "accD": "#BC8F8F", "atpA": "#B0E0E6", "atpB": "#00008B", "atpE": "#008B8B", "atpF": "#B8860B", "atpH": "#556B2F", "atpI": "#FF8C00",
+    "ccsA": "#703642", "cemA": "#7B68EE", "chlB": "#DAA520", "chlL": "#A0522D", "chlN": "#6B8E23", "clpP": "#CD853F", "clpP1": "#808000",
+    "cysA": "#87CEFA", "cysT": "#DEB887", "ftsH": "#C0C0C0", "infA": "#87CEEB", "lhbA": "#FF6347", "matK": "#40E0D0", "ndhA": "#EE82EE",
+    "ndhB": "#F5DEB3", "ndhC": "#FFFF00", "ndhD": "#9ACD32", "ndhE": "#696969", "ndhF": "#800000", "ndhG": "#66CDAA", "ndhH": "#0000CD",
+    "ndhI": "#BA55D3", "ndhJ": "#9370DB", "ndhK": "#3CB371", "pafI": "#7FFFD4", "pafII": "#FFDAB9", "pbf1": "#48D1CC", "petA": "#C71585",
+    "petB": "#191970", "petD": "#F5FFFA", "petE": "#FFE4E1", "petG": "#FFE4B5", "petL": "#FFDEAD", "petN": "#000080", "psaA": "#FDF5E6",
+    "psaB": "#808080", "psaC": "#8B0000", "psaI": "#BDB76B", "psaJ": "#8B008B", "psaM": "#556B2F", "psb30": "#FF4500", "psbA": "#DEB890",
+    "psbB": "#663399", "psbC": "#FF0000", "psbD": "#98FB98", "psbE": "#AFEEEE", "psbF": "#DB7093", "psbG": "#FFEFD5", "psbH": "#FFD700",
+    "psbI": "#CD853F", "psbJ": "#FFC0CB", "psbK": "#DDA0DD", "psbL": "#B0C4DE", "psbM": "#00FF7F", "psbN": "#48D1CC", "psbT": "#C71585",
+    "psbZ": "#191970", "rbcL": "#F5F5F5", "rpl14": "#FFE4C4", "rpl16": "#008080", "rpl2": "#FAEBD7", "rpl20": "#D2B48C", "rpl21": "#FFFAF0",
+    "rpl22": "#F0FFF0", "rpl23": "#228B22", "rpl32": "#FF00FF", "rpl33": "#DCDCDC", "rpl36": "#F8F8FF", "rpoA": "#FFFAFA", "rpoB": "#00FA9A",
+    "rpoC1": "#B0E0DD", "rpoC2": "#FFFACD", "rps11": "#ADD8E6", "rps12": "#F08080", "rps14": "#E0FFFF", "rps15": "#FAFAD2", "rps16": "#D3D3D3",
+    "rps18": "#90EE90", "rps19": "#FFB6C1", "rps2": "#FFA07A", "rps3": "#20B2AA", "rps4": "#87CEFA", "rps7": "#778899", "rps8": "#B0C4DE",
+    "rrn16S": "#FFFFE0", "rrn23S": "#00FFFF", "rrn4.5S": "#32CD32", "rrn5S": "#FAF0E6", "ycf2": "#800080", "ycf1": "#66CDAA", "ycl2": "#0000FF"
 };
+
+// Verify if each color is unique
+//let colorSet = new Set(Object.values(colorMitochondrial));
+//if (colorSet.size === Object.keys(colorMitochondrial).length) {
+//    console.log("All genes have unique colors.");
+//} else {
+//    console.error("Color repetition detected, please check. Unique colors assigned:", colorSet.size);
+//}
+
+
+
+
+
+
+
 
 
 async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
@@ -296,12 +304,12 @@ function processPseudoGenes(geneData) {
 }
 
 
-function createSVG(genomicData, geneStart, pattern = false) {
-    // Mapa para armazenar padrões únicos
+function createSVG(genomicData, geneStart, geneList, pattern = false) {
+    console.log('createSVG called with:', { genomicData, geneStart, geneList, pattern });
+
     const patternMap = new Map();
     let patternCounter = 1;
 
-    // Se o parâmetro pattern for true, processa os dados para obter padrões únicos
     if (pattern) {
         genomicData.forEach(data => {
             let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
@@ -320,7 +328,6 @@ function createSVG(genomicData, geneStart, pattern = false) {
             patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
         });
 
-        // Redefine o genomicData para conter apenas os padrões únicos
         genomicData = Array.from(patternMap.values()).map(patternData => ({
             speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
             vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
@@ -333,7 +340,7 @@ function createSVG(genomicData, geneStart, pattern = false) {
         }));
     }
 
-    // Remove todos os SVGs existentes antes de adicionar novos
+    // Clear the existing SVG containers
     document.querySelectorAll('.svg-container').forEach(container => container.remove());
 
     genomicData.forEach(data => {
@@ -341,10 +348,12 @@ function createSVG(genomicData, geneStart, pattern = false) {
         const nomeEspecie = speciesNames;
         const voucher = vouchers;
 
+        console.log('Processing genomic data for:', { nomeEspecie, voucher, genes, geneOrder });
+
         const pieceWidth = 125;
         const pieceHeight = pieceWidth / 2;
         const tRNAWidth = pieceWidth;
-        const safeVoucher = String(voucher).replace(/[^a-zA-Z0-9-_]/g, '_'); // Identificador seguro
+        const safeVoucher = String(voucher).replace(/[^a-zA-Z0-9-_]/g, '_');
 
         const preferidos = [geneStart];
         let startGene = preferidos.find(gene => genes.includes(gene));
@@ -365,96 +374,6 @@ function createSVG(genomicData, geneStart, pattern = false) {
         svg.setAttribute("height", "150");
         svg.setAttribute("viewBox", `0 50 ${svgWidth} 150`);
 
-        function adicionarElemento(index, lado) {
-            $('#addGeneModal').modal('show');
-            $('#saveGeneButton').off('click').on('click', function () {
-                const newGeneName = $('#geneNameInput').val();
-                const newGeneStrand = $('#light').prop('checked') ? '+' : '-';
-                const newGenePosition = lado === 'esquerda' ? index : index + 1;
-
-                const updateGenes = (genes, strands, lengths) => {
-                    genes.splice(newGenePosition, 0, newGeneName);
-                    strands.splice(newGenePosition, 0, newGeneStrand);
-                    lengths.splice(newGenePosition, 0, 0);
-                };
-
-                if (pattern) {
-                    // Atualizar todos os dados do mesmo padrão
-                    patternMap.get(geneOrder).species.forEach(speciesData => {
-                        genomicData.forEach(genome => {
-                            if (genome.geneOrder === geneOrder) {
-                                updateGenes(genome.genes, genome.strands, genome.lengths);
-                            }
-                        });
-                    });
-                } else {
-                    updateGenes(genes, strands, lengths);
-                }
-
-                const newGeneOrder = geneOrder.split(',').slice();
-                newGeneOrder.splice(newGenePosition, 0, newGeneStrand === '-' ? `-${newGeneName}` : newGeneName);
-                data.geneOrder = newGeneOrder.join(',');
-
-                data.genes = genes;
-                data.strands = strands;
-                data.lengths = lengths;
-
-                updatePseudoGenes();
-
-                createSVG(genomicData, geneStart, pattern);
-                $('#addGeneModal').modal('hide');
-            });
-        }
-
-        function removerElemento(index) {
-            const elementToRemove = document.querySelector(`#svg-${safeVoucher} .gene-path[data-index="${index}"]`);
-            if (elementToRemove) {
-                const tooltipInstance = bootstrap.Tooltip.getInstance(elementToRemove);
-                if (tooltipInstance) {
-                    tooltipInstance.dispose();
-                }
-            }
-
-            if (confirm("Are you sure you want to remove this gene?")) {
-                genes.splice(index, 1);
-                strands.splice(index, 1);
-                lengths.splice(index, 1);
-
-                const newGeneOrder = geneOrder.split(',').slice();
-                newGeneOrder.splice(index, 1);
-                data.geneOrder = newGeneOrder.join(',');
-
-                data.genes = genes;
-                data.strands = strands;
-                data.lengths = lengths;
-
-                updatePseudoGenes();
-
-                createSVG(genomicData, geneStart, pattern);
-            }
-        }
-
-        function updatePseudoGenes() {
-            const geneCount = {};
-            genes.forEach(gene => {
-                if (!geneCount[gene]) {
-                    geneCount[gene] = 0;
-                }
-                geneCount[gene]++;
-            });
-
-            pseudoGenes = [];
-            for (const [gene, count] of Object.entries(geneCount)) {
-                if (count > 1) {
-                    pseudoGenes.push({ gene });
-                }
-            }
-
-            data.pseudoGenes = pseudoGenes;
-        }
-
-        updatePseudoGenes();
-
         let textEspecie = document.createElementNS(svgNS, "text");
         textEspecie.setAttribute("x", "10");
         textEspecie.setAttribute("y", "70");
@@ -468,7 +387,6 @@ function createSVG(genomicData, geneStart, pattern = false) {
             italicEspecie.textContent = `${id}: `;
             textEspecie.appendChild(italicEspecie);
 
-            // Adiciona as espécies e vouchers
             patternMap.get(geneOrder).species.forEach(speciesData => {
                 let speciesVoucher = document.createElementNS(svgNS, "tspan");
                 speciesVoucher.setAttribute("font-style", "italic");
@@ -561,6 +479,20 @@ function createSVG(genomicData, geneStart, pattern = false) {
 
             svg.appendChild(path);
             svg.appendChild(text);
+
+            let editIcon = document.createElementNS(svgNS, "text");
+            editIcon.setAttribute("x", (currentX + pieceW / 2).toString());
+            editIcon.setAttribute("y", (70 + pieceH).toString());
+            editIcon.setAttribute("fill", "#000000");
+            editIcon.setAttribute("text-anchor", "middle");
+            editIcon.setAttribute("font-size", "15px");
+            editIcon.setAttribute("cursor", "pointer");
+            editIcon.setAttribute("data-bs-toggle", "tooltip");
+            editIcon.setAttribute("title", "Edit this Gene");
+            editIcon.textContent = "✎";
+            editIcon.onclick = () => openEditModal(produto, index, genes, strands, lengths, data, geneOrder, pattern);
+
+            svg.appendChild(editIcon);
 
             const isPseudoGene = pseudoGenes.some(pg => pg.gene === produto);
             const isNewGene = lengths[index] === 0;
@@ -662,6 +594,81 @@ function createSVG(genomicData, geneStart, pattern = false) {
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     });
+
+    function openEditModal(geneName, index, genes, strands, lengths, data, geneOrder, pattern) {
+        console.log('Opening edit modal for gene:', geneName);
+        const modalContent = `
+            <div class="modal fade" id="editGeneModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header h3 bg-dark text-white">
+                            <h5 class="modal-title" id="editGeneModalLabel">Rename <b>${geneName}</b></h5>
+                        </div>
+                        <div class="modal-body">
+                            <label for="newGeneName">Rename <b>${geneName}</b> to:</label>
+                            <select id="newGeneName" class="form-control form-control-lg">
+                                ${geneList.map(gene => `<option value="${gene}">${gene}</option>`).join('')}
+                            </select>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="strand" id="strandPlus" value="+" ${strands[index] === '+' ? 'checked' : ''}>
+                                <label class="form-check-label" for="strandPlus"><b>+</b> (Line above)</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="strand" id="strandMinus" value="-" ${strands[index] === '-' ? 'checked' : ''}>
+                                <label class="form-check-label" for="strandMinus"><b>-</b> (Line below)</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="saveEditGeneButton">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+        $('#editGeneModal').modal('show');
+
+        $('#saveEditGeneButton').off('click').on('click', function () {
+            const newGeneName = $('#newGeneName').val();
+            const newStrand = $('input[name="strand"]:checked').val();
+            console.log('Saving new gene name:', newGeneName, 'with strand:', newStrand);
+
+            // Update genes and strands arrays
+            genes[index] = newGeneName;
+            strands[index] = newStrand;
+
+            // Update geneOrder
+            const newGeneOrder = geneOrder.split(',').slice();
+            newGeneOrder[index] = newStrand === '-' ? `-${newGeneName}` : newGeneName;
+            data.geneOrder = newGeneOrder.join(',');
+
+            // Update genes in the data object
+            data.genes = genes;
+
+            // If pattern is true, update all instances in patternMap
+            if (pattern) {
+                patternMap.get(geneOrder).species.forEach(speciesData => {
+                    genomicData.forEach(genome => {
+                        if (genome.geneOrder === geneOrder) {
+                            genome.genes[index] = newGeneName;
+                            genome.strands[index] = newStrand;
+                            genome.geneOrder = newGeneOrder.join(',');
+                        }
+                    });
+                });
+            }
+
+            // Debugging information
+            console.log('Updated data:', data);
+            console.log('Updated genes:', genes);
+            console.log('Updated geneOrder:', data.geneOrder);
+
+            createSVG(genomicData, geneStart, geneList, pattern);
+            $('#editGeneModal').modal('hide');
+            $('#editGeneModal').remove();
+        });
+    }
 }
 
 function toRoman(num) {
@@ -689,6 +696,10 @@ function toRoman(num) {
     }
     return result;
 }
+
+
+
+
 
 // Sincroniza o scroll de todos os elementos SVG
 function syncScroll() {

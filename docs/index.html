@@ -98,10 +98,7 @@
     }
     
 </style>
-
-
 <body class="bg-light container-fluid">
-    
     <!-- Modal -->
     <div class="modal fade" id="LoadingPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -110,7 +107,7 @@
                 <div class="modal-body text-center">
                     <figure class="figure">
                         <img src="assets/PUMAS.png" class="figure-img img-fluid rounded" alt="..." width="50%">
-                        <div class="h4"><b>Pu</b>zzle <b>M</b>itochondrial <b>A</b>nalysis <b>S</b>cript</div>
+                        <div class="h4"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
                     </figure>
                     <div class="progress">
                         <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
@@ -122,9 +119,7 @@
             </div>
         </div>
     </div>
-
     <main>
-
         <div class="container full-screen text-center">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center">
@@ -134,7 +129,7 @@
                 <div>
                     <div class="display-2">PUMAS<sup>by Luan Rabelo</sup></div>
                     <div class="h3"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
-                    <div class="h5 mt-5">Cite PUMAS: Em Breve...</div>
+                    <div class="h5 mt-5">Cite PUMAS: Coming Soon…</div>
                     <div class="mt-5">
                         <i style="cursor: pointer;" id="btnStartPUMAS" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Click to Start PUMAS" class="fa-solid fa-circle-arrow-down fa-fade fa-4x"></i>
                     </div>
@@ -142,7 +137,6 @@
               </div>
             </div>
         </div>
-        
         <script>
             $(document).ready(function () {
                 const btnStartPUMAS = $('#btnStartPUMAS');
@@ -154,154 +148,151 @@
                 });
             });
         </script>
-          
-
         <div class="mt-5 mb-2 mx-auto container-fluid formPUMAS">
-
             <div class="mb-1 container">
                 <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank voucher genomes</label>
                 <textarea class="form-control" placeholder="" id="vouchersList" style="height: 20vh" spellcheck="false"></textarea>
                 <div id="errorDiv" class="text-danger mt-1"></div>
-                <div class="text-left mt-1" style="text-align: justify; line-height: 1.75;">
-                    <p><small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> Enter the <strong>NCBI - GenBank Vouchers for Mitochondrial or Chloroplast Genomes</strong> in the space provided above.</small></p>
-                    <p><small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> Each voucher should be on a <strong>distinct line without any blank lines in between</strong>.</small></p>
+                <div class="text-left mt-1" style="text-align: justify; line-height: 2;">
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>22 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>25 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list and start over.
+                            <i class="fa-solid fa-circle-info"></i> Enter the <strong>NCBI - GenBank Vouchers for Mitochondrial or Chloroplast Genomes</strong> in the space provided above.
+                        </small>
+                    </p>
+                    <p>
+                        <small id="infoText" class="text-muted">
+                            <i class="fa-solid fa-circle-info"></i> Each voucher should be on a <strong>distinct line without any blank lines in between</strong>.
+                        </small>
+                    </p>
+                    <p>
+                        <small id="infoText" class="text-muted">
+                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>22 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list and start over.
                         </small>
                     </p>
                 </div>
-            <script>
-                $(document).ready(function () {
-                    const vouchers = document.getElementById('vouchersList');
-                    const mt = document.getElementById('mt');
-                    const cp = document.getElementById('cp');
-                    const startSearch = document.getElementById('startSearch');
-                    const exampleMitochondrial = document.getElementById('exampleVouchersMitochondrial');
-                    const exampleChloroplast = document.getElementById('exampleVouchersChloroplast');
-                    const resetVouchers = document.getElementById('resetVouchers');
-            
-                    vouchers.addEventListener('input', function () {
-                        const lines = vouchers.value.split('\n');
-                        var errorLine = -1;
-                        var errorMessage = '';
-                        const errorDiv = document.getElementById('errorDiv');
-                        var charError = '';
-                        const voucherSet = new Set();
-                        if (lines.length === 1 && lines[0] === '') {
-                            vouchers.style.backgroundColor = '';
-                            errorDiv.innerHTML = '';
-                            return;
-                        }
-                        for (let i = 0; i < lines.length; i++) {
-                            if (!/^[a-zA-Z0-9_.]+$/.test(lines[i])) {
-                                charError = 'Invalid characters detected';
-                            } else if (!/\.\d+$/.test(lines[i])) {
-                                charError = 'Line must end with a . followed by a number';
-                            } else if (voucherSet.has(lines[i])) {
-                                charError = 'Duplicate voucher detected';
-                            } else if (lines[i].length < 5 || lines[i].length > 15) {
-                                charError = 'Invalid voucher length';
-                            }
-                            if (charError) {
-                                errorLine = i + 1;
-                                errorMessage = `Invalid input in line ${errorLine}: ${charError}. Please fix it before proceeding.`;
-                                break;
-                            }
-                            voucherSet.add(lines[i]);
-                        }
-                        if (errorLine !== -1) {
-                            vouchers.style.backgroundColor = '#FF7F3E';
-                            errorDiv.innerHTML = errorMessage;
-                            mt.disabled = true;
-                            cp.disabled = true;
-                        } else {
-                            vouchers.style.backgroundColor = '#9DDE8B';
-                            errorDiv.innerHTML = '';
-                            mt.disabled = false;
-                            cp.disabled = false;
-                        }
-                    });
-            
-                    resetVouchers.addEventListener('click', function () {
-                        vouchers.value = "";
-                        const event = new Event('input', {
-                            bubbles: true,
-                            cancelable: true,
-                        });
-                        vouchers.dispatchEvent(event);
-                        
-                        const cds = document.getElementById('CDS');
-                        const rRNAs = document.getElementById('rRNA');
-                        const tRNAs = document.getElementById('tRNA');
-                        const geneList = document.getElementById('geneList');
-                        const _results = document.getElementById('PUMASResults');
-                        const svgPlot = document.getElementById('svgPlot');
-                        const Patterns = document.getElementById('Patterns');
-            
-                        mt.checked = false;
-                        mt.disabled = true;
-                        cp.checked = false;
-                        cp.disabled = true;
-
-                        Patterns.checked = false;
-            
-                        startSearch.disabled = true;
-                        cds.checked = false;
-                        cds.disabled = true;
-                        rRNAs.checked = false;
-                        rRNAs.disabled = true;
-                        tRNAs.checked = false;
-                        tRNAs.disabled = true;
-                        geneList.disabled = true;
-                        geneList.style.backgroundColor = '';
-                        _results.style.display = 'none';
-                    });
-            
-                    exampleMitochondrial.addEventListener('click', function () {
-                        const _vouchers = ["MN737137.1", "MN737145.1", "AB187570.1", "MN737141.1", "MN737139.1", "MN737143.1", "MN737144.1", "MN737133.1", "MN737138.1", "MN737136.1", "MN737142.1", "MN737134.1", "KU042041.1", "KY785880.1", "KY785879.1", "MN737132.1", "MN737140.1", "MN737135.1", "KU042042.1", "NC_021754.1", "NC_025324.1", "NC_012569.1"];
-                        vouchers.value = "";
-                        _vouchers.forEach((s, i) => setTimeout(() => {
-                            vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
-                        }, i * 1));
-            
-                        setTimeout(() => {
-                            const event = new Event('input', {
-                                bubbles: true,
-                                cancelable: true,
-                            });
-                            vouchers.dispatchEvent(event);
-                        }, _vouchers.length * 1);
-                        mt.checked = false;
-                        cp.checked = false;
-                    });
-            
-                    exampleChloroplast.addEventListener('click', function () {
-                        const _vouchers = ["PP708565.1", "NC_079620.1", "NC_079619.1", "NC_079618.1", "MN901638.1", "ON117418.1", "ON101708.1", "ON101707.1", "NC_030053.1", "NC_008535.1", "OL789882.1", "MW970412.1", "MW970411.1", "MN894552.1", "MN894551.1", "MN894550.1", "MK875244.1", "MK862266.1", "MK353212.1", "MK353209.1", "MK342634.1", "EF044213.1", "KU500324.1", "CM061598.1", "MN370912.1"];
-                        vouchers.value = "";
-                        _vouchers.forEach((s, i) => setTimeout(() => {
-                            vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
-                        }, i * 1));
-            
-                        setTimeout(() => {
-                            const event = new Event('input', {
-                                bubbles: true,
-                                cancelable: true,
-                            });
-                            vouchers.dispatchEvent(event);
-                        }, _vouchers.length * 1);
-                        mt.checked = false;
-                        cp.checked = false;
-                    });
-                });
-            </script>
+                <script>
+                    $(document).ready(function () {
+                        const vouchers              = document.getElementById('vouchersList');
+                        const mt                    = document.getElementById('mt');
+                        const cp                    = document.getElementById('cp');
+                        const startSearch           = document.getElementById('startSearch');
+                        const exampleMitochondrial  = document.getElementById('exampleVouchersMitochondrial');
+                        const exampleChloroplast    = document.getElementById('exampleVouchersChloroplast');
+                        const resetVouchers         = document.getElementById('resetVouchers');
                 
-
+                        vouchers.addEventListener('input', function () {
+                            const lines = vouchers.value.split('\n');
+                            var errorLine = -1;
+                            var errorMessage = '';
+                            const errorDiv = document.getElementById('errorDiv');
+                            var charError = '';
+                            const voucherSet = new Set();
+                            if (lines.length === 1 && lines[0] === '') {
+                                vouchers.style.backgroundColor = '';
+                                errorDiv.innerHTML = '';
+                                return;
+                            }
+                            for (let i = 0; i < lines.length; i++) {
+                                if (!/^[a-zA-Z0-9_.]+$/.test(lines[i])) {
+                                    charError = 'Invalid characters detected';
+                                } else if (!/\.\d+$/.test(lines[i])) {
+                                    charError = 'Line must end with a . followed by a number';
+                                } else if (voucherSet.has(lines[i])) {
+                                    charError = 'Duplicate voucher detected';
+                                } else if (lines[i].length < 5 || lines[i].length > 15) {
+                                    charError = 'Invalid voucher length';
+                                }
+                                if (charError) {
+                                    errorLine = i + 1;
+                                    errorMessage = `Invalid input in line ${errorLine}: ${charError}. Please fix it before proceeding.`;
+                                    break;
+                                }
+                                voucherSet.add(lines[i]);
+                            }
+                            if (errorLine !== -1) {
+                                vouchers.style.backgroundColor = '#FF7F3E';
+                                errorDiv.innerHTML = errorMessage;
+                                mt.disabled = true;
+                                cp.disabled = true;
+                            } else {
+                                vouchers.style.backgroundColor = '#9DDE8B';
+                                errorDiv.innerHTML = '';
+                                mt.disabled = false;
+                                cp.disabled = false;
+                            }
+                        });
+                
+                        resetVouchers.addEventListener('click', function () {
+                            vouchers.value = "";
+                            const event = new Event('input', {
+                                bubbles: true,
+                                cancelable: true,
+                            });
+                            vouchers.dispatchEvent(event);
+                            
+                            const cds       = document.getElementById('CDS');
+                            const rRNAs     = document.getElementById('rRNA');
+                            const tRNAs     = document.getElementById('tRNA');
+                            const geneList  = document.getElementById('geneList');
+                            const _results  = document.getElementById('PUMASResults');
+                            const svgPlot   = document.getElementById('svgPlot');
+                            const Patterns  = document.getElementById('Patterns');
+                            geneList.value                  = 'NaN';
+                            mt.checked                      = false;
+                            mt.disabled                     = true;
+                            cp.checked                      = false;
+                            cp.disabled                     = true;
+                            Patterns.checked                = false;
+                            startSearch.disabled            = true;
+                            cds.checked                     = false;
+                            cds.disabled                    = true;
+                            rRNAs.checked                   = false;
+                            rRNAs.disabled                  = true;
+                            tRNAs.checked                   = false;
+                            tRNAs.disabled                  = true;
+                            geneList.disabled               = true;
+                            geneList.style.backgroundColor  = '';
+                            _results.style.display          = 'none';
+                        });
+                
+                        exampleMitochondrial.addEventListener('click', function () {
+                            const _vouchers = ["MN737137.1", "MN737145.1", "AB187570.1", "MN737141.1", "MN737139.1", "MN737143.1", "MN737144.1", "MN737133.1", "MN737138.1", "MN737136.1", "MN737142.1", "MN737134.1", "KU042041.1", "KY785880.1", "KY785879.1", "MN737132.1", "MN737140.1", "MN737135.1", "KU042042.1", "NC_021754.1", "NC_025324.1", "NC_012569.1"];
+                            vouchers.value = "";
+                            _vouchers.forEach((s, i) => setTimeout(() => {
+                                vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
+                            }, i * 1));
+                            setTimeout(() => {
+                                const event = new Event('input', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                });
+                                vouchers.dispatchEvent(event);
+                            }, _vouchers.length * 1);
+                            mt.checked = false;
+                            cp.checked = false;
+                        });
+                        exampleChloroplast.addEventListener('click', function () {
+                            const _vouchers = ["PP708565.1", "NC_079620.1", "NC_079619.1", "NC_079618.1", "MN901638.1", "ON117418.1", "ON101708.1", "ON101707.1", "NC_030053.1", "NC_008535.1", "OL789882.1", "MW970412.1", "MW970411.1", "MN894552.1", "MN894551.1", "MN894550.1", "MK875244.1", "MK862266.1", "MK353212.1", "MK353209.1", "MK342634.1", "EF044213.1", "MN370912.1"];
+                            vouchers.value = "";
+                            _vouchers.forEach((s, i) => setTimeout(() => {
+                                vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
+                            }, i * 1));
+                
+                            setTimeout(() => {
+                                const event = new Event('input', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                });
+                                vouchers.dispatchEvent(event);
+                            }, _vouchers.length * 1);
+                            mt.checked = false;
+                            cp.checked = false;
+                        });
+                    });
+                </script>
             </div>
             <hr class="mt-2">
-
             <div class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3 container mx-auto">
-
                 <div class="col mt-2">
                     <label class="h4"><span class="badge text-bg-dark">2</span> - What analysis to perform?</label>
                     <div class="form-check form-switch">
@@ -313,7 +304,6 @@
                         <label class="form-check-label ml-2 mr-2" for="cp">Chloroplast analysis</label>
                     </div>
                 </div>
-
                 <script>
                     $(document).ready(function () {
                         const mt = document.getElementById('mt');
@@ -325,13 +315,12 @@
                         const tRNA          = document.getElementById('tRNA');
 
                         function toggleInputs(disableMt, disableCp, disableOthers) {
-                            mt.disabled = disableMt;
-                            cp.disabled = disableCp;
-                            cds.disabled = disableOthers;
-                            rRNA.disabled = disableOthers;
-                            tRNA.disabled = disableOthers;
+                            mt.disabled     = disableMt;
+                            cp.disabled     = disableCp;
+                            cds.disabled    = disableOthers;
+                            rRNA.disabled   = disableOthers;
+                            tRNA.disabled   = disableOthers;
                         }
-
                         mt.addEventListener('change', function () {
                             if (mt.checked) {
                                 toggleInputs(false, true, false);
@@ -339,7 +328,6 @@
                                 toggleInputs(false, false, true);
                             }
                         });
-
                         cp.addEventListener('change', function () {
                             if (cp.checked) {
                                 toggleInputs(true, false, false);
@@ -348,11 +336,9 @@
                             }
                         });
                     });
-
                 </script>
-
                 <div class="col mt-2">
-                    <label class="h4"><span class="badge text-bg-dark">3</span> - Gene types for analysis</label>
+                    <label class="h4"><span class="badge text-bg-dark">3</span> - <b>Gene(s) types</b> for analysis</label>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="CDS" id="CDS" disabled>
                         <label class="form-check-label" for="CDS">CDS</label>
@@ -421,16 +407,14 @@
                         tRNAs.addEventListener('change', updateGeneList);
                     });
                 </script>
-
                 <div class="col mt-2">
-                    <label class="h4"><span class="badge text-bg-dark">4</span> - Start order at:</label>
+                    <label class="h4"><span class="badge text-bg-dark">4</span> - Start <b>Genome Order</b> at:</label>
                     <select class="form-select form-select-lg" id="geneList" disabled></select>
                 </div>
-
                 <script>
                     $(document).ready(function () {
-                        const geneList = document.getElementById('geneList');
-                        const startSearch = document.getElementById('startSearch');
+                        const geneList      = document.getElementById('geneList');
+                        const startSearch   = document.getElementById('startSearch');
                         geneList.addEventListener('change', function () {
                             if (geneList.value !== 'NaN') {
                                 geneList.style.backgroundColor = '#9DDE8B';
@@ -444,27 +428,35 @@
                 </script>
 
             </div>
-            
             <div class="mt-2 text-center">
                 <div class="d-grid gap-2 col-xs-12 col-sm-12 col-sm-8 col-lg-6 mx-auto">
-                    <button id="startSearch" class="btn btn-lg btn-dark text-center" type="button" disabled><i class="fa-solid fa-magnifying-glass"></i> Start PUMAS</button>
+                    <button id="startSearch" class="btn btn-lg btn-dark text-center" type="button" disabled><i class="fa-solid fa-magnifying-glass"></i> Run PUMAS</button>
                 </div>
             </div>
-
             <script>
                 $(document).ready(function () {
                     let data = null;
-            
                     const startSearch = document.getElementById('startSearch');
                     startSearch.addEventListener('click', async function () {
-                        const vouchersList = document.getElementById('vouchersList').value.trim();
-                        const geneStart = document.getElementById('geneList').value;
-                        const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
-                        const genelist = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
-                        const Patterns = document.getElementById('Patterns');
-            
+                        const vouchersList  = document.getElementById('vouchersList').value.trim();
+                        const geneStart     = document.getElementById('geneList').value;
+                        const typeGenome    = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+                        const genelist      = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
+                        const Patterns      = document.getElementById('Patterns');
+
+                        var _geneListEdit = null;
+
                         if (!vouchersList) {
                             alert('Enter the GenBank Vouchers');
+                            return;
+                        }
+
+                        if (typeGenome === 'Mitochondrial') {
+                            _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                        } else if (typeGenome === 'Chloroplast') {
+                            _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                        } else {
+                            alert('Select the type of genome');
                             return;
                         }
             
@@ -472,12 +464,10 @@
                         const vouchers = vouchersList.split('\n').map(s => s.trim()).filter(s => s.length > 0);
                         data = await fetchGenomicData(vouchers, genelist, typeGenome, geneStart);
                         $('#LoadingPumas').modal('hide');
-            
                         if (typeGenome) {
-                            createSVG(data, geneStart, Patterns.checked);
+                            createSVG(data, geneStart, _geneListEdit, Patterns.checked);
                             if (typeGenome === 'Mitochondrial' || typeGenome === 'Chloroplast') {
                                 showResults(data, typeGenome);
-                                console.log(data);
                             }
                         } else {
                             alert('Select the type of genome');
@@ -486,12 +476,22 @@
             
                     const Patterns = document.getElementById('Patterns');
                     Patterns.addEventListener('change', function () {
+                        const typeGenome    = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+                        if (typeGenome === 'Mitochondrial') {
+                            _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                        } else if (typeGenome === 'Chloroplast') {
+                            _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                        } else {
+                            alert('Select the type of genome');
+                            return;
+                        }
+
                         if (data) {
-                            createSVG(data, document.getElementById('geneList').value, Patterns.checked);
+                            createSVG(data, document.getElementById('geneList').value, _geneListEdit, Patterns.checked);
                         }
                     });
-                    const downloadFasta = document.getElementById('downloadFasta');
-                    const genesToFasta = document.getElementById('genesToFasta');
+                    const downloadFasta     = document.getElementById('downloadFasta');
+                    const genesToFasta      = document.getElementById('genesToFasta');
                         genesToFasta.addEventListener('change', function () {
                             downloadFasta.disabled = genesToFasta.value === 'NaN';
                         });
@@ -525,9 +525,11 @@
                     });
 
                     downloadInputFile.addEventListener('click', function () {
+                        let geneOrderCounts = {};
+
                         const geneMapQmgr = {
-                            'D-loop': 'dloop',
-                            '-D-loop': '-dloop',
+                            'CR': 'D-loop',
+                            '-CR': '-D-loop',
 
                             '12S': '12S', '-12S': '-12S',
                             '16S': '16S', '-16S': '-16S',
@@ -577,24 +579,28 @@
                             let _geneOrder = data[id].geneOrder;
                             let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
 
+                            if (!geneOrderCounts[_geneOrderUnique]) {
+                                geneOrderCounts[_geneOrderUnique] = 0;
+                            }
+                            geneOrderCounts[_geneOrderUnique]++;
+                        });
+
+                        _data.forEach((id) => {
+                            let _geneOrder = data[id].geneOrder;
+                            let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
+
+                            
+
                             switch (_createInputFile) {
                                 case 'CREx':
                                     _geneOrderUnique = _geneOrderUnique.split(',').map(gene => geneMapQmgr[gene] || gene).join(' ');
                                     dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${_geneOrderUnique}\n`;
                                     break;
                                 case 'qMGR':
+                                    let count = geneOrderCounts[_geneOrderUnique];
                                     _geneOrderUnique = _geneOrderUnique.split(',').map(gene => geneMapQmgr[gene] || gene).join(',');
-                                    dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${_geneOrderUnique}\n`;
+                                    dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${count},${_geneOrderUnique}\n`;
                                     break;
-                                //case 'ToolA':
-                                //    // Adicione o formato específico para ToolA
-                                //    dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${_geneOrderUnique.replace(/,/g, '-')}\n`;
-                                //    break;
-                                //case 'ToolB':
-                                //    // Adicione o formato específico para ToolB
-                                //    dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${_geneOrderUnique.replace(/,/g, '_')}\n`;
-                                //    break;
-                                // Adicione mais ferramentas conforme necessário
                                 default:
                                     console.error('Unknown tool selected');
                                     break;
@@ -617,7 +623,7 @@
             
             <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
                 <hr>
-                <label class="h4"><span class="badge text-bg-dark">5</span> - Show Genomes Patterns</label>
+                <label class="h4"><span class="badge text-bg-dark">5</span> - Genomes Patterns</label>
                 <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-1 row-cols-xl-1 row-cols-xxl-1">
                     <div class="col mt-2 mb-5">
                         <div class="form-check form-switch">
@@ -654,8 +660,8 @@
                         <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a plot</b>"><span class="badge text-bg-dark">6.3</span> - Create a Plot</label>
                         <div class="input-group">
                             <select id="genesToPlot" class="form-select form-select-lg" aria-label="">
-                                <option value="PNG" selected>PNG</option>
-                                <option value="SVG">SVG</option>
+                                <option value="SVG" selected>SVG</option>
+                                <option value="PNG">PNG</option>
                                 <option value="PDF">PDF</option>
                             </select>
                             <button id="downloadPlot" class="btn btn-dark" type="button">Download Plot</button>
@@ -734,12 +740,22 @@
                     </div>
                     <script>
                         $(document).ready(function () {
-                            const mtGenes = Object.keys(MitochondrialGenes).sort();
-                            const cpGenes = Object.keys(ChloroplastGenes).sort();
+                            const mtGenes       = Object.keys(MitochondrialGenes).sort();
+                            const cpGenes       = Object.keys(ChloroplastGenes).sort();
+                            const startSearch   = document.getElementById('startSearch');
+                            const mt            = document.getElementById('mt');
+                            const cp            = document.getElementById('cp');
                             const geneNameInput = $('#geneNameInput');
-                            geneNameInput.empty();
-                            mtGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
-                            cpGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
+
+                            startSearch.addEventListener('click', function () {
+                                if (mt.checked) {
+                                    geneNameInput.empty();
+                                    mtGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
+                                } else if (cp.checked) {
+                                    geneNameInput.empty();
+                                    cpGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
+                                }
+                            });
                         });
                     </script>
                     <div class="form-check">
@@ -784,7 +800,7 @@
                     <div class="h4">About:</div>
                     <div class="media">
                         <img src="assets/PUMAS.png" class="mr-3 mx-auto d-block" alt="" width="35%">
-                        <div class="media-body text-center"><p><b>Pu</b>zzle <b>M</b>itochondrial <b>A</b>nalysis <b>S</b>cript</p></div>
+                        <div class="media-body text-center"><p><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</p></div>
                     </div>
                 </div>
                 <div class="col-12 col-md-5">
