@@ -374,6 +374,95 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         svg.setAttribute("height", "150");
         svg.setAttribute("viewBox", `0 50 ${svgWidth} 150`);
 
+        function adicionarElemento(index, lado) {
+            $('#addGeneModal').modal('show');
+            $('#saveGeneButton').off('click').on('click', function () {
+                const newGeneName = $('#geneNameInput').val();
+                const newGeneStrand = $('#light').prop('checked') ? '+' : '-';
+                const newGenePosition = lado === 'esquerda' ? index : index + 1;
+
+                const updateGenes = (genes, strands, lengths) => {
+                    genes.splice(newGenePosition, 0, newGeneName);
+                    strands.splice(newGenePosition, 0, newGeneStrand);
+                    lengths.splice(newGenePosition, 0, 0);
+                };
+
+                if (pattern) {
+                    patternMap.get(geneOrder).species.forEach(speciesData => {
+                        genomicData.forEach(genome => {
+                            if (genome.geneOrder === geneOrder) {
+                                updateGenes(genome.genes, genome.strands, genome.lengths);
+                            }
+                        });
+                    });
+                } else {
+                    updateGenes(genes, strands, lengths);
+                }
+
+                const newGeneOrder = geneOrder.split(',').slice();
+                newGeneOrder.splice(newGenePosition, 0, newGeneStrand === '-' ? `-${newGeneName}` : newGeneName);
+                data.geneOrder = newGeneOrder.join(',');
+
+                data.genes = genes;
+                data.strands = strands;
+                data.lengths = lengths;
+
+                updatePseudoGenes();
+
+                createSVG(genomicData, geneStart, geneList, pattern);
+                $('#addGeneModal').modal('hide');
+            });
+        }
+
+        function removerElemento(index) {
+            const elementToRemove = document.querySelector(`#svg-${safeVoucher} .gene-path[data-index="${index}"]`);
+            if (elementToRemove) {
+                const tooltipInstance = bootstrap.Tooltip.getInstance(elementToRemove);
+                if (tooltipInstance) {
+                    tooltipInstance.dispose();
+                }
+            }
+
+            if (confirm("Are you sure you want to remove this gene?")) {
+                genes.splice(index, 1);
+                strands.splice(index, 1);
+                lengths.splice(index, 1);
+
+                const newGeneOrder = geneOrder.split(',').slice();
+                newGeneOrder.splice(index, 1);
+                data.geneOrder = newGeneOrder.join(',');
+
+                data.genes = genes;
+                data.strands = strands;
+                data.lengths = lengths;
+
+                updatePseudoGenes();
+
+                createSVG(genomicData, geneStart, geneList, pattern);
+            }
+        }
+
+        function updatePseudoGenes() {
+            const geneCount = {};
+            genes.forEach(gene => {
+                if (!geneCount[gene]) {
+                    geneCount[gene] = 0;
+                }
+                geneCount[gene]++;
+            });
+
+            pseudoGenes = [];
+            for (const [gene, count] of Object.entries(geneCount)) {
+                if (count > 1) {
+                    pseudoGenes.push({ gene });
+                }
+            }
+
+            data.pseudoGenes = pseudoGenes;
+        }
+
+        updatePseudoGenes();
+
         let textEspecie = document.createElementNS(svgNS, "text");
         textEspecie.setAttribute("x", "10");
         textEspecie.setAttribute("y", "70");
