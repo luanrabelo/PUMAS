@@ -1,7 +1,7 @@
 var dataGenomes = {};
 
 const MitochondrialGenes = {
-    "-":        [],
+    "-":      [],
     "OL":       [],
     "OH":       [],
     "12S":      ['small subunit ribosomal RNA', 's-rRNA', '12S ribosormal RNA', 'small ribosomal RNA subunit RNA', '12SrRNA', '12 ribosomal RNA', 'rrnS', '12S ribosomal RNA subunit', '12S', 'small ribosomal RNA', 'small subunit ribosormal RNA', '12 rRNA', '12 S ribosomal RNA', '12S small subunit ribosomal RNA', 'trnS', 'Product small subunit ribosomal RNA', '12S-rRNA', 'rRNA-12S', '12S ribosonal RNA', '12Srrn', '12S ribosome RNA', '12S ribsomal RNA', '12S rRNA', '12S ribosomal RNA', '12S ribosomal ribonucleic acid'],
@@ -126,7 +126,7 @@ const ChloroplastGenes = {
 
 
 var colorMitochondrial = {
-    "-": "#FFFFFF",
+    "-": "#FFFFFF", "GAP": "#FFFFFF", "": "#FFFFFF",
 
     "COI": "#FF6347", "COII": "#4682B4", "COIII": "#FF4500",
     "tRNA-Met": "#32CD32", "tRNA-Gln": "#DA70D6", "tRNA-Lys": "#7FFF00", "tRNA-Ile": "#FFA07A", "tRNA-Trp": "#BA55D3",
@@ -696,6 +696,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                         <div class="modal-body">
                             <label for="newGeneName">Rename <b>${geneName}</b> to:</label>
                             <select id="newGeneName" class="form-control form-control-lg">
+                                <option value="" selected>GAP (-)</option>
                                 ${geneList.map(gene => `<option value="${gene}">${gene}</option>`).join('')}
                             </select>
                             <div class="form-check">
@@ -822,6 +823,7 @@ function ListGenes(object, typeGenome) {
 
     _genesToFasta.empty();
     _genesToFasta.append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+    _genesToFasta.append($('<option>').text('All CDS').attr('value', 'allCDS'));
 
     if (typeGenome === 'Mitochondrial') {
     const mt = Object.keys(data);
@@ -927,8 +929,8 @@ function showResults(dataGenomes, typeGenome) {
         window.genomeDraw = new CGV.Viewer('#LinearGenome', {
             name: "data_LuanRabelo",
             id: "data_LuanRabelo",
-            height: screen.height,
-            width: screen.width,
+            height: screen.height/1.5,
+            width: screen.width/1.25,
             showLegend: true,
             showRuler: true,
             showDivider: true,
@@ -981,7 +983,7 @@ function generateLinearObject(dataEntry) {
                 showShading: false,
                 arrowHeadLength: 0.5,
                 minArcLength: 1,
-                initialMapThicknessProportion: 1.5,
+                initialMapThicknessProportion: 0.25,
                 maxMapThicknessProportion: 1.5
             },
             backbone: {

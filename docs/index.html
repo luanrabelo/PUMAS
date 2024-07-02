@@ -96,6 +96,13 @@
         justify-content: center;
         align-items: center;
     }
+    #LinearGenome {
+        width: 75%;
+        height: 75%;
+        margin: 0 auto;
+
+    }
+
     
 </style>
 <body class="bg-light container-fluid">
@@ -444,6 +451,8 @@
                         const genelist      = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
                         const Patterns      = document.getElementById('Patterns');
 
+                        
+
                         var _geneListEdit = null;
 
                         if (!vouchersList) {
@@ -451,10 +460,14 @@
                             return;
                         }
 
+                        let cdsList = null;
+
                         if (typeGenome === 'Mitochondrial') {
                             _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                            cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
                         } else if (typeGenome === 'Chloroplast') {
                             _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                            cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19']
                         } else {
                             alert('Select the type of genome');
                             return;
@@ -496,26 +509,68 @@
                             downloadFasta.disabled = genesToFasta.value === 'NaN';
                         });
                         downloadFasta.addEventListener('click', function () {
-                            const _genesToFasta = document.getElementById('genesToFasta').value;
-                            const _data = Object.keys(data);
-                            let dataSeq = ''
-                            _data.forEach((id) => {
+                        const _genesToFasta = document.getElementById('genesToFasta').value;
+                        const _data = Object.keys(data);
+                        const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+
+                        let cdsList = null;
+
+                        if (typeGenome === 'Mitochondrial') {
+                            cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
+                        } else if (typeGenome === 'Chloroplast') {
+                            cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19']
+                        }
+
+                        if (_genesToFasta === "allCDS") {
+                            // Cria um objeto para armazenar sequências de cada gene
+                            let geneData = cdsList.reduce((acc, gene) => {
+                                acc[gene] = '';
+                                return acc;
+                            }, {});
+
+                            // Agrupa todas as sequências de cada gene especificado na lista
+                            _data.forEach(id => {
                                 const seq = data[id].geneSequences;
-                                $.each(seq, function (key, value) {
-                                    if (key == _genesToFasta) {
-                                        const speciesName = data[id].speciesNames;
-                                        dataSeq += `>${data[id].vouchers} ${speciesName}\n${value}\n`;
+                                const speciesName = data[id].speciesNames;
+                                cdsList.forEach(gene => {
+                                    if (seq.hasOwnProperty(gene)) {
+                                        geneData[gene] += `>${data[id].vouchers} ${speciesName}\n${seq[gene]}\n`;
                                     }
                                 });
                             });
-                            const blob = new Blob([dataSeq], { type: 'text/plain' });
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'PUMAS_' + _genesToFasta + '.fasta';
-                            document.body.appendChild(a);
-                            a.click();
-                        });
+
+                            // Baixa cada arquivo FASTA para cada gene
+                            cdsList.forEach(gene => {
+                                if (geneData[gene]) {
+                                    downloadIndividualGene(gene, geneData[gene]);
+                                }
+                            });
+                        } else if (cdsList.includes(_genesToFasta)) {
+                            // Processo para um único gene da lista
+                            let dataSeq = '';
+                            _data.forEach(id => {
+                                const seq = data[id].geneSequences;
+                                if (seq.hasOwnProperty(_genesToFasta)) {
+                                    const speciesName = data[id].speciesNames;
+                                    dataSeq += `>${data[id].vouchers} ${speciesName}\n${seq[_genesToFasta]}\n`;
+                                }
+                            });
+                            downloadIndividualGene(_genesToFasta, dataSeq);
+                        }
+                    });
+
+                    function downloadIndividualGene(geneName, dataSeq) {
+                        const blob = new Blob([dataSeq], { type: 'text/plain' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `PUMAS_${geneName}.fasta`; // Nome do arquivo baseado no gene
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a); // Limpa o elemento 'a' após o download
+                    }
+
+
                     
                     const downloadInputFile = document.getElementById('downloadInputFile');
                     const createInputFile = document.getElementById('createInputFile');
@@ -708,16 +763,16 @@
     </main>
 
     <div class="modal fade" id="ViewGenomeDraw" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-fullscreen">
+        <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
             <div class="modal-header bg-dark text-white">
             <h5 id="ViewPlotTitle" class="modal-title"></h5>
         </div>
         <div class="modal-body">
             <figure class="figure">
-            <figcaption id="ViewPlotFigureCaption" class="figure-caption"></figcaption>
-        <div id="LinearGenome" class="d-flex justify-content-center align-items-center text-center"></div>
-        </figure>
+                <figcaption id="ViewPlotFigureCaption" class="figure-caption"></figcaption>
+            </figure>
+            <div id="LinearGenome"></div>
         </div>
         <div class="modal-footer bg-dark">
         <button type="button" class="btn btn-lg btn-light" id="ViewPlotColor">Invert Map Colors</button>
@@ -732,10 +787,10 @@
     <div class="modal fade" id="addGeneModal" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header h3 bg-dark text-white">Add a New Gene or Region</div>
+                <div class="modal-header h3 bg-dark text-white">Add a GAP, New Gene or Region</div>
                 <div class="modal-body">
                     <div class="input-group mb-3">
-                        <label class="input-group-text" for="geneNameInput">Choose a Gene or Region</label>
+                        <label class="input-group-text" for="geneNameInput">Choose a GAP, Gene or Region</label>
                         <select id="geneNameInput" class="form-select form-select-lg"></select>
                     </div>
                     <script>
@@ -750,7 +805,13 @@
                             startSearch.addEventListener('click', function () {
                                 if (mt.checked) {
                                     geneNameInput.empty();
-                                    mtGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
+                                    mtGenes.forEach((gene) => {
+                                        if (gene === '-'){
+                                            geneNameInput.append($('<option>').text(`- (GAP)`).attr('value', ''))
+                                        } else {
+                                            geneNameInput.append($('<option>').text(gene).attr('value', gene))
+                                        }
+                                    });
                                 } else if (cp.checked) {
                                     geneNameInput.empty();
                                     cpGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
