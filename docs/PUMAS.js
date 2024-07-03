@@ -501,7 +501,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
         if (!pattern && pseudoGenes.length > 0) {
             let _pseudoGenes = pseudoGenes.map(pseudoGene => pseudoGene.gene.replace('tRNA-', '')).join(', ');
-            textEspecie.innerHTML += ` - Duplicate genes: ${_pseudoGenes}`;
+            textEspecie.innerHTML += ` - Duplicated Genes or Regions: ${_pseudoGenes}`;
         }
 
         svg.appendChild(textEspecie);
@@ -1510,7 +1510,7 @@ function createAndDownloadPNG(genomicData, geneList, geneStart) {
     let serializer = new XMLSerializer();
     let svgString = serializer.serializeToString(svg);
     let canvas = document.createElement("canvas");
-    let scaleFactor = 3; // Increase this for better quality
+    let scaleFactor = 300 / 96; // DPI conversion factor (300 DPI vs 96 DPI standard)
     canvas.width = maxSvgWidth * scaleFactor;
     canvas.height = totalHeight * scaleFactor;
     let context = canvas.getContext("2d");

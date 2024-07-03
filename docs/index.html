@@ -136,7 +136,7 @@
                 <div>
                     <div class="display-2">PUMAS<sup>by Luan Rabelo</sup></div>
                     <div class="h3"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
-                    <div class="h5 mt-5">Cite PUMAS: Coming Soon…</div>
+                    <div class="h5 mt-5">How to Cite PUMAS: Coming Soon…</div>
                     <div class="mt-5">
                         <i style="cursor: pointer;" id="btnStartPUMAS" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Click to Start PUMAS" class="fa-solid fa-circle-arrow-down fa-fade fa-4x"></i>
                     </div>
@@ -173,7 +173,7 @@
                     </p>
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>22 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list and start over.
+                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>22 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list above.
                         </small>
                     </p>
                 </div>
@@ -450,18 +450,12 @@
                         const typeGenome    = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
                         const genelist      = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
                         const Patterns      = document.getElementById('Patterns');
-
-                        
-
                         var _geneListEdit = null;
-
                         if (!vouchersList) {
                             alert('Enter the GenBank Vouchers');
                             return;
                         }
-
                         let cdsList = null;
-
                         if (typeGenome === 'Mitochondrial') {
                             _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
                             cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
@@ -472,7 +466,6 @@
                             alert('Select the type of genome');
                             return;
                         }
-            
                         $('#LoadingPumas').modal('show');
                         const vouchers = vouchersList.split('\n').map(s => s.trim()).filter(s => s.length > 0);
                         data = await fetchGenomicData(vouchers, genelist, typeGenome, geneStart);
@@ -522,13 +515,10 @@
                         }
 
                         if (_genesToFasta === "allCDS") {
-                            // Cria um objeto para armazenar sequências de cada gene
                             let geneData = cdsList.reduce((acc, gene) => {
                                 acc[gene] = '';
                                 return acc;
                             }, {});
-
-                            // Agrupa todas as sequências de cada gene especificado na lista
                             _data.forEach(id => {
                                 const seq = data[id].geneSequences;
                                 const speciesName = data[id].speciesNames;
@@ -539,14 +529,12 @@
                                 });
                             });
 
-                            // Baixa cada arquivo FASTA para cada gene
                             cdsList.forEach(gene => {
                                 if (geneData[gene]) {
                                     downloadIndividualGene(gene, geneData[gene]);
                                 }
                             });
                         } else if (cdsList.includes(_genesToFasta)) {
-                            // Processo para um único gene da lista
                             let dataSeq = '';
                             _data.forEach(id => {
                                 const seq = data[id].geneSequences;
@@ -564,14 +552,11 @@
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `PUMAS_${geneName}.fasta`; // Nome do arquivo baseado no gene
+                        a.download = `PUMAS_${geneName}.fasta`;
                         document.body.appendChild(a);
                         a.click();
-                        document.body.removeChild(a); // Limpa o elemento 'a' após o download
+                        document.body.removeChild(a);
                     }
-
-
-                    
                     const downloadInputFile = document.getElementById('downloadInputFile');
                     const createInputFile = document.getElementById('createInputFile');
 
@@ -688,49 +673,13 @@
                 });
             </script>
             
-            
             <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
                 <hr>
-                <label class="h4"><span class="badge text-bg-dark">5</span> - Genomes Patterns</label>
-                <div class="row row-cols-4 row-cols-sm-2 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4">
-                    <div class="col mt-2 mb-5">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="Patterns">
-                            <label class="form-check-label" for="Patterns">Show only Patterns</label>
-                        </div>                          
-                    </div>
-                    <div class="col mt-2 mb-5">
-                        <div class="input-group">
-                            <select id="PatternsSelect" class="form-select form-select-lg" aria-label="" disabled>
-                                <option value="SVG" selected>SVG</option>
-                                <option value="PNG">PNG</option>
-                            </select>
-                            <button id="PatternsDownload" class="btn btn-lg btn-dark" type="button" disabled>Download Patterns Figure</button>
-                        </div>                    
-                    </div>
-                </div>
-                <script>
-                    $(document).ready(function () {
-                        const PatternsSelect = document.getElementById('PatternsSelect');
-                        const PatternsDownload = document.getElementById('PatternsDownload');
-                        const Patterns = document.getElementById('Patterns');
-                        Patterns.addEventListener('change', function () {
-                            if (Patterns.checked) {
-                                PatternsSelect.disabled = false;
-                                PatternsDownload.disabled = false;
-                            } else {
-                                PatternsSelect.disabled = true;
-                                PatternsDownload.disabled = true;
-                            }
-                        });
-                    });
-                </script>
-
-                <label class="h4"><span class="badge text-bg-dark">6</span> - Export Results</label>
+                <label class="h4"><span class="badge text-bg-dark">5</span> - Export Results</label>
                 <div class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4 mb-5">
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create an fasta file</b>"><span class="badge text-bg-dark">6.1</span> - Fasta File</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create an fasta file</b>"><span class="badge text-bg-dark">5.1</span> - Fasta File</label>
                         <div class="input-group">
                             <select id="genesToFasta" class="form-select form-select-lg" id="fastaFileExport" aria-label=""></select>
                             <button id="downloadFasta" class="btn btn-dark" type="button" disabled>Download File</button>
@@ -738,7 +687,7 @@
                     </div>
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>format</b> to <b>create an Plot</b>"><span class="badge text-bg-dark">6.2</span> - Create an Input File</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>format</b> to <b>create an Plot</b>"><span class="badge text-bg-dark">5.2</span> - Create an Input File</label>
                         <div class="input-group">
                             <select id="createInputFile" class="form-select form-select-lg" aria-label="">
                                 <option value="NaN" selected>Select a tool</option>
@@ -750,12 +699,12 @@
                     </div>
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a plot</b>"><span class="badge text-bg-dark">6.3</span> - Create a Plot</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="This is the puzzlelike figure observed below, that is, the data obtained directly from the gene order, with or without modifications (like gaps introduced by the user) of all genomes or solely the genome patterns."><span class="badge text-bg-dark">5.3</span> - Create a Puzzlelike Plot (image below)*</label>
                         <div class="input-group">
                             <select id="genesToPlot" class="form-select form-select-lg" aria-label="">
                                 <option value="SVG" selected>SVG</option>
                                 <option value="PNG">PNG</option>
-                                <option value="PDF">PDF</option>
+                                <!--<option value="PDF">PDF</option>-->
                             </select>
                             <button id="downloadPlot" class="btn btn-dark" type="button">Download Plot</button>
                         </div>
@@ -784,7 +733,7 @@
                     </div>
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a Individual plot</b>"><span class="badge text-bg-dark">6.4</span> - Create a Individual Plot</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a Individual plot</b>"><span class="badge text-bg-dark">5.4</span> - Create a Individual Plot</label>
                         <div class="input-group">
                             <select id="individualPlot" class="form-select form-select-lg" aria-label=""></select>
                             <button id="downloadIndivivualPlot" class="btn btn-dark" type="button" disabled>View Plot</button>
@@ -792,6 +741,44 @@
                     </div>
 
                 </div>
+
+                <label class="h4"><span class="badge text-bg-dark">6</span> - Genomes Patterns</label>
+                <div class="row row-cols-2 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3 mt-2 mb-2">
+                        <label class="h4"><span class="badge text-bg-dark">6.1</span> - Show only Genome Patterns</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="Patterns">
+                            <label class="form-check-label" for="Patterns">Show only Patterns</label>
+                        </div>                          
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4 mt-2 mb-2">
+                        <label class="h4"><span class="badge text-bg-dark">6.2</span> - Genome Patterns <b>(Final Figure for Publication)</b></label>
+                        <div class="input-group">
+                            <select id="PatternsSelect" class="form-select form-select-lg" aria-label="" disabled>
+                                <option value="SVG" selected>SVG</option>
+                                <option value="PNG">PNG</option>
+                            </select>
+                            <button id="PatternsDownload" class="btn btn-lg btn-dark" type="button" disabled>Download Figure</button>
+                        </div>                    
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        const PatternsSelect = document.getElementById('PatternsSelect');
+                        const PatternsDownload = document.getElementById('PatternsDownload');
+                        const Patterns = document.getElementById('Patterns');
+                        Patterns.addEventListener('change', function () {
+                            if (Patterns.checked) {
+                                PatternsSelect.disabled = false;
+                                PatternsDownload.disabled = false;
+                            } else {
+                                PatternsSelect.disabled = true;
+                                PatternsDownload.disabled = true;
+                            }
+                        });
+                    });
+                </script>
+
             </div>
 
         </div>
