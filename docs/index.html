@@ -672,6 +672,19 @@
                     document.body.removeChild(a);
                 });
 
+                const downloadPlot = document.getElementById('PatternsDownload');
+                const PatternsSelect = document.getElementById('PatternsSelect');
+                downloadPlot.addEventListener('click', function () {
+                    let geneStart     = document.getElementById('geneList').value;
+                    if (PatternsSelect.value === 'SVG') {
+                        createAndDownloadSVG(data, _geneListEdit, geneStart);
+                    } else if (PatternsSelect.value === 'PNG') {
+                        createAndDownloadPNG(data, _geneListEdit, geneStart);
+                    }
+
+                });
+                    
+
                 });
             </script>
             
@@ -679,14 +692,39 @@
             <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
                 <hr>
                 <label class="h4"><span class="badge text-bg-dark">5</span> - Genomes Patterns</label>
-                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-1 row-cols-xl-1 row-cols-xxl-1">
+                <div class="row row-cols-4 row-cols-sm-2 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4">
                     <div class="col mt-2 mb-5">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="Patterns">
                             <label class="form-check-label" for="Patterns">Show only Patterns</label>
                         </div>                          
                     </div>
+                    <div class="col mt-2 mb-5">
+                        <div class="input-group">
+                            <select id="PatternsSelect" class="form-select form-select-lg" aria-label="" disabled>
+                                <option value="SVG" selected>SVG</option>
+                                <option value="PNG">PNG</option>
+                            </select>
+                            <button id="PatternsDownload" class="btn btn-lg btn-dark" type="button" disabled>Download Patterns Figure</button>
+                        </div>                    
+                    </div>
                 </div>
+                <script>
+                    $(document).ready(function () {
+                        const PatternsSelect = document.getElementById('PatternsSelect');
+                        const PatternsDownload = document.getElementById('PatternsDownload');
+                        const Patterns = document.getElementById('Patterns');
+                        Patterns.addEventListener('change', function () {
+                            if (Patterns.checked) {
+                                PatternsSelect.disabled = false;
+                                PatternsDownload.disabled = false;
+                            } else {
+                                PatternsSelect.disabled = true;
+                                PatternsDownload.disabled = true;
+                            }
+                        });
+                    });
+                </script>
 
                 <label class="h4"><span class="badge text-bg-dark">6</span> - Export Results</label>
                 <div class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4 mb-5">
