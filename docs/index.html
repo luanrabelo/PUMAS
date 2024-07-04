@@ -18,21 +18,20 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.css">
-    <title>PUMAS</title>
+    <title>PUMAS by Luan Rabelo</title>
     <meta name="title" content="PUMAS" />
-    <meta name="description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
-    <!-- Open Graph / Facebook -->
+    <meta name="description" content="PUMAS: Puzzle Mitochondrial (and Chloroplast) Analysis Script" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://luanrabelo.github.io/PUMAS/" />
     <meta property="og:title" content="PUMAS" />
-    <meta property="og:description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
-    <meta property="og:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/stable/docs/assets/PUMASsm.png" />
+    <meta property="og:description" content="PUMAS: Puzzle Mitochondrial (and Chloroplast) Analysis Script" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMASsm.png" />
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://luanrabelo.github.io/SyBA/" />
-    <meta property="twitter:title" content="SyBA" />
-    <meta property="twitter:description" content="PUMAS: Puzzle Mitochondrial Analysis Script" />
-    <meta property="twitter:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/stable/docs/assets/PUMASsm.png" />
+    <meta property="twitter:card" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMAS.png" />
+    <meta property="twitter:url" content="https://luanrabelo.github.io/PUMAS/" />
+    <meta property="twitter:title" content="PUMAS" />
+    <meta property="twitter:description" content="PUMAS: Puzzle Mitochondrial (and Chloroplast) Analysis Script" />
+    <meta property="twitter:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMASsm.png" />
 </head>
 
 <style>
@@ -157,7 +156,9 @@
         </script>
         <div class="mt-5 mb-2 mx-auto container-fluid formPUMAS">
             <div class="mb-1 container">
-                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank voucher genomes</label>
+                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank voucher genomes</label><br>
+                <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> For a robust search for genomes in GenBank, we recommend to the use <b><a style="color: #000000;" href="https://luanrabelo.github.io/SynGenes" target="_blank">SynGenes</a></b>.</small><br>
+                <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> How to cite SynGenes: <b><a style="color: #000000;" href="https://doi.org/10.1186/s12859-024-05781-y" target="_blank">https://doi.org/10.1186/s12859-024-05781-y</a></b></small>
                 <textarea class="form-control" placeholder="" id="vouchersList" style="height: 20vh" spellcheck="false"></textarea>
                 <div id="errorDiv" class="text-danger mt-1"></div>
                 <div class="text-left mt-1" style="text-align: justify; line-height: 2;">
@@ -676,7 +677,7 @@
             <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
                 <hr>
                 <label class="h4"><span class="badge text-bg-dark">5</span> - Export Results</label>
-                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4 mb-5">
+                <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 mb-5">
 
                     <div class="col mt-2">
                         <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create an fasta file</b>"><span class="badge text-bg-dark">5.1</span> - Fasta File</label>
@@ -771,7 +772,7 @@
                             <label class="form-check-label" for="Patterns">Show only Patterns</label>
                         </div>                          
                     </div>
-                    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 col-xxl-4 mt-2 mb-2">
+                    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6 mt-2 mb-2">
                         <label class="h4"><span class="badge text-bg-dark">6.2</span> - Genome Patterns <b>(Final Figure for Publication)</b></label>
                         <div class="input-group">
                             <select id="PatternsSelect" class="form-select form-select-lg" aria-label="" disabled>
