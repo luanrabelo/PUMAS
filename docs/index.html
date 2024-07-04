@@ -696,6 +696,26 @@
                             </select>
                             <button id="downloadInputFile" class="btn btn-dark" type="button" disabled>Download File</button>
                         </div>
+                        <div id="textInfo" style="display: none; text-align: justify;"></div>
+                        <script>
+                            $(document).ready(function () {
+                                const createInputFile = document.getElementById('createInputFile');
+                                const txt = document.getElementById('textInfo');
+                                createInputFile.addEventListener('change', function () {
+                                   if (createInputFile.value === 'CREx') {
+                                        txt.style.display = 'block';
+                                        txt.innerHTML = '';
+                                        txt.innerHTML = '<i class="fa-solid fa-circle-info"></i> Note that, the downloaded file should be edited, as any duplicated genes must be renamed (i.e. Leu1 and Leu2) or only one copy is permitted (one copy should be deleted for each duplicated genes) for CREx/CREx2/TreeREx to work properly.';
+                                    } else if (createInputFile.value === 'qMGR') {
+                                        txt.style.display = 'block';
+                                        txt.innerHTML = '';
+                                        txt.innerHTML = '<i class="fa-solid fa-circle-info"></i> Note that, the downloaded file should be edited, user must edit the file to inform important issues, such as: there are two Leucines, so the user should inform which copy is L1, as well as L2.';
+                                    } else {
+                                        txt.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
                     </div>
 
                     <div class="col mt-2">
