@@ -156,7 +156,7 @@
         </script>
         <div class="mt-5 mb-2 mx-auto container-fluid formPUMAS">
             <div class="mb-1 container">
-                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank voucher genomes</label><br>
+                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank Accession Numbers genomes</label><br>
                 <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> For a robust search for genomes in GenBank, we recommend to the use <b><a style="color: #000000;" href="https://luanrabelo.github.io/SynGenes" target="_blank">SynGenes</a></b>.</small><br>
                 <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> How to cite SynGenes: <b><a style="color: #000000;" href="https://doi.org/10.1186/s12859-024-05781-y" target="_blank">https://doi.org/10.1186/s12859-024-05781-y</a></b></small>
                 <textarea class="form-control" placeholder="" id="vouchersList" style="height: 20vh" spellcheck="false"></textarea>
@@ -164,12 +164,12 @@
                 <div class="text-left mt-1" style="text-align: justify; line-height: 2;">
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Enter the <strong>NCBI - GenBank Vouchers for Mitochondrial or Chloroplast Genomes</strong> in the space provided above.
+                            <i class="fa-solid fa-circle-info"></i> Enter the <strong>NCBI - GenBank Accession Numbers for Mitochondrial or Chloroplast Genomes</strong> in the space provided above.
                         </small>
                     </p>
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Each voucher should be on a <strong>distinct line without any blank lines in between</strong>.
+                            <i class="fa-solid fa-circle-info"></i> Each Accession Number should be on a <strong>distinct line without any blank lines in between</strong>.
                         </small>
                     </p>
                     <p>
@@ -206,9 +206,9 @@
                                 } else if (!/\.\d+$/.test(lines[i])) {
                                     charError = 'Line must end with a . followed by a number';
                                 } else if (voucherSet.has(lines[i])) {
-                                    charError = 'Duplicate voucher detected';
+                                    charError = 'Duplicate Accession Number detected';
                                 } else if (lines[i].length < 5 || lines[i].length > 15) {
-                                    charError = 'Invalid voucher length';
+                                    charError = 'Invalid Accession Number length';
                                 }
                                 if (charError) {
                                     errorLine = i + 1;
