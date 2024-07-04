@@ -23,6 +23,7 @@ const MitochondrialGenes = {
 };
 
 const ChloroplastGenes = {
+    "-":      [],
     "accD":     ['acetyl-CoA carboxylase subunit beta', 'acetyl-CoA carboxylase carboxyltransferase beta', 'acetyl-CoA carboxylase, carboxyl transferase subunit beta', 'acetyl-CoA carboxylase carboxyl transferase subunit beta', 'acetyl-CoA carboxylase carboxyltransferase subunit beta', 'acetyl-CoA carboxylase carboxyl transferase beta', 'Acetyl-CoA carboxylase carboxyltransferase beta subunit', 'carboxytransferase beta subunit', 'acetyl-CoA carboxylase, carboxyl transferasesubunit beta', 'acetyl-coenzyme A carboxylase carboxyl', 'acetyl-CoA carboxylase carboxyltransferase beta subunit protein', 'acetyl-CoA carboxyltransferase beta subunit', 'acetyl-coenzyme A carboxylase carboxyltransferase subunit beta', 'Acetyl-CoA carboxylase carboxyl transferase beta subunit', 'acetyl-coenzyme A carboxylase carboxyl transferase subunit beta', 'acetyl-CoA carboxylase carboxyl transferase betasubunit', 'acetylCoA carboxylase, carboxyl transferase subunit beta', 'acetyl-CoA carboxlyase carboxyltransferase beta subunit', 'Acetyl-coenzyme A carboxylase carboxyl transferasesubunit beta', 'acetyl-CoA caboxylase beta subunit', 'Acetyl-CoA carboxylase beta subunit', 'accD protein', 'acetyl-CoA carboxytransferase subunit beta', 'acetyl-CoA carboxylase carboxyltransferase beta#bunit', 'acetyl-CoA carboxylase carbosyltransferase beta subunit', 'acetyl-coenzyme A carboxylase carboxyl transferase subunit beta, chloroplastic', 'acetyl-coenzyme A carboxylase beta subunit', 'acetyl-CoA carboxyltransferase subunit beta', 'cetyl-coenzyme A carboxylase carboxyl transferase subunit beta', 'accD', 'AccD; acetyl-CoA carboxylase beta subunit', 'beta-carboxyltransferase subunit', 'Acetyl-CoA carboxylasecarboxyl transferase beta subunit', 'Acetyl-CoAcarboxylase carboxyl transferase beta subunit', 'acetyl-CoA carboxylase 1', 'Acetyl-CoA carboxylase subunit', 'beta subunit of acetyl-CoA carboxylase carboxytransferase', 'Acetyl-o A carboxylase carboxyl transferase beta subunit', "'acetyl-CoA carboxylase carboxyltransferase beta", 'Acetyle-CoA carboxylase beta subunit', 'acetyl-CoAcarboxylase carboxyltransferase beta subunit', 'acetyl-CoA carboxylase arboxyltransferase beta subunit', 'truncated acetyl-CoA carboxylase beta subunit', 'acetyl- CoAcarboxylasecarboxyltransferasebetasubunit', 'acetyl-CoA carboxylase', 'acetyl-CoA carboxylase carboxyl transferase', 'acetyl-CoA carboxylase carboxyl transferase subunit', 'Acetyl-CoA carboxylase carboxyltransferase betasubunit', 'acetyl-CoA carboxylase carboxy l transferase beta subunit', 'acetyl-coenzyme A decarboxylase', 'acetyl-carboxylase beta subunit', 'putative acetyl-coenzyme A carboxylase carboxyl transferase subunit beta-like protein', 'cetyl-CoA carboxylase carboxyltransferase beta subunit', 'acetyl-CoA carboxylase carboxytransferase beta subunit', 'acetyl-CoA carb oxylase carboxyl transferase beta', 'Acetyl-CoA carboxylase carboxyltransferase subuni t beta', 'carboxytransferase beta subuni', 'NiTa acetyl-CoA carboxylase beta subunit-like protein', 'acetyl-CoA carboxylase beta subunit-like protein', 'acetyl CoA carboxylase', 'acetyl CoA carboxylase beta subunit', 'beta-carboxyl transferase subunit of acetyl-CoA carboxylase', 'acetyl-CoA carboxylase beta subuni', 'acetyl-CoA carboxylase-D'],
     "atpA":     ['CF1 subunit alpha', 'ATP synthase alpha chain', 'ATP synthase CF1 subunit alpha', 'ATPase alpha subunit', 'ATP synthase CF1 alpha chain', 'ATP synthase alpha subunit', 'ATP synthase F0 subunit A', 'ATP synthase subunit alpha', 'ATP systhase CF1 alpha subunit', 'atpA', 'ATP synthase CF1 alpha', 'ATPsynthaseCF1 alpha subunit', 'ATP synthase CF1, subunit alpha', 'CF1 alpha subunit', 'AT Psynthase CF1 alpha subunit', 'atpA protein', 'ATP synthase CF1 alph a subunit', 'ATPsynthase CF1 alpha subunit', 'ATP synthase CF 1 subunit alpha', 'ATP synthase CF1alpha subunit', 'AtpA; ATP synthase CF1 alpha subunit', 'CF1 alpha subunit of ATP synthase', 'ATP synthase subunit CF1 alpha subunit', 'ATP synthase CF1 alpha protein', 'H+-ATPase alpha subunit', 'ATPase subunit alpha', 'ATP synthase subunit CF1 alpha', 'ATP synthase subunit alpha, chloroplastic (EC:7.1 .2.2)', 'ATP synthase subunit alpha subunit', 'ATP-synthase CF1 alpha subunit', 'putative ATP synthase CF1 alpha subunit', 'ATP Synthase CF1 alpha subunit', 'F1-ATPase alpha-subunit'],
     "atpB":     ['CF1 subunit beta', 'ATP synthase beta chain', 'ATP synthase CF1 subunit beta', 'ATPase beta subunit', 'ATP synthase beta subunit', 'ATP synthase CF1 beta chain', 'ATP synthase F0 subunit B', 'ATP synthase subunit beta', 'ATP synthaes CF11 beta subunit', 'ATP synthase CF1beta subunit', 'atpB', 'ATPsynthaseCF1betasubunit', 'ATP synthase CF1, subunit beta', 'F-type H+/Na+-transporting ATPase subunit beta', 'ATPsynthase CF1 beta subunit', 'atpB protein', 'ATPase beta chain', 'ATP synthase CF 1 subunit beta', 'AtpB; ATP synthase CF1 beta subunit', 'CF1 beta subunit of ATP synthase', 'ATP synthase CF1 betas ubunit', 'ATP synthase subunit CF1 beta subunit', 'ATP synthase CF1 beta protein', 'ATP syntase CF1 beta subunit', 'H+-ATP synthase subunit B', 'H+-ATPase beta subunit', 'ATP synthase cf1 beta subunit', 'CF1 beta subunit', 'ATP synthase subunit beta, chloroplastic (EC:7.1. 2.2)', 'ATP synthase CF1 beta subuni', 'ATP-synthase CF1 beta subunit'],
@@ -164,14 +165,6 @@ var colorMitochondrial = {
 //} else {
 //    console.error("Color repetition detected, please check. Unique colors assigned:", colorSet.size);
 //}
-
-
-
-
-
-
-
-
 
 async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
     let progress = 0;
@@ -370,21 +363,24 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
         const svgWidth = genes.reduce((acc, produto) => acc + (produto.startsWith('tRNA') ? tRNAWidth : pieceWidth), 0);
 
-        svg.setAttribute("width", svgWidth.toString());
+        svg.setAttribute("width", svgWidth + 50); // Adicione espaço adicional para o botão
         svg.setAttribute("height", "150");
-        svg.setAttribute("viewBox", `0 50 ${svgWidth} 150`);
+        svg.setAttribute("viewBox", `0 50 ${svgWidth + 50} 150`);
 
-        function adicionarElemento(index, lado) {
+        function adicionarElemento(index, lado, quantidade = 1) {
             $('#addGeneModal').modal('show');
             $('#saveGeneButton').off('click').on('click', function () {
                 const newGeneName = $('#geneNameInput').val();
+                const qtde = parseInt($('#quantidade').val()) || quantidade;
                 const newGeneStrand = $('#light').prop('checked') ? '+' : '-';
                 const newGenePosition = lado === 'esquerda' ? index : index + 1;
 
                 const updateGenes = (genes, strands, lengths) => {
-                    genes.splice(newGenePosition, 0, newGeneName);
-                    strands.splice(newGenePosition, 0, newGeneStrand);
-                    lengths.splice(newGenePosition, 0, 0);
+                    for (let i = 0; i < qtde; i++) {
+                        genes.splice(newGenePosition + i, 0, newGeneName);
+                        strands.splice(newGenePosition + i, 0, newGeneStrand);
+                        lengths.splice(newGenePosition + i, 0, 0);
+                    }
                 };
 
                 if (pattern) {
@@ -400,7 +396,9 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 }
 
                 const newGeneOrder = geneOrder.split(',').slice();
-                newGeneOrder.splice(newGenePosition, 0, newGeneStrand === '-' ? `-${newGeneName}` : newGeneName);
+                for (let i = 0; i < qtde; i++) {
+                    newGeneOrder.splice(newGenePosition + i, 0, newGeneStrand === '-' ? `-${newGeneName}` : newGeneName);
+                }
                 data.geneOrder = newGeneOrder.join(',');
 
                 data.genes = genes;
@@ -640,6 +638,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             svg.appendChild(line);
 
             if (!pattern && index > 0) {
+                let quantidade = document.getElementById('quantidade').value || 1;
                 let btnEsquerda = document.createElementNS(svgNS, "text");
                 btnEsquerda.textContent = '+';
                 btnEsquerda.setAttribute("x", (currentX - 10).toString());
@@ -649,24 +648,25 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 btnEsquerda.setAttribute("text-anchor", "middle");
                 btnEsquerda.setAttribute("cursor", "pointer");
                 btnEsquerda.setAttribute("font-size", "20px");
-                btnEsquerda.onclick = () => adicionarElemento(index, 'esquerda');
+                btnEsquerda.onclick = () => adicionarElemento(index, 'esquerda', quantidade);
                 svg.appendChild(btnEsquerda);
-            }
-            if (produto === '-') {
-                let btnRemover = document.createElementNS(svgNS, "text");
-                btnRemover.textContent = '-';
-                btnRemover.setAttribute("x", (currentX + pieceW / 2).toString());
-                btnRemover.setAttribute("y", "115");
-                btnRemover.setAttribute("fill", "#202020");
-                btnRemover.setAttribute("font-weight", "bold");
-                btnRemover.setAttribute("text-anchor", "middle");
-                btnRemover.setAttribute("cursor", "pointer");
-                btnRemover.onclick = () => removerElemento(index);
-                svg.appendChild(btnRemover);
             }
 
             currentX += pieceW;
         });
+
+        // Adiciona o botão de adicionar ao final
+        let btnFinal = document.createElementNS(svgNS, "text");
+        btnFinal.textContent = '+';
+        btnFinal.setAttribute("x", (currentX + 10).toString());
+        btnFinal.setAttribute("y", "115");
+        btnFinal.setAttribute("fill", "#000000");
+        btnFinal.setAttribute("font-weight", "bold");
+        btnFinal.setAttribute("text-anchor", "middle");
+        btnFinal.setAttribute("cursor", "pointer");
+        btnFinal.setAttribute("font-size", "20px");
+        btnFinal.onclick = () => adicionarElemento(genes.length - 1, 'direita');
+        svg.appendChild(btnFinal);
 
         let container = document.createElement("div");
         container.setAttribute("id", `container-${safeVoucher}`);
@@ -760,6 +760,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         });
     }
 }
+
+
 
 function toRoman(num) {
     const romanNumeralMap = [
