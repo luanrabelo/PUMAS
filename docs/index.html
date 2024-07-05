@@ -174,7 +174,7 @@
                     </p>
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>22 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list above.
+                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>17 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list above.
                         </small>
                     </p>
                 </div>
@@ -264,7 +264,7 @@
                         });
                 
                         exampleMitochondrial.addEventListener('click', function () {
-                            const _vouchers = ["MN737137.1", "MN737145.1", "AB187570.1", "MN737141.1", "MN737139.1", "MN737143.1", "MN737144.1", "MN737133.1", "MN737138.1", "MN737136.1", "MN737142.1", "MN737134.1", "KU042041.1", "KY785880.1", "KY785879.1", "MN737132.1", "MN737140.1", "MN737135.1", "KU042042.1", "NC_021754.1", "NC_025324.1", "NC_012569.1"];
+                            const _vouchers = ["MN737137.1", "MN737145.1", "AB187570.1", "MN737141.1", "MN737139.1", "MN737143.1", "MN737144.1", "MN737133.1", "MN737138.1", "MN737136.1", "MN737142.1", "MN737134.1", "KU042041.1", "KY785880.1", "KY785879.1", "MN737132.1", "MN737140.1"];
                             vouchers.value = "";
                             _vouchers.forEach((s, i) => setTimeout(() => {
                                 vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
@@ -627,10 +627,12 @@
                         });
 
                         _data.forEach((id) => {
-                            let _geneOrder = data[id].geneOrder;
-                            let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
-
+                            let _geneOrder = data[id].geneOrder
+                                .split(',')
+                                .filter(gene => gene.trim() !== '-') // Remove standalone '-'
+                                .join(',');
                             
+                            let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
 
                             switch (_createInputFile) {
                                 case 'CREx':
@@ -647,6 +649,9 @@
                                     break;
                             }
                         });
+
+
+
 
                     const blob = new Blob([dataSeq], { type: 'text/plain' });
                     const url = window.URL.createObjectURL(blob);
@@ -875,10 +880,8 @@
                     </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text">Number of Genes/Gaps/Region to add</span>
-                            <input type="number" class="form-control" id="quantidade">
+                            <input type="number" class="form-control" id="quantidade" min="1" max="5" value="1">
                         </div>
-                          
-
                     <script>
                         $(document).ready(function () {
                             const light = document.getElementById('light');
