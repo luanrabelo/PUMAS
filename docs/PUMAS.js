@@ -300,15 +300,6 @@ function processPseudoGenes(geneData) {
 function createSVG(genomicData, geneStart, geneList, pattern = false) {
     console.log('createSVG called with:', { genomicData, geneStart, geneList, pattern });
 
-    // Organize o objeto por ordem alfabética usando o nome da espécie
-    if (!pattern) {
-        genomicData.sort((a, b) => {
-            const speciesA = Array.isArray(a.speciesNames) ? a.speciesNames.join(", ") : a.speciesNames;
-            const speciesB = Array.isArray(b.speciesNames) ? b.speciesNames.join(", ") : b.speciesNames;
-            return speciesA.localeCompare(speciesB);
-        });
-    }
-
     const patternMap = new Map();
     let patternCounter = 1;
 
@@ -365,11 +356,10 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
     genomicData.forEach((data, dataIndex) => {
         let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
         const nomeEspecie = Array.isArray(speciesNames) ? speciesNames.join(", ") : speciesNames;
-        const voucher = vouchers;
 
-        console.log('Processing genomic data for:', { nomeEspecie, voucher, genes, geneOrder });
+        console.log('Processing genomic data for:', { nomeEspecie, genes, geneOrder });
 
-        const safeVoucher = String(voucher).replace(/[^a-zA-Z0-9-_]/g, '_');
+        const safeVoucher = String(speciesNames).replace(/[^a-zA-Z0-9-_]/g, '_');
 
         const preferidos = [geneStart];
         let startGene = preferidos.find(gene => genes.includes(gene));
@@ -483,20 +473,20 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         updatePseudoGenes();
 
         let textEspecie = document.createElementNS(svgNS, "text");
-        textEspecie.setAttribute("x", "35");
+        textEspecie.setAttribute("x", "100");
         textEspecie.setAttribute("y", "70");
         textEspecie.setAttribute("fill", "black");
         textEspecie.setAttribute("font-size", "20px");
 
         let italicEspecie = document.createElementNS(svgNS, "tspan");
         italicEspecie.setAttribute("font-style", "italic");
-        italicEspecie.textContent = `${nomeEspecie} `;
+        italicEspecie.textContent = `${pattern ? id + ': ' : ''}${nomeEspecie} `;
         textEspecie.appendChild(italicEspecie);
 
         let boldVoucher = document.createElementNS(svgNS, "tspan");
         boldVoucher.setAttribute("font-weight", "bold");
         boldVoucher.innerHTML = `
-            (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucher}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${voucher}</a>)
+            (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${vouchers}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${vouchers}</a>)
         `;
         textEspecie.appendChild(boldVoucher);
 
@@ -506,33 +496,37 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
 
         if (!pattern) {
-        //    // Botão para mover para cima
-        //    let moveUpIcon = document.createElementNS(svgNS, "text");
-        //    moveUpIcon.textContent = '⬆';
-        //    moveUpIcon.setAttribute("x", "10");
-        //    moveUpIcon.setAttribute("y", "70");
-        //    moveUpIcon.setAttribute("fill", "#000000");
-        //    moveUpIcon.setAttribute("font-weight", "bold");
-        //    moveUpIcon.setAttribute("text-anchor", "middle");
-        //    moveUpIcon.setAttribute("cursor", "pointer");
-        //    moveUpIcon.setAttribute("font-size", "25px");
-        //    moveUpIcon.onclick = () => moveLine(dataIndex, -1);
-        //    svg.appendChild(moveUpIcon);
-//
-        //    // Botão para mover para baixo
-        //    let moveDownIcon = document.createElementNS(svgNS, "text");
-        //    moveDownIcon.textContent = '⬇';
-        //    moveDownIcon.setAttribute("x", "30");
-        //    moveDownIcon.setAttribute("y", "70");
-        //    moveDownIcon.setAttribute("fill", "#000000");
-        //    moveDownIcon.setAttribute("font-weight", "bold");
-        //    moveDownIcon.setAttribute("text-anchor", "middle");
-        //    moveDownIcon.setAttribute("cursor", "pointer");
-        //    moveDownIcon.setAttribute("font-size", "25px");
-        //    moveDownIcon.onclick = () => moveLine(dataIndex, 1);
-        //    svg.appendChild(moveDownIcon);
-//
-        //    // Botão para excluir a linha
+            // Botão para mover para cima
+            let moveUpIcon = document.createElementNS(svgNS, "text");
+            moveUpIcon.textContent = '⬆';
+            moveUpIcon.setAttribute("x", "45");
+            moveUpIcon.setAttribute("y", "70");
+            moveUpIcon.setAttribute("fill", "#000000");
+            moveUpIcon.setAttribute("font-weight", "bold");
+            moveUpIcon.setAttribute("text-anchor", "middle");
+            moveUpIcon.setAttribute("cursor", "pointer");
+            moveUpIcon.setAttribute("font-size", "25px");
+            moveUpIcon.setAttribute("data-bs-toggle", "tooltip");
+            moveUpIcon.setAttribute("title", "Move up");
+            moveUpIcon.onclick = () => moveLine(dataIndex, -1);
+            svg.appendChild(moveUpIcon);
+
+            // Botão para mover para baixo
+            let moveDownIcon = document.createElementNS(svgNS, "text");
+            moveDownIcon.textContent = '⬇';
+            moveDownIcon.setAttribute("x", "75");
+            moveDownIcon.setAttribute("y", "70");
+            moveDownIcon.setAttribute("fill", "#000000");
+            moveDownIcon.setAttribute("font-weight", "bold");
+            moveDownIcon.setAttribute("text-anchor", "middle");
+            moveDownIcon.setAttribute("cursor", "pointer");
+            moveDownIcon.setAttribute("font-size", "25px");
+            moveDownIcon.setAttribute("data-bs-toggle", "tooltip");
+            moveDownIcon.setAttribute("title", "Move down");
+            moveDownIcon.onclick = () => moveLine(dataIndex, 1);
+            svg.appendChild(moveDownIcon);
+
+            // Botão para excluir a linha
             let deleteIcon = document.createElementNS(svgNS, "text");
             deleteIcon.textContent = '❌';
             deleteIcon.setAttribute("x", "15");
@@ -542,6 +536,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             deleteIcon.setAttribute("text-anchor", "middle");
             deleteIcon.setAttribute("cursor", "pointer");
             deleteIcon.setAttribute("font-size", "20px");
+            deleteIcon.setAttribute("data-bs-toggle", "tooltip");
+            deleteIcon.setAttribute("title", "Delete line");
             deleteIcon.onclick = () => deleteLine(dataIndex);
             svg.appendChild(deleteIcon);
         }
@@ -822,6 +818,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
     }
 }
+
 
 // Sincroniza o scroll de todos os elementos SVG
 function syncScroll() {

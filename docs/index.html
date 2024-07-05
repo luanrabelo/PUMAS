@@ -472,6 +472,11 @@
                         data = await fetchGenomicData(vouchers, genelist, typeGenome, geneStart);
                         $('#LoadingPumas').modal('hide');
                         if (typeGenome) {
+                            data.sort((a, b) => {
+                                const speciesA = Array.isArray(a.speciesNames) ? a.speciesNames.join(", ") : a.speciesNames;
+                                const speciesB = Array.isArray(b.speciesNames) ? b.speciesNames.join(", ") : b.speciesNames;
+                                return speciesA.localeCompare(speciesB);
+                            });
                             createSVG(data, geneStart, _geneListEdit, Patterns.checked);
                             if (typeGenome === 'Mitochondrial' || typeGenome === 'Chloroplast') {
                                 showResults(data, typeGenome);
@@ -880,7 +885,7 @@
                     </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text">Number of Genes/Gaps/Region to add</span>
-                            <input type="number" class="form-control" id="quantidade" min="1" max="5" value="1">
+                            <input type="number" class="form-control" id="quantidade" min="1" max="10" value="1">
                         </div>
                     <script>
                         $(document).ready(function () {
