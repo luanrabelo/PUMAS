@@ -483,49 +483,51 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         italicEspecie.textContent = `${pattern ? id + ': ' : ''}${nomeEspecie} `;
         textEspecie.appendChild(italicEspecie);
 
-        let boldVoucher = document.createElementNS(svgNS, "tspan");
-        boldVoucher.setAttribute("font-weight", "bold");
-        boldVoucher.innerHTML = `
-            (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${vouchers}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${vouchers}</a>)
-        `;
-        textEspecie.appendChild(boldVoucher);
+        if (!pattern) {
+            let boldVoucher = document.createElementNS(svgNS, "tspan");
+            boldVoucher.setAttribute("font-weight", "bold");
+            boldVoucher.innerHTML = `
+                (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${vouchers}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${vouchers}</a>)
+            `;
+            textEspecie.appendChild(boldVoucher);
+        }
 
         if (!pattern && pseudoGenes.length > 0) {
             let _pseudoGenes = pseudoGenes.map(pseudoGene => pseudoGene.gene.replace('tRNA-', '')).join(', ');
             textEspecie.innerHTML += ` - Duplicated Genes or Regions: ${_pseudoGenes}`;
         }
 
+        // Botão para mover para cima
+        let moveUpIcon = document.createElementNS(svgNS, "text");
+        moveUpIcon.textContent = '⬆';
+        moveUpIcon.setAttribute("x", "45");
+        moveUpIcon.setAttribute("y", "70");
+        moveUpIcon.setAttribute("fill", "#000000");
+        moveUpIcon.setAttribute("font-weight", "bold");
+        moveUpIcon.setAttribute("text-anchor", "middle");
+        moveUpIcon.setAttribute("cursor", "pointer");
+        moveUpIcon.setAttribute("font-size", "25px");
+        if (!pattern) moveUpIcon.setAttribute("data-bs-toggle", "tooltip");
+        moveUpIcon.setAttribute("title", "Move up");
+        moveUpIcon.onclick = () => moveLine(dataIndex, -1);
+        svg.appendChild(moveUpIcon);
+
+        // Botão para mover para baixo
+        let moveDownIcon = document.createElementNS(svgNS, "text");
+        moveDownIcon.textContent = '⬇';
+        moveDownIcon.setAttribute("x", "75");
+        moveDownIcon.setAttribute("y", "70");
+        moveDownIcon.setAttribute("fill", "#000000");
+        moveDownIcon.setAttribute("font-weight", "bold");
+        moveDownIcon.setAttribute("text-anchor", "middle");
+        moveDownIcon.setAttribute("cursor", "pointer");
+        moveDownIcon.setAttribute("font-size", "25px");
+        if (!pattern) moveDownIcon.setAttribute("data-bs-toggle", "tooltip");
+        moveDownIcon.setAttribute("title", "Move down");
+        moveDownIcon.onclick = () => moveLine(dataIndex, 1);
+        svg.appendChild(moveDownIcon);
+
         if (!pattern) {
-            // Botão para mover para cima
-            let moveUpIcon = document.createElementNS(svgNS, "text");
-            moveUpIcon.textContent = '⬆';
-            moveUpIcon.setAttribute("x", "45");
-            moveUpIcon.setAttribute("y", "70");
-            moveUpIcon.setAttribute("fill", "#000000");
-            moveUpIcon.setAttribute("font-weight", "bold");
-            moveUpIcon.setAttribute("text-anchor", "middle");
-            moveUpIcon.setAttribute("cursor", "pointer");
-            moveUpIcon.setAttribute("font-size", "25px");
-            moveUpIcon.setAttribute("data-bs-toggle", "tooltip");
-            moveUpIcon.setAttribute("title", "Move up");
-            moveUpIcon.onclick = () => moveLine(dataIndex, -1);
-            svg.appendChild(moveUpIcon);
-
-            // Botão para mover para baixo
-            let moveDownIcon = document.createElementNS(svgNS, "text");
-            moveDownIcon.textContent = '⬇';
-            moveDownIcon.setAttribute("x", "75");
-            moveDownIcon.setAttribute("y", "70");
-            moveDownIcon.setAttribute("fill", "#000000");
-            moveDownIcon.setAttribute("font-weight", "bold");
-            moveDownIcon.setAttribute("text-anchor", "middle");
-            moveDownIcon.setAttribute("cursor", "pointer");
-            moveDownIcon.setAttribute("font-size", "25px");
-            moveDownIcon.setAttribute("data-bs-toggle", "tooltip");
-            moveDownIcon.setAttribute("title", "Move down");
-            moveDownIcon.onclick = () => moveLine(dataIndex, 1);
-            svg.appendChild(moveDownIcon);
-
             // Botão para excluir a linha
             let deleteIcon = document.createElementNS(svgNS, "text");
             deleteIcon.textContent = '❌';
@@ -536,7 +538,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             deleteIcon.setAttribute("text-anchor", "middle");
             deleteIcon.setAttribute("cursor", "pointer");
             deleteIcon.setAttribute("font-size", "20px");
-            deleteIcon.setAttribute("data-bs-toggle", "tooltip");
+            if (!pattern) deleteIcon.setAttribute("data-bs-toggle", "tooltip");
             deleteIcon.setAttribute("title", "Delete line");
             deleteIcon.onclick = () => deleteLine(dataIndex);
             svg.appendChild(deleteIcon);
@@ -588,12 +590,14 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             path.setAttribute("stroke-width", "1");
             path.setAttribute("stroke-linejoin", "round");
             path.setAttribute("class", "gene-path");
-            path.setAttribute("data-bs-toggle", "tooltip");
-            path.setAttribute("data-bs-placement", "bottom");
-            path.setAttribute("data-bs-custom-class", "custom-tooltip");
-            path.setAttribute("data-bs-html", "true");
-            let len = lengths[index] ? lengths[index].toString().replace('-', '') : 'N/A';
-            path.setAttribute("title", `Gene: <b>${produto}</b><br>Length: <b>${len} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light</b>' : '<b>heavy</b>'}`);
+            if (!pattern) {
+                path.setAttribute("data-bs-toggle", "tooltip");
+                path.setAttribute("data-bs-placement", "bottom");
+                path.setAttribute("data-bs-custom-class", "custom-tooltip");
+                path.setAttribute("data-bs-html", "true");
+                let len = lengths[index] ? lengths[index].toString().replace('-', '') : 'N/A';
+                path.setAttribute("title", `Gene: <b>${produto}</b><br>Length: <b>${len} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light</b>' : '<b>heavy</b>'}`);
+            }
 
             let text = document.createElementNS(svgNS, "text");
             text.setAttribute("x", (currentX + pieceW / 2).toString());
@@ -607,19 +611,21 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             svg.appendChild(path);
             svg.appendChild(text);
 
-            let editIcon = document.createElementNS(svgNS, "text");
-            editIcon.setAttribute("x", (currentX + pieceW / 2).toString());
-            editIcon.setAttribute("y", (70 + pieceH).toString());
-            editIcon.setAttribute("fill", "#000000");
-            editIcon.setAttribute("text-anchor", "middle");
-            editIcon.setAttribute("font-size", "15px");
-            editIcon.setAttribute("cursor", "pointer");
-            editIcon.setAttribute("data-bs-toggle", "tooltip");
-            editIcon.setAttribute("title", "Edit this Gene");
-            editIcon.textContent = "✎";
-            editIcon.onclick = () => openEditModal(produto, index, genes, strands, lengths, data, geneOrder, pattern);
+            if (!pattern) {
+                let editIcon = document.createElementNS(svgNS, "text");
+                editIcon.setAttribute("x", (currentX + pieceW / 2).toString());
+                editIcon.setAttribute("y", (70 + pieceH).toString());
+                editIcon.setAttribute("fill", "#000000");
+                editIcon.setAttribute("text-anchor", "middle");
+                editIcon.setAttribute("font-size", "15px");
+                editIcon.setAttribute("cursor", "pointer");
+                editIcon.setAttribute("data-bs-toggle", "tooltip");
+                editIcon.setAttribute("title", "Edit this Gene");
+                editIcon.textContent = "✎";
+                editIcon.onclick = () => openEditModal(produto, index, genes, strands, lengths, data, geneOrder, pattern);
 
-            svg.appendChild(editIcon);
+                svg.appendChild(editIcon);
+            }
 
             const isPseudoGene = pseudoGenes.some(pg => pg.gene === produto);
             const isNewGene = lengths[index] === 0;
@@ -644,11 +650,13 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 hash.setAttribute("font-size", "25px");
                 hash.textContent = "#";
                 hash.setAttribute("cursor", "pointer");
-                hash.setAttribute("data-bs-toggle", "tooltip");
-                hash.setAttribute("data-bs-placement", "bottom");
-                hash.setAttribute("data-bs-custom-class", "custom-tooltip");
-                hash.setAttribute("data-bs-html", "true");
-                hash.setAttribute("title", "Click to remove");
+                if (!pattern) {
+                    hash.setAttribute("data-bs-toggle", "tooltip");
+                    hash.setAttribute("data-bs-placement", "bottom");
+                    hash.setAttribute("data-bs-custom-class", "custom-tooltip");
+                    hash.setAttribute("data-bs-html", "true");
+                    hash.setAttribute("title", "Click to remove");
+                }
                 hash.onclick = () => {
                     if (confirm("Are you sure you want to remove this gene?")) {
                         const tooltipInstance = bootstrap.Tooltip.getInstance(hash);
@@ -696,18 +704,20 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             currentX += pieceW;
         });
 
-        // Adiciona o botão de adicionar ao final
-        let btnFinal = document.createElementNS(svgNS, "text");
-        btnFinal.textContent = '+';
-        btnFinal.setAttribute("x", (currentX + 10).toString());
-        btnFinal.setAttribute("y", "115");
-        btnFinal.setAttribute("fill", "#000000");
-        btnFinal.setAttribute("font-weight", "bold");
-        btnFinal.setAttribute("text-anchor", "middle");
-        btnFinal.setAttribute("cursor", "pointer");
-        btnFinal.setAttribute("font-size", "20px");
-        btnFinal.onclick = () => adicionarElemento(genes.length - 1, 'direita');
-        svg.appendChild(btnFinal);
+        // Adiciona o botão de adicionar ao final, apenas se pattern for false
+        if (!pattern) {
+            let btnFinal = document.createElementNS(svgNS, "text");
+            btnFinal.textContent = '+';
+            btnFinal.setAttribute("x", (currentX + 10).toString());
+            btnFinal.setAttribute("y", "115");
+            btnFinal.setAttribute("fill", "#000000");
+            btnFinal.setAttribute("font-weight", "bold");
+            btnFinal.setAttribute("text-anchor", "middle");
+            btnFinal.setAttribute("cursor", "pointer");
+            btnFinal.setAttribute("font-size", "20px");
+            btnFinal.onclick = () => adicionarElemento(genes.length - 1, 'direita');
+            svg.appendChild(btnFinal);
+        }
 
         let container = document.createElement("div");
         container.setAttribute("id", `container-${safeVoucher}`);
@@ -721,8 +731,10 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
         syncScroll();
 
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        if (!pattern) {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        }
     });
 
     function openEditModal(geneName, index, genes, strands, lengths, data, geneOrder, pattern) {
@@ -801,6 +813,46 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         });
     }
 
+    function openEditPatternModal(data, patternMap, patternCounter) {
+        console.log('Opening edit modal for pattern:', data.id);
+        const modalContent = `
+            <div class="modal fade" id="editPatternModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header h3 bg-dark text-white">
+                            <h5 class="modal-title" id="editPatternModalLabel">Rename <b>${data.id}</b></h5>
+                        </div>
+                        <div class="modal-body">
+                            <label for="newPatternName">Rename <b>${data.id}</b> to:</label>
+                            <input id="newPatternName" class="form-control form-control-lg" type="text" value="${data.id}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="saveEditPatternButton">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+        $('#editPatternModal').modal('show');
+
+        $('#saveEditPatternButton').off('click').on('click', function () {
+            const newPatternName = $('#newPatternName').val();
+            if (newPatternName && newPatternName !== data.id) {
+                data.id = newPatternName;
+                patternMap.set(data.geneOrder, {
+                    ...patternMap.get(data.geneOrder),
+                    id: newPatternName
+                });
+
+                createSVG(genomicData, geneStart, geneList, pattern);
+                $('#editPatternModal').modal('hide');
+                $('#editPatternModal').remove();
+            }
+        });
+    }
+
     function moveLine(index, direction) {
         if (index + direction < 0 || index + direction >= genomicData.length) return;
 
@@ -818,6 +870,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
     }
 }
+
+
 
 
 // Sincroniza o scroll de todos os elementos SVG
@@ -984,7 +1038,7 @@ function showResults(dataGenomes, typeGenome) {
         // Show the modal with new content
         ViewGenomeDraw.modal('show');
         $('#ViewPlotTitle').append(`Genome diagram for <i>${dataGenomes[id].speciesNames.join(", ")}</i> <b>(${dataGenomes[id].vouchers.join(", ")})</b>`);
-        $('#ViewPlotFigureCaption').append(`<h4>Genome diagram for <i>${dataGenomes[id].speciesNames.join(", ")}</i> <b>(${dataGenomes[id].vouchers.join(", ")})</b></h4><br><h5>The Colors Scheme is adapted for Color Blindness - Wong, B. (2011). Color blindness. <i>Nature Methods</i>, <i>8</i>(6), 441. https://doi.org/10.1038/nmeth.1618</h5>`);
+        $('#ViewPlotFigureCaption').append(`<h6>The Colors Scheme is adapted for Color Blindness - Wong, B. (2011). Color blindness. <i>Nature Methods</i>, <i>8</i>(6), 441. https://doi.org/10.1038/nmeth.1618</h6>`);
 
         // Create a new genomeDraw instance and store it in window object
         window.genomeDraw = new CGV.Viewer('#LinearGenome', {
@@ -1118,34 +1172,36 @@ function generateLinearObject(dataEntry) {
     };
 
     dataEntry.genes.forEach((geneName, index) => {
-        //console.log(dataEntry.geneInfo[geneName][0].start);
-        let type = 'PCGs';
-        if (geneName.includes('tRNA-')) {
-            type = 'tRNA';
-        } else if (['12S', '16S'].includes(geneName)) {
-            type = 'rRNA';
+        if (geneName != '-') {
+            //console.log(dataEntry.geneInfo[geneName][0].start);
+            let type = 'PCGs';
+            if (geneName.includes('tRNA-')) {
+                type = 'tRNA';
+            } else if (['12S', '16S'].includes(geneName)) {
+                type = 'rRNA';
+            }
+
+            let start = dataEntry.geneData[geneName][0].start;
+            let end = dataEntry.geneData[geneName][0].end;
+
+            //console.log(geneName, start, end);
+
+            if (end < start) {
+                start = dataEntry.geneData[geneName][0].end;
+                end = dataEntry.geneData[geneName][0].start;
+            }
+
+            Linear.cgview.features.push({
+                name: geneName,
+                type: type,
+                start: start,
+                stop: end,
+                strand: dataEntry.strands[index] === '+' ? +1 : -1,
+                source: "data_LuanRabelo",
+                legend: type,
+                tags: []
+            });
         }
-
-        let start = dataEntry.geneData[geneName][0].start;
-        let end = dataEntry.geneData[geneName][0].end;
-
-        //console.log(geneName, start, end);
-
-        if (end < start) {
-            start = dataEntry.geneData[geneName][0].end;
-            end = dataEntry.geneData[geneName][0].start;
-        }
-
-        Linear.cgview.features.push({
-            name: geneName,
-            type: type,
-            start: start,
-            stop: end,
-            strand: dataEntry.strands[index] === '+' ? +1 : -1,
-            source: "data_LuanRabelo",
-            legend: type,
-            tags: []
-        });
     });
 
     return Linear;
