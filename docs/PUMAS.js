@@ -440,6 +440,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         function updatePseudoGenes() {
             const geneCount = {};
             genes.forEach(gene => {
+                if (!gene || gene === 'gap' || gene === '-') return; // Ignore empty, gap, or "-" genes
                 if (!geneCount[gene]) {
                     geneCount[gene] = 0;
                 }
@@ -578,7 +579,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             path.setAttribute("stroke-width", "0.25");
             path.setAttribute("stroke-linejoin", "round");
             path.setAttribute("class", "gene-path");
-            if (!pattern) {
+
+            if (!pattern && produto && produto !== 'gap' && produto !== '-') {
                 path.setAttribute("data-bs-toggle", "tooltip");
                 path.setAttribute("data-bs-placement", "bottom");
                 path.setAttribute("data-bs-custom-class", "custom-tooltip");
@@ -646,11 +648,11 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             line.setAttribute("x2", (currentX + pieceW).toString());
             line.setAttribute("stroke", "black");
 
-            if (strands[index] === '+') {
+            if (strands[index] === '+' && produto && produto !== 'gap' && produto !== '-') {
                 line.setAttribute("y1", "80");
                 line.setAttribute("y2", "80");
                 line.setAttribute("stroke-width", "5");
-            } else {
+            } else if (produto && produto !== 'gap' && produto !== '-') {
                 line.setAttribute("y1", (80 + pieceH).toString());
                 line.setAttribute("y2", (80 + pieceH).toString());
                 line.setAttribute("stroke-width", "5");
@@ -724,11 +726,11 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                                 ${geneList.map(gene => `<option value="${gene}">${gene}</option>`).join('')}
                             </select>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="strand" id="strandPlus" value="+" ${strands[index] === '+' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="strand" id="strandPlus" value="+" ${strands[index] === '+' ? 'checked' : ''} disabled>
                                 <label class="form-check-label" for="strandPlus"><b>+</b> (Line above)</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="strand" id="strandMinus" value="-" ${strands[index] === '-' ? 'checked' : ''}>
+                                <input class="form-check-input" type="radio" name="strand" id="strandMinus" value="-" ${strands[index] === '-' ? 'checked' : ''} disabled>
                                 <label class="form-check-label" for="strandMinus"><b>-</b> (Line below)</label>
                             </div>
                         </div>
@@ -742,6 +744,12 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         `;
         document.body.insertAdjacentHTML('beforeend', modalContent);
         $('#editGeneModal').modal('show');
+
+        $('#newGeneName').on('change', function () {
+            const selectedGene = $(this).val();
+            const disableStrands = !selectedGene || selectedGene === 'gap' || selectedGene === '-';
+            $('#strandPlus, #strandMinus').prop('disabled', disableStrands);
+        });
 
         $('#saveEditGeneButton').off('click').on('click', function () {
             const newGeneName = $('#newGeneName').val();
@@ -836,6 +844,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
     }
 }
+
 
 function createAndDownloadSVG(geneList, geneStart) {
     const svgNS = "http://www.w3.org/2000/svg";
