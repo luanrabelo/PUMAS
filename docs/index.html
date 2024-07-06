@@ -261,6 +261,10 @@
                             geneList.disabled               = true;
                             geneList.style.backgroundColor  = '';
                             _results.style.display          = 'none';
+
+                            $('html, body').animate({
+                                scrollTop: 0
+                            }, 1000);
                         });
                 
                         exampleMitochondrial.addEventListener('click', function () {
@@ -443,7 +447,7 @@
             </div>
             <script>
                 $(document).ready(function () {
-                    let data = null;
+                    var data = null;
                     const startSearch = document.getElementById('startSearch');
                     startSearch.addEventListener('click', async function () {
                         const vouchersList  = document.getElementById('vouchersList').value.trim();
@@ -670,18 +674,22 @@
 
                 const downloadPlot = document.getElementById('PatternsDownload');
                 const PatternsSelect = document.getElementById('PatternsSelect');
+                const PatternsDownloadFile = document.getElementById('PatternsDownloadFile');
                 downloadPlot.addEventListener('click', function () {
                     let geneStart     = document.getElementById('geneList').value;
                     if (PatternsSelect.value === 'SVG') {
-                        createAndDownloadSVG(data, _geneListEdit, geneStart);
+                        createAndDownloadSVG(_geneListEdit, geneStart);
                     } else if (PatternsSelect.value === 'PNG') {
-                        createAndDownloadPNG(data, _geneListEdit, geneStart);
+                        createAndDownloadPNG(_geneListEdit, geneStart);
                     }
 
                 });
-                    
 
+                PatternsDownloadFile.addEventListener('click', function () {
+                    let geneStart     = document.getElementById('geneList').value;
+                    createAndDownloadText(_geneListEdit, geneStart);
                 });
+            });
             </script>
             
             <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
@@ -774,7 +782,7 @@
                 </div>
 
                 <label class="h4"><span class="badge text-bg-dark">6</span> - Genomes Patterns</label>
-                <div class="row row-cols-2 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
+                <div class="row row-cols-3 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
                     <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3 mt-2 mb-2">
                         <label class="h4"><span class="badge text-bg-dark">6.1</span> - Show only Genome Patterns</label>
                         <div class="form-check form-switch">
@@ -792,19 +800,28 @@
                             <button id="PatternsDownload" class="btn btn-lg btn-dark" type="button" disabled>Download Figure</button>
                         </div>                    
                     </div>
+                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3 mt-2 mb-2">
+                        <label class="h4"><span class="badge text-bg-dark">6.3</span> - Patterns File</label>
+                        <div class="input-group">
+                            <button id="PatternsDownloadFile" class="btn btn-lg btn-dark" type="button" disabled>Download File</button>    
+                        </div>                    
+                    </div>
                 </div>
                 <script>
                     $(document).ready(function () {
                         const PatternsSelect = document.getElementById('PatternsSelect');
                         const PatternsDownload = document.getElementById('PatternsDownload');
+                        const PatternsDownloadFile = document.getElementById('PatternsDownloadFile');
                         const Patterns = document.getElementById('Patterns');
                         Patterns.addEventListener('change', function () {
                             if (Patterns.checked) {
                                 PatternsSelect.disabled = false;
                                 PatternsDownload.disabled = false;
+                                PatternsDownloadFile.disabled = false;
                             } else {
                                 PatternsSelect.disabled = true;
                                 PatternsDownload.disabled = true;
+                                PatternsDownloadFile.disabled = true;
                             }
                         });
                     });

@@ -1,5 +1,3 @@
-var dataGenomes = {};
-
 const MitochondrialGenes = {
     "-":      [],
     "OL":       [],
@@ -158,17 +156,9 @@ var colorMitochondrial = {
     "rrn16S": "#FFFFE0", "rrn23S": "#00FFFF", "rrn4.5S": "#32CD32", "rrn5S": "#FAF0E6", "ycf2": "#800080", "ycf1": "#66CDAA", "ycl2": "#0000FF"
 };
 
-// Verify if each color is unique
-//let colorSet = new Set(Object.values(colorMitochondrial));
-//if (colorSet.size === Object.keys(colorMitochondrial).length) {
-//    console.log("All genes have unique colors.");
-//} else {
-//    console.error("Color repetition detected, please check. Unique colors assigned:", colorSet.size);
-//}
 
 async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
     let progress = 0;
-
     function updateProgressBar(current, total) {
         const progressBar = document.getElementById('progressBar');
         const percentage = (current / total) * 100;
@@ -297,9 +287,10 @@ function processPseudoGenes(geneData) {
 }
 
 
+let currentGenomicData = []; // Variável global para armazenar a ordem atualizada
+
 function createSVG(genomicData, geneStart, geneList, pattern = false) {
     console.log('createSVG called with:', { genomicData, geneStart, geneList, pattern });
-
     const patternMap = new Map();
     let patternCounter = 1;
 
@@ -333,7 +324,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }));
     }
 
-    // Calculate the maximum SVG width
+    currentGenomicData = [...genomicData]; // Atualizar a variável global com a ordem atualizada
+
     const pieceWidth = 125;
     const pieceHeight = pieceWidth / 2;
     const tRNAWidth = pieceWidth;
@@ -347,20 +339,15 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
     });
 
-    // Add extra space for the final "+" button
     const totalWidth = maxGeneOrderLength + 50;
 
-    // Clear the existing SVG containers
     document.querySelectorAll('.svg-container').forEach(container => container.remove());
 
     genomicData.forEach((data, dataIndex) => {
         let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
         const nomeEspecie = Array.isArray(speciesNames) ? speciesNames.join(", ") : speciesNames;
-
         console.log('Processing genomic data for:', { nomeEspecie, genes, geneOrder });
-
         const safeVoucher = String(speciesNames).replace(/[^a-zA-Z0-9-_]/g, '_');
-
         const preferidos = [geneStart];
         let startGene = preferidos.find(gene => genes.includes(gene));
         if (startGene) {
@@ -385,7 +372,6 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 const qtde = parseInt($('#quantidade').val()) || quantidade;
                 const newGeneStrand = $('#light').prop('checked') ? '+' : '-';
                 const newGenePosition = lado === 'esquerda' ? index : index + 1;
-
                 const updateGenes = (genes, strands, lengths) => {
                     for (let i = 0; i < qtde; i++) {
                         genes.splice(newGenePosition + i, 0, newGeneName);
@@ -459,14 +445,12 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 }
                 geneCount[gene]++;
             });
-
             pseudoGenes = [];
             for (const [gene, count] of Object.entries(geneCount)) {
                 if (count > 1) {
                     pseudoGenes.push({ gene });
                 }
             }
-
             data.pseudoGenes = pseudoGenes;
         }
 
@@ -479,8 +463,12 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         textEspecie.setAttribute("font-size", "20px");
 
         let italicEspecie = document.createElementNS(svgNS, "tspan");
-        italicEspecie.setAttribute("font-style", "italic");
-        italicEspecie.textContent = `${pattern ? id + ': ' : ''}${nomeEspecie} `;
+        if (pattern) {
+            italicEspecie.setAttribute("font-weight", "bold");
+        } else {
+            italicEspecie.setAttribute("font-style", "italic");
+        }
+        italicEspecie.textContent = `${pattern ? id + '' : nomeEspecie}`;
         textEspecie.appendChild(italicEspecie);
 
         if (!pattern) {
@@ -611,22 +599,6 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             svg.appendChild(path);
             svg.appendChild(text);
 
-            if (!pattern) {
-                let editIcon = document.createElementNS(svgNS, "text");
-                editIcon.setAttribute("x", (currentX + pieceW / 2).toString());
-                editIcon.setAttribute("y", (70 + pieceH).toString());
-                editIcon.setAttribute("fill", "#000000");
-                editIcon.setAttribute("text-anchor", "middle");
-                editIcon.setAttribute("font-size", "15px");
-                editIcon.setAttribute("cursor", "pointer");
-                editIcon.setAttribute("data-bs-toggle", "tooltip");
-                editIcon.setAttribute("title", "Edit this Gene");
-                editIcon.textContent = "✎";
-                editIcon.onclick = () => openEditModal(produto, index, genes, strands, lengths, data, geneOrder, pattern);
-
-                svg.appendChild(editIcon);
-            }
-
             const isPseudoGene = pseudoGenes.some(pg => pg.gene === produto);
             const isNewGene = lengths[index] === 0;
 
@@ -704,7 +676,6 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             currentX += pieceW;
         });
 
-        // Adiciona o botão de adicionar ao final, apenas se pattern for false
         if (!pattern) {
             let btnFinal = document.createElementNS(svgNS, "text");
             btnFinal.textContent = '+';
@@ -777,19 +748,15 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             const newStrand = $('input[name="strand"]:checked').val();
             console.log('Saving new gene name:', newGeneName, 'with strand:', newStrand);
 
-            // Update genes and strands arrays
             genes[index] = newGeneName;
             strands[index] = newStrand;
 
-            // Update geneOrder
             const newGeneOrder = geneOrder.split(',').slice();
             newGeneOrder[index] = newStrand === '-' ? `-${newGeneName}` : newGeneName;
             data.geneOrder = newGeneOrder.join(',');
 
-            // Update genes in the data object
             data.genes = genes;
 
-            // If pattern is true, update all instances in patternMap
             if (pattern) {
                 patternMap.get(geneOrder).species.forEach(speciesData => {
                     genomicData.forEach(genome => {
@@ -802,7 +769,6 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 });
             }
 
-            // Debugging information
             console.log('Updated data:', data);
             console.log('Updated genes:', genes);
             console.log('Updated geneOrder:', data.geneOrder);
@@ -870,6 +836,124 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
     }
 }
+
+function createAndDownloadSVG(geneList, geneStart) {
+    const svgNS = "http://www.w3.org/2000/svg";
+    let genomicData = [...currentGenomicData]; // Usar a ordem atualizada de currentGenomicData
+    const patternMap = new Map();
+    let patternCounter = 1;
+
+    genomicData.forEach(data => {
+        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
+
+        if (!patternMap.has(geneOrder)) {
+            patternMap.set(geneOrder, {
+                id: `Pattern ${toRoman(patternCounter++)}`,
+                genes: [...genes],
+                strands: [...strands],
+                lengths: [...lengths],
+                pseudoGenes: [...pseudoGenes],
+                geneOrder,
+                species: []
+            });
+        }
+        patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
+    });
+
+    genomicData = Array.from(patternMap.values()).map(patternData => ({
+        speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
+        vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
+        genes: patternData.genes,
+        strands: patternData.strands,
+        lengths: patternData.lengths,
+        pseudoGenes: patternData.pseudoGenes,
+        geneOrder: patternData.geneOrder,
+        id: patternData.id
+    }));
+
+    let svg = document.createElementNS(svgNS, "svg");
+    let maxSvgWidth = 0;
+    let totalHeight = 0;
+
+    genomicData.forEach((data, index) => {
+        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
+        const geneStartIndex = genes.indexOf(geneStart);
+        if (geneStartIndex !== -1) {
+            genes = [...genes.slice(geneStartIndex), ...genes.slice(0, geneStartIndex)];
+            strands = [...strands.slice(geneStartIndex), ...strands.slice(0, geneStartIndex)];
+            lengths = [...lengths.slice(geneStartIndex), ...lengths.slice(0, geneStartIndex)];
+        }
+
+        let rectWidth = 40;
+        let rectHeight = rectWidth * 1.25;
+        let svgWidth = genes.length * rectWidth;
+        let svgHeight = rectHeight + 25;
+
+        maxSvgWidth = Math.max(maxSvgWidth, svgWidth);
+
+        let titleText = document.createElementNS(svgNS, "text");
+        titleText.setAttribute("x", "10");
+        titleText.setAttribute("y", totalHeight + 20);
+        titleText.setAttribute("fill", "black");
+        titleText.setAttribute("font-size", "20px");
+        titleText.setAttribute("font-weight", "bold");
+        titleText.innerHTML = `Pattern ${toRoman(index + 1)}`;
+        svg.appendChild(titleText);
+
+        totalHeight += 40;
+
+        let xPosition = 0;
+        genes.forEach((gene, idx) => {
+            let rect = document.createElementNS(svgNS, "rect");
+            rect.setAttribute("x", xPosition);
+            rect.setAttribute("y", totalHeight);
+            rect.setAttribute("width", rectWidth.toString());
+            rect.setAttribute("height", rectHeight.toString());
+            rect.setAttribute("fill", colorMitochondrial[gene] || "#D3D3D3");
+            rect.setAttribute("stroke", "#000000");
+            rect.setAttribute("fill-opacity", "0.50");
+
+            let text = document.createElementNS(svgNS, "text");
+            text.setAttribute("x", xPosition + rectWidth / 2);
+            text.setAttribute("y", totalHeight + rectHeight / 2);
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("dominant-baseline", "middle");
+            text.setAttribute("transform", `rotate(90, ${xPosition + rectWidth / 2}, ${totalHeight + rectHeight / 2})`);
+            text.textContent = gene.replace('tRNA-', '');
+            svg.appendChild(rect);
+            svg.appendChild(text);
+
+            let line = document.createElementNS(svgNS, "line");
+            line.setAttribute("x1", xPosition);
+            line.setAttribute("x2", xPosition + rectWidth);
+            line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
+            line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
+            line.setAttribute("stroke", "#000000");
+            line.setAttribute("stroke-width", "5");
+            svg.appendChild(line);
+
+            xPosition += rectWidth;
+        });
+
+        totalHeight += rectHeight + 20;
+    });
+
+    svg.setAttribute("width", maxSvgWidth.toString());
+    svg.setAttribute("height", totalHeight.toString());
+
+    let serializer = new XMLSerializer();
+    let svgString = serializer.serializeToString(svg);
+    let blob = new Blob([svgString], { type: "image/svg+xml" });
+    let url = window.URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "PUMAS_CompleteGenomicData.svg";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+
 
 
 
@@ -1360,14 +1444,14 @@ async function mergeSVGsIntoPDF(svgElements) {
 
 
 
-function createAndDownloadSVG(genomicData, geneList, geneStart) {
-    console.log('createAndDownloadSVG called with:', { genomicData, geneList, geneStart });
 
+
+function createAndDownloadPNG(geneList, geneStart) {
     const svgNS = "http://www.w3.org/2000/svg";
+    let genomicData = [...currentGenomicData];
     const patternMap = new Map();
     let patternCounter = 1;
 
-    // Group genomic data by gene order
     genomicData.forEach(data => {
         let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
 
@@ -1396,16 +1480,12 @@ function createAndDownloadSVG(genomicData, geneList, geneStart) {
         id: patternData.id
     }));
 
-    // Initialize SVG element
     let svg = document.createElementNS(svgNS, "svg");
     let maxSvgWidth = 0;
     let totalHeight = 0;
 
-    // Filter out unique gene orders and create SVG only for common patterns
     genomicData.forEach((data, index) => {
         let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
-
-        // Reorder genes to start from the specified gene
         const geneStartIndex = genes.indexOf(geneStart);
         if (geneStartIndex !== -1) {
             genes = [...genes.slice(geneStartIndex), ...genes.slice(0, geneStartIndex)];
@@ -1420,24 +1500,16 @@ function createAndDownloadSVG(genomicData, geneList, geneStart) {
 
         maxSvgWidth = Math.max(maxSvgWidth, svgWidth);
 
-        // Pattern title
         let titleText = document.createElementNS(svgNS, "text");
         titleText.setAttribute("x", "10");
         titleText.setAttribute("y", totalHeight + 20);
         titleText.setAttribute("fill", "black");
         titleText.setAttribute("font-size", "20px");
         titleText.setAttribute("font-weight", "bold");
-
-        let speciesNamesList = patternMap.get(geneOrder).species.map(speciesData => speciesData.speciesNames).join("; ");
-        titleText.innerHTML = `Pattern ${toRoman(index + 1)}: `;
-        
-        let italicSpeciesNamesList = document.createElementNS(svgNS, "tspan");
-        italicSpeciesNamesList.setAttribute("font-style", "italic");
-        italicSpeciesNamesList.textContent = speciesNamesList;
-        titleText.appendChild(italicSpeciesNamesList);
-
+        titleText.innerHTML = `Pattern ${toRoman(index + 1)}`;
         svg.appendChild(titleText);
-        totalHeight += 40; // Increase Y position for gene drawings
+
+        totalHeight += 40;
 
         let xPosition = 0;
         genes.forEach((gene, idx) => {
@@ -1472,184 +1544,93 @@ function createAndDownloadSVG(genomicData, geneList, geneStart) {
             xPosition += rectWidth;
         });
 
-        totalHeight += rectHeight + 20; // Adjust Y for the next pattern
+        totalHeight += rectHeight + 20;
     });
 
-    // Set final dimensions for the SVG
     svg.setAttribute("width", maxSvgWidth.toString());
     svg.setAttribute("height", totalHeight.toString());
 
-    // Convert SVG to string and initiate download
-    let serializer = new XMLSerializer();
-    let svgString = serializer.serializeToString(svg);
-    let blob = new Blob([svgString], { type: "image/svg+xml" });
-    let url = window.URL.createObjectURL(blob);
-    let a = document.createElement("a");
-    a.href = url;
-    a.download = "CompleteGenomicData.svg";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a); // Clean up after download
-}
-
-function toRoman(num) {
-    const lookup = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
-    let roman = '';
-    for (let i in lookup) {
-        while (num >= lookup[i]) {
-            roman += i;
-            num -= lookup[i];
-        }
-    }
-    return roman;
-}
-
-function createAndDownloadPNG(genomicData, geneList, geneStart) {
-    console.log('createAndDownloadPNG called with:', { genomicData, geneList, geneStart });
-
-    const svgNS = "http://www.w3.org/2000/svg";
-    const patternMap = new Map();
-    let patternCounter = 1;
-
-    // Group genomic data by gene order
-    genomicData.forEach(data => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
-
-        if (!patternMap.has(geneOrder)) {
-            patternMap.set(geneOrder, {
-                id: `Pattern ${toRoman(patternCounter++)}`,
-                genes: [...genes],
-                strands: [...strands],
-                lengths: [...lengths],
-                pseudoGenes: [...pseudoGenes],
-                geneOrder,
-                species: []
-            });
-        }
-        patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
-    });
-
-    genomicData = Array.from(patternMap.values()).map(patternData => ({
-        speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
-        vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
-        genes: patternData.genes,
-        strands: patternData.strands,
-        lengths: patternData.lengths,
-        pseudoGenes: patternData.pseudoGenes,
-        geneOrder: patternData.geneOrder,
-        id: patternData.id
-    }));
-
-    // Initialize SVG element
-    let svg = document.createElementNS(svgNS, "svg");
-    let maxSvgWidth = 0;
-    let totalHeight = 0;
-
-    // Filter out unique gene orders and create SVG only for common patterns
-    genomicData.forEach((data, index) => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
-
-        // Reorder genes to start from the specified gene
-        const geneStartIndex = genes.indexOf(geneStart);
-        if (geneStartIndex !== -1) {
-            genes = [...genes.slice(geneStartIndex), ...genes.slice(0, geneStartIndex)];
-            strands = [...strands.slice(geneStartIndex), ...strands.slice(0, geneStartIndex)];
-            lengths = [...lengths.slice(geneStartIndex), ...lengths.slice(0, geneStartIndex)];
-        }
-
-        let rectWidth = 40;
-        let rectHeight = rectWidth * 1.25;
-        let svgWidth = genes.length * rectWidth;
-        let svgHeight = rectHeight + 25;
-
-        maxSvgWidth = Math.max(maxSvgWidth, svgWidth);
-
-        // Pattern title
-        let titleText = document.createElementNS(svgNS, "text");
-        titleText.setAttribute("x", "10");
-        titleText.setAttribute("y", totalHeight + 20);
-        titleText.setAttribute("fill", "black");
-        titleText.setAttribute("font-size", "20px");
-        titleText.setAttribute("font-weight", "bold");
-
-        let speciesNamesList = patternMap.get(geneOrder).species.map(speciesData => speciesData.speciesNames).join("; ");
-        titleText.innerHTML = `Pattern ${toRoman(index + 1)}: `;
-        
-        let italicSpeciesNamesList = document.createElementNS(svgNS, "tspan");
-        italicSpeciesNamesList.setAttribute("font-style", "italic");
-        italicSpeciesNamesList.textContent = speciesNamesList;
-        titleText.appendChild(italicSpeciesNamesList);
-
-        svg.appendChild(titleText);
-        totalHeight += 40; // Increase Y position for gene drawings
-
-        let xPosition = 0;
-        genes.forEach((gene, idx) => {
-            let rect = document.createElementNS(svgNS, "rect");
-            rect.setAttribute("x", xPosition);
-            rect.setAttribute("y", totalHeight);
-            rect.setAttribute("width", rectWidth.toString());
-            rect.setAttribute("height", rectHeight.toString());
-            rect.setAttribute("fill", colorMitochondrial[gene] || "#D3D3D3");
-            rect.setAttribute("stroke", "#000000");
-            rect.setAttribute("fill-opacity", "0.50");
-
-            let text = document.createElementNS(svgNS, "text");
-            text.setAttribute("x", xPosition + rectWidth / 2);
-            text.setAttribute("y", totalHeight + rectHeight / 2);
-            text.setAttribute("text-anchor", "middle");
-            text.setAttribute("dominant-baseline", "middle");
-            text.setAttribute("transform", `rotate(90, ${xPosition + rectWidth / 2}, ${totalHeight + rectHeight / 2})`);
-            text.textContent = gene.replace('tRNA-', '');
-            svg.appendChild(rect);
-            svg.appendChild(text);
-
-            let line = document.createElementNS(svgNS, "line");
-            line.setAttribute("x1", xPosition);
-            line.setAttribute("x2", xPosition + rectWidth);
-            line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-            line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-            line.setAttribute("stroke", "#000000");
-            line.setAttribute("stroke-width", "5");
-            svg.appendChild(line);
-
-            xPosition += rectWidth;
-        });
-
-        totalHeight += rectHeight + 20; // Adjust Y for the next pattern
-    });
-
-    // Set final dimensions for the SVG
-    svg.setAttribute("width", maxSvgWidth.toString());
-    svg.setAttribute("height", totalHeight.toString());
-
-    // Convert SVG to PNG
+    // Convert SVG to PNG with 300 DPI and white background
     let serializer = new XMLSerializer();
     let svgString = serializer.serializeToString(svg);
     let canvas = document.createElement("canvas");
-    let scaleFactor = 300 / 96; // DPI conversion factor (300 DPI vs 96 DPI standard)
-    canvas.width = maxSvgWidth * scaleFactor;
-    canvas.height = totalHeight * scaleFactor;
     let context = canvas.getContext("2d");
+    let img = new Image();
 
-    // Fill background with white
-    context.fillStyle = "#FFFFFF";
+    canvas.width = maxSvgWidth * 5;
+    canvas.height = totalHeight * 5;
+    context.fillStyle = "#FFFFFF"; // Fundo branco
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    let image = new Image();
-    image.onload = function () {
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        let png = canvas.toDataURL("image/png");
-
+    img.onload = function() {
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
         let a = document.createElement("a");
-        a.href = png;
-        a.download = "CompleteGenomicData.png";
+        a.href = canvas.toDataURL("image/png");
+        a.download = "PUMAS_CompleteGenomicData.png";
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a); // Clean up after download
+        document.body.removeChild(a);
     };
 
-    let svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    let url = URL.createObjectURL(svgBlob);
-    image.src = url;
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
+}
+
+function createAndDownloadText(geneList, geneStart) {
+    let genomicData = [...currentGenomicData];
+    const patternMap = new Map();
+    let patternCounter = 1;
+
+    genomicData.forEach(data => {
+        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
+
+        if (!patternMap.has(geneOrder)) {
+            patternMap.set(geneOrder, {
+                id: `Pattern ${toRoman(patternCounter++)}`,
+                genes: [...genes],
+                strands: [...strands],
+                lengths: [...lengths],
+                pseudoGenes: [...pseudoGenes],
+                geneOrder,
+                species: []
+            });
+        }
+        patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
+    });
+
+    genomicData = Array.from(patternMap.values()).map(patternData => ({
+        speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
+        vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
+        genes: patternData.genes,
+        strands: patternData.strands,
+        lengths: patternData.lengths,
+        pseudoGenes: patternData.pseudoGenes,
+        geneOrder: patternData.geneOrder,
+        id: patternData.id
+    }));
+
+    let textContent = "";
+
+    genomicData.forEach((data, index) => {
+        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
+        const geneStartIndex = genes.indexOf(geneStart);
+        if (geneStartIndex !== -1) {
+            genes = [...genes.slice(geneStartIndex), ...genes.slice(0, geneStartIndex)];
+            strands = [...strands.slice(geneStartIndex), ...strands.slice(0, geneStartIndex)];
+            lengths = [...lengths.slice(geneStartIndex), ...lengths.slice(0, geneStartIndex)];
+        }
+
+        textContent += `${id}\n`;
+        textContent += `${genes.join(", ")}\n`;
+        textContent += `${speciesNames.split("; ").map((name, i) => `${name} (${vouchers.split("; ")[i]})`).join("; ")}\n`;
+        textContent += `\n\n\n\n`; // Quatro quebras de linha
+    });
+
+    let blob = new Blob([textContent], { type: "text/plain" });
+    let url = window.URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "PUMAS_GenomicPatterns.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
