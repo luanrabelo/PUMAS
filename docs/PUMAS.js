@@ -574,8 +574,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
             path.setAttribute("d", d);
             path.setAttribute("fill", colorMitochondrial[produto] || "#FFFFFF");
-            path.setAttribute("stroke", colorMitochondrial[produto] || "#FFFFFF");
-            path.setAttribute("stroke-width", "1");
+            path.setAttribute("stroke", "#202020");
+            path.setAttribute("stroke-width", "0.25");
             path.setAttribute("stroke-linejoin", "round");
             path.setAttribute("class", "gene-path");
             if (!pattern) {
