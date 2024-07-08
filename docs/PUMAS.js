@@ -1,5 +1,5 @@
 const MitochondrialGenes = {
-    "-":      [],
+    "-":        [],
     "OL":       [],
     "OH":       [],
     "12S":      ['small subunit ribosomal RNA', 's-rRNA', '12S ribosormal RNA', 'small ribosomal RNA subunit RNA', '12SrRNA', '12 ribosomal RNA', 'rrnS', '12S ribosomal RNA subunit', '12S', 'small ribosomal RNA', 'small subunit ribosormal RNA', '12 rRNA', '12 S ribosomal RNA', '12S small subunit ribosomal RNA', 'trnS', 'Product small subunit ribosomal RNA', '12S-rRNA', 'rRNA-12S', '12S ribosonal RNA', '12Srrn', '12S ribosome RNA', '12S ribsomal RNA', '12S rRNA', '12S ribosomal RNA', '12S ribosomal ribonucleic acid'],
@@ -21,7 +21,7 @@ const MitochondrialGenes = {
 };
 
 const ChloroplastGenes = {
-    "-":      [],
+    "-":        [],
     "accD":     ['acetyl-CoA carboxylase subunit beta', 'acetyl-CoA carboxylase carboxyltransferase beta', 'acetyl-CoA carboxylase, carboxyl transferase subunit beta', 'acetyl-CoA carboxylase carboxyl transferase subunit beta', 'acetyl-CoA carboxylase carboxyltransferase subunit beta', 'acetyl-CoA carboxylase carboxyl transferase beta', 'Acetyl-CoA carboxylase carboxyltransferase beta subunit', 'carboxytransferase beta subunit', 'acetyl-CoA carboxylase, carboxyl transferasesubunit beta', 'acetyl-coenzyme A carboxylase carboxyl', 'acetyl-CoA carboxylase carboxyltransferase beta subunit protein', 'acetyl-CoA carboxyltransferase beta subunit', 'acetyl-coenzyme A carboxylase carboxyltransferase subunit beta', 'Acetyl-CoA carboxylase carboxyl transferase beta subunit', 'acetyl-coenzyme A carboxylase carboxyl transferase subunit beta', 'acetyl-CoA carboxylase carboxyl transferase betasubunit', 'acetylCoA carboxylase, carboxyl transferase subunit beta', 'acetyl-CoA carboxlyase carboxyltransferase beta subunit', 'Acetyl-coenzyme A carboxylase carboxyl transferasesubunit beta', 'acetyl-CoA caboxylase beta subunit', 'Acetyl-CoA carboxylase beta subunit', 'accD protein', 'acetyl-CoA carboxytransferase subunit beta', 'acetyl-CoA carboxylase carboxyltransferase beta#bunit', 'acetyl-CoA carboxylase carbosyltransferase beta subunit', 'acetyl-coenzyme A carboxylase carboxyl transferase subunit beta, chloroplastic', 'acetyl-coenzyme A carboxylase beta subunit', 'acetyl-CoA carboxyltransferase subunit beta', 'cetyl-coenzyme A carboxylase carboxyl transferase subunit beta', 'accD', 'AccD; acetyl-CoA carboxylase beta subunit', 'beta-carboxyltransferase subunit', 'Acetyl-CoA carboxylasecarboxyl transferase beta subunit', 'Acetyl-CoAcarboxylase carboxyl transferase beta subunit', 'acetyl-CoA carboxylase 1', 'Acetyl-CoA carboxylase subunit', 'beta subunit of acetyl-CoA carboxylase carboxytransferase', 'Acetyl-o A carboxylase carboxyl transferase beta subunit', "'acetyl-CoA carboxylase carboxyltransferase beta", 'Acetyle-CoA carboxylase beta subunit', 'acetyl-CoAcarboxylase carboxyltransferase beta subunit', 'acetyl-CoA carboxylase arboxyltransferase beta subunit', 'truncated acetyl-CoA carboxylase beta subunit', 'acetyl- CoAcarboxylasecarboxyltransferasebetasubunit', 'acetyl-CoA carboxylase', 'acetyl-CoA carboxylase carboxyl transferase', 'acetyl-CoA carboxylase carboxyl transferase subunit', 'Acetyl-CoA carboxylase carboxyltransferase betasubunit', 'acetyl-CoA carboxylase carboxy l transferase beta subunit', 'acetyl-coenzyme A decarboxylase', 'acetyl-carboxylase beta subunit', 'putative acetyl-coenzyme A carboxylase carboxyl transferase subunit beta-like protein', 'cetyl-CoA carboxylase carboxyltransferase beta subunit', 'acetyl-CoA carboxylase carboxytransferase beta subunit', 'acetyl-CoA carb oxylase carboxyl transferase beta', 'Acetyl-CoA carboxylase carboxyltransferase subuni t beta', 'carboxytransferase beta subuni', 'NiTa acetyl-CoA carboxylase beta subunit-like protein', 'acetyl-CoA carboxylase beta subunit-like protein', 'acetyl CoA carboxylase', 'acetyl CoA carboxylase beta subunit', 'beta-carboxyl transferase subunit of acetyl-CoA carboxylase', 'acetyl-CoA carboxylase beta subuni', 'acetyl-CoA carboxylase-D'],
     "atpA":     ['CF1 subunit alpha', 'ATP synthase alpha chain', 'ATP synthase CF1 subunit alpha', 'ATPase alpha subunit', 'ATP synthase CF1 alpha chain', 'ATP synthase alpha subunit', 'ATP synthase F0 subunit A', 'ATP synthase subunit alpha', 'ATP systhase CF1 alpha subunit', 'atpA', 'ATP synthase CF1 alpha', 'ATPsynthaseCF1 alpha subunit', 'ATP synthase CF1, subunit alpha', 'CF1 alpha subunit', 'AT Psynthase CF1 alpha subunit', 'atpA protein', 'ATP synthase CF1 alph a subunit', 'ATPsynthase CF1 alpha subunit', 'ATP synthase CF 1 subunit alpha', 'ATP synthase CF1alpha subunit', 'AtpA; ATP synthase CF1 alpha subunit', 'CF1 alpha subunit of ATP synthase', 'ATP synthase subunit CF1 alpha subunit', 'ATP synthase CF1 alpha protein', 'H+-ATPase alpha subunit', 'ATPase subunit alpha', 'ATP synthase subunit CF1 alpha', 'ATP synthase subunit alpha, chloroplastic (EC:7.1 .2.2)', 'ATP synthase subunit alpha subunit', 'ATP-synthase CF1 alpha subunit', 'putative ATP synthase CF1 alpha subunit', 'ATP Synthase CF1 alpha subunit', 'F1-ATPase alpha-subunit'],
     "atpB":     ['CF1 subunit beta', 'ATP synthase beta chain', 'ATP synthase CF1 subunit beta', 'ATPase beta subunit', 'ATP synthase beta subunit', 'ATP synthase CF1 beta chain', 'ATP synthase F0 subunit B', 'ATP synthase subunit beta', 'ATP synthaes CF11 beta subunit', 'ATP synthase CF1beta subunit', 'atpB', 'ATPsynthaseCF1betasubunit', 'ATP synthase CF1, subunit beta', 'F-type H+/Na+-transporting ATPase subunit beta', 'ATPsynthase CF1 beta subunit', 'atpB protein', 'ATPase beta chain', 'ATP synthase CF 1 subunit beta', 'AtpB; ATP synthase CF1 beta subunit', 'CF1 beta subunit of ATP synthase', 'ATP synthase CF1 betas ubunit', 'ATP synthase subunit CF1 beta subunit', 'ATP synthase CF1 beta protein', 'ATP syntase CF1 beta subunit', 'H+-ATP synthase subunit B', 'H+-ATPase beta subunit', 'ATP synthase cf1 beta subunit', 'CF1 beta subunit', 'ATP synthase subunit beta, chloroplastic (EC:7.1. 2.2)', 'ATP synthase CF1 beta subuni', 'ATP-synthase CF1 beta subunit'],
@@ -125,7 +125,7 @@ const ChloroplastGenes = {
 
 
 var colorMitochondrial = {
-    "-": "#FFFFFF", "GAP": "#FFFFFF", "": "#FFFFFF",
+    "-": "#EEEEEE", "GAP": "#EEEEEE", "": "#EEEEEE",
 
     "COI": "#FF6347", "COII": "#4682B4", "COIII": "#FF4500",
     "tRNA-Met": "#32CD32", "tRNA-Gln": "#DA70D6", "tRNA-Lys": "#7FFF00", "tRNA-Ile": "#FFA07A", "tRNA-Trp": "#BA55D3",
@@ -290,7 +290,6 @@ function processPseudoGenes(geneData) {
 let currentGenomicData = []; // Variável global para armazenar a ordem atualizada
 
 function createSVG(genomicData, geneStart, geneList, pattern = false) {
-    console.log('createSVG called with:', { genomicData, geneStart, geneList, pattern });
     const patternMap = new Map();
     let patternCounter = 1;
 
@@ -324,11 +323,11 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }));
     }
 
-    currentGenomicData = [...genomicData]; // Atualizar a variável global com a ordem atualizada
+    currentGenomicData = [...genomicData];
 
-    const pieceWidth = 125;
-    const pieceHeight = pieceWidth / 2;
-    const tRNAWidth = pieceWidth;
+    const pieceWidth    = 125;
+    const pieceHeight   = pieceWidth / 2;
+    const tRNAWidth     = pieceWidth;
     let maxGeneOrderLength = 0;
 
     genomicData.forEach(data => {
@@ -345,11 +344,10 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
     genomicData.forEach((data, dataIndex) => {
         let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
-        const nomeEspecie = Array.isArray(speciesNames) ? speciesNames.join(", ") : speciesNames;
-        console.log('Processing genomic data for:', { nomeEspecie, genes, geneOrder });
-        const safeVoucher = String(speciesNames).replace(/[^a-zA-Z0-9-_]/g, '_');
-        const preferidos = [geneStart];
-        let startGene = preferidos.find(gene => genes.includes(gene));
+        const nomeEspecie   = Array.isArray(speciesNames) ? speciesNames.join(", ") : speciesNames;
+        const safeVoucher   = String(speciesNames).replace(/[^a-zA-Z0-9-_]/g, '_');
+        const preferidos    = [geneStart];
+        let startGene       = preferidos.find(gene => genes.includes(gene));
         if (startGene) {
             const indexInicio = genes.indexOf(startGene);
             genes = [...genes.slice(indexInicio), ...genes.slice(0, indexInicio)];
@@ -398,9 +396,9 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 }
                 data.geneOrder = newGeneOrder.join(',');
 
-                data.genes = genes;
-                data.strands = strands;
-                data.lengths = lengths;
+                data.genes      = genes;
+                data.strands    = strands;
+                data.lengths    = lengths;
 
                 updatePseudoGenes();
 
@@ -576,7 +574,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             path.setAttribute("d", d);
             path.setAttribute("fill", colorMitochondrial[produto] || "#FFFFFF");
             path.setAttribute("stroke", "#202020");
-            path.setAttribute("stroke-width", "0.25");
+            path.setAttribute("stroke-width", "0.15");
             path.setAttribute("stroke-linejoin", "round");
             path.setAttribute("class", "gene-path");
 
@@ -711,7 +709,12 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
     });
 
     function openEditModal(geneName, index, genes, strands, lengths, data, geneOrder, pattern) {
-        console.log('Opening edit modal for gene:', geneName);
+        let listGenes = null;
+        if (MitochondrialGenes[geneName]) {
+            listGenes = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+        } else if (ChloroplastGenes[geneName]) {
+            listGenes = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
+        }
         const modalContent = `
             <div class="modal fade" id="editGeneModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">

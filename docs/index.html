@@ -98,13 +98,11 @@
         height: 2.5px;
     }
     #drop-area {
-        border: 2px dashed #ccc;
+        border: 2px solid #202020;
         border-radius: 5px;
         padding: 20px;
         cursor: pointer;
-    }
-    #drop-area.bg-light {
-        background-color: #f8f9fa;
+        background-color: #FF7F3E;
     }
     .drag{
         background-color: #9dde8b;
@@ -141,7 +139,7 @@
             </div>
             <div class="modal-body">
                 <p class="text-muted">Upload your .pumas file to import previously saved data for mitochondrial or chloroplast analysis.</p>
-                <div id="drop-area" class="border p-5 text-center bg-light">
+                <div id="drop-area" class="border p-5 text-center">
                     <p class="h5">Drag & drop the <b>.pumas</b> file here, or click to browse and select a file</p>
                     <input type="file" id="fileElem" accept=".pumas" style="display:none" onchange="handleFiles(this.files)">
                 </div>
@@ -222,14 +220,16 @@
 
             dropArea.addEventListener('dragover', (event) => {
                 event.preventDefault();
-                dropArea.classList.add('bg-secondary-subtle');
+                dropArea.classList.add('bg-success');
             });
             dropArea.addEventListener('dragleave', () => {
-                dropArea.classList.remove('bg-secondary-subtle');
+                dropArea.classList.remove('bg-success');
             });
             dropArea.addEventListener('drop', (event) => {
                 event.preventDefault();
-                dropArea.classList.remove('bg-secondary-subtle');
+                dropArea.classList.remove('bg-success');
+                dropArea.classList.add('bg-success-subtle');
+
                 let files = event.dataTransfer.files;
                 handleFiles(files);
             });
@@ -322,6 +322,7 @@
                         const chloroplastSwitch     = document.getElementById('chloroplastSwitch');
                         const importGeneSelect      = document.getElementById('importGeneSelect');
                         const fileNameSpan          = document.getElementById('fileName');
+                        let dropArea                = document.getElementById('drop-area');
 
                         importPUMAS.addEventListener('click', function () {
                             btnImport.disabled = true;
@@ -331,6 +332,8 @@
                             chloroplastSwitch.disabled = true;
                             importGeneSelect.disabled = true;
                             fileNameSpan.textContent = '';
+                            dropArea.classList.remove('bg-success-subtle');
+                            dropArea.classList.remove('bg-success');
                             $('#importGeneSelect').empty();
                             $('#ModalImportPumas').modal('show');
                             fileContent.value = '';
@@ -711,7 +714,12 @@
                     }
             
                     function handlePatternsChange() {
-                        const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+                        let typeGenome = null;
+                        if (document.getElementById('mt').checked || document.getElementById('mitochondrialSwitch').checked) {
+                            typeGenome = 'Mitochondrial';
+                        } else if (document.getElementById('cp').checked || document.getElementById('chloroplastSwitch').checked) {
+                            typeGenome = 'Chloroplast';
+                        } 
                         setGeneLists(typeGenome);
                         if (data) {
                             const startGene = geneStartGlobal || importGeneSelect.value;
@@ -722,7 +730,7 @@
                     Patterns.addEventListener('change', handlePatternsChange);
             
                     btnImport.addEventListener('click', function () {
-                        const typeData = document.getElementById('mitochondrialSwitch').checked ? 'Mitochondrial' : 'Chloroplast';
+                        let typeData = document.getElementById('mitochondrialSwitch').checked ? 'Mitochondrial' : 'Chloroplast';
                         setGeneLists(typeData);
                         data = JSON.parse(fileContent.value);
                         originalData = JSON.parse(fileContent.value); // Armazena a ordem original
@@ -931,16 +939,7 @@
                 });
             </script>
             
-            
-            
-            
-            
-            
-            
-                        
-            
-            
-            <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
+            <div id="PUMASResults" style="display: none;" class="mt-5 container-fluid mx-auto">
                 <hr>
                 <label class="h4"><span class="badge text-bg-dark">5</span> - Export Results</label>
                 <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 mb-5">
@@ -1129,6 +1128,31 @@
                             const mt            = document.getElementById('mt');
                             const cp            = document.getElementById('cp');
                             const geneNameInput = $('#geneNameInput');
+                            const mitochondrialSwitch   = document.getElementById('mitochondrialSwitch');
+                            const chloroplastSwitch     = document.getElementById('chloroplastSwitch');
+                            const btnImport             = document.getElementById('btnImport'); 
+
+                            btnImport.addEventListener('click', function () {
+                                if (mitochondrialSwitch.checked) {
+                                    geneNameInput.empty();
+                                    mtGenes.forEach((gene) => {
+                                        if (gene === '-'){
+                                            geneNameInput.append($('<option>').text(`- (GAP)`).attr('value', '')) 
+                                        } else {
+                                            geneNameInput.append($('<option>').text(gene).attr('value', gene))
+                                        }
+                                    });
+                                } else if (chloroplastSwitch.checked) {
+                                    geneNameInput.empty();
+                                    cpGenes.forEach((gene) => {
+                                        if (gene === '-'){
+                                            geneNameInput.append($('<option>').text(`- (GAP)`).attr('value', '')) 
+                                        } else {
+                                            geneNameInput.append($('<option>').text(gene).attr('value', gene))
+                                        }
+                                    });
+                                }
+                            });
 
                             startSearch.addEventListener('click', function () {
                                 if (mt.checked) {
@@ -1142,7 +1166,13 @@
                                     });
                                 } else if (cp.checked) {
                                     geneNameInput.empty();
-                                    cpGenes.forEach((gene) => geneNameInput.append($('<option>').text(gene).attr('value', gene)));
+                                    cpGenes.forEach((gene) => {
+                                        if (gene === '-'){
+                                            geneNameInput.append($('<option>').text(`- (GAP)`).attr('value', ''))
+                                        } else {
+                                            geneNameInput.append($('<option>').text(gene).attr('value', gene))
+                                        }
+                                    });
                                 }
                             });
                         });
