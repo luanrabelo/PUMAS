@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,22 +17,20 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.css">
-    <title>PUMAS by Luan Rabelo</title>
-    <meta name="title" content="PUMAS" />
-    <meta name="description" content="PUMAS: Puzzle Mitochondrial (and Chloroplast) Analysis Script" />
+    <title>PUMAS - Puzzle Mitochondrial and Chloroplast Analysis Script by Luan Rabelo</title>
+    <meta name="title" content="PUMAS - Puzzle Mitochondrial and Chloroplast Analysis Script" />
+    <meta name="description" content="PUMAS: A comprehensive tool for analyzing mitochondrial and chloroplast genomes with advanced functionalities for genome ordering and visualization." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://luanrabelo.github.io/PUMAS/" />
     <meta property="og:title" content="PUMAS" />
     <meta property="og:description" content="PUMAS: Puzzle Mitochondrial (and Chloroplast) Analysis Script" />
     <meta property="og:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMASsm.png" />
-
     <meta property="twitter:card" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMAS.png" />
     <meta property="twitter:url" content="https://luanrabelo.github.io/PUMAS/" />
     <meta property="twitter:title" content="PUMAS" />
     <meta property="twitter:description" content="PUMAS: Puzzle Mitochondrial (and Chloroplast) Analysis Script" />
     <meta property="twitter:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMASsm.png" />
 </head>
-
 <style>
     * {
         font-family: "Montserrat", sans-serif;
@@ -52,16 +49,8 @@
         text-decoration: none;
     }
     a:hover {
-        color: #EE4E4E;
+        color: #FF7F3E;
         text-decoration: underline;
-    }
-    hr {
-        border: 0;
-        clear: both;
-        display: block;
-        width: 100%;
-        background-color: #dee2e6;
-        height: 2.5px;
     }
     .form-check-label {
         font-size: 1.25em;
@@ -75,14 +64,14 @@
         vertical-align: middle;
     }
     .form-check-input:not(:checked) {
-        background-color: #ff7f3e;
-        border-color: #ff7f3e;
+        background-color: #FF7F3E;
+        border-color: #FF7F3E;
         width: 2.5em;
         height: 1.5em;
         vertical-align: middle;
     }
     .progress-bar {
-        background-color: #ff9800;
+        background-color: #FF7F3E;
         color: #000000;
         font-size: 1.5em;
     }
@@ -101,11 +90,28 @@
         margin: 0 auto;
 
     }
-
-    
+    hr{
+        border: 1.5px solid #000000;
+        clear: both;
+        display: block;
+        width: 100%;
+        height: 2.5px;
+    }
+    #drop-area {
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        cursor: pointer;
+    }
+    #drop-area.bg-light {
+        background-color: #f8f9fa;
+    }
+    .drag{
+        background-color: #9dde8b;
+    }
 </style>
 <body class="bg-light container-fluid">
-    <!-- Modal -->
+    
     <div class="modal fade" id="LoadingPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -125,6 +131,151 @@
             </div>
         </div>
     </div>
+
+<!-- Modal for Importing PUMAS File -->
+<div class="modal fade" id="ModalImportPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h3 class="modal-title">Import <b>PUMAS</b> File</h3>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Upload your .pumas file to import previously saved data for mitochondrial or chloroplast analysis.</p>
+                <div id="drop-area" class="border p-5 text-center bg-light">
+                    <p class="h5">Drag & drop the <b>.pumas</b> file here, or click to browse and select a file</p>
+                    <input type="file" id="fileElem" accept=".pumas" style="display:none" onchange="handleFiles(this.files)">
+                </div>
+                <textarea id="fileContent" class="form-control mt-3" rows="10" spellcheck="false" disabled readonly></textarea>
+                <div class="form-check form-switch mt-3 text-start">
+                    <input class="form-check-input" type="checkbox" id="mitochondrialSwitch" disabled>
+                    <label class="form-check-label" for="mitochondrialSwitch">The imported file contains <b>Mitochondrial</b> data</label>
+                </div>
+                <div class="form-check form-switch mt-2 text-start">
+                    <input class="form-check-input" type="checkbox" id="chloroplastSwitch" disabled>
+                    <label class="form-check-label" for="chloroplastSwitch">The imported file contains <b>Chloroplast</b> data</label>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="importGeneSelect">Select a Gene or Region to start Genome Ordering:</label>
+                    <select class="form-select form-select-lg" id="importGeneSelect" disabled></select>
+                </div>
+            </div>
+            <div class="modal-footer bg-dark text-white">
+                <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close without importing</button>
+                <button id="btnImport" type="button" class="btn btn-lg btn-success" disabled>Import <span id="fileName">No file selected</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        $(document).ready(function () {
+            let dropArea                = document.getElementById('drop-area');
+            const fileElem              = document.getElementById('fileElem');
+            const btnImport             = document.getElementById('btnImport');
+            const fileContentPre        = document.getElementById('fileContent');
+            const mitochondrialSwitch   = document.getElementById('mitochondrialSwitch');
+            const chloroplastSwitch     = document.getElementById('chloroplastSwitch');
+            const importGeneSelect      = document.getElementById('importGeneSelect');
+
+            mitochondrialSwitch.addEventListener('change', () => {
+                if (mitochondrialSwitch.checked && fileContentPre.value.trim() !== '') {
+                    importGeneSelect.disabled = false;
+                    chloroplastSwitch.disabled = true;
+                    const _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                    $('#importGeneSelect').empty();
+                    $('#importGeneSelect').append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+                    $.each(_geneListEdit, function (i, gene) {
+                        $('#importGeneSelect').append($('<option>').text(gene).attr('value', gene));
+                    });
+                } else {
+                    importGeneSelect.disabled = true;
+                    chloroplastSwitch.disabled = false;
+                    $('#importGeneSelect').empty();
+                }
+            });
+            chloroplastSwitch.addEventListener('change', () => {
+                if (chloroplastSwitch.checked && fileContentPre.value.trim() !== '') {
+                    importGeneSelect.disabled = false;
+                    mitochondrialSwitch.disabled = true;
+                    const _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                    $('#importGeneSelect').empty();
+                    $('#importGeneSelect').append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+                    $.each(_geneListEdit, function (i, gene) {
+                        $('#importGeneSelect').append($('<option>').text(gene).attr('value', gene));
+                    });
+                } else {
+                    importGeneSelect.disabled = true;
+                    mitochondrialSwitch.disabled = false;
+                    $('#importGeneSelect').empty();
+                }
+            });
+
+            importGeneSelect.addEventListener('change', () => {
+                if (importGeneSelect.value !== 'NaN') {
+                    btnImport.disabled = false;
+                } else {
+                    btnImport.disabled = true;
+                }
+            });
+
+
+            dropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropArea.classList.add('bg-secondary-subtle');
+            });
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('bg-secondary-subtle');
+            });
+            dropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropArea.classList.remove('bg-secondary-subtle');
+                let files = event.dataTransfer.files;
+                handleFiles(files);
+            });
+            dropArea.addEventListener('click', () => {
+                fileElem.click();
+            });
+            fileContentPre.addEventListener('input', () => {
+                mitochondrialSwitch.disabled = fileContent.value.trim() === '';
+                chloroplastSwitch.disabled = fileContent.value.trim() === '';
+            });
+            fileElem.addEventListener('change', (event) => {
+                let files = event.target.files;
+                handleFiles(files);
+            });
+        });
+
+        function handleFiles(files) {
+                const fileNameSpan          = document.getElementById('fileName');
+            if (files.length > 0) {
+                let file = files[0];
+                fileNameSpan.innerHTML = `<b>${file.name}</b>`;
+                if (file.name.endsWith('.pumas')) {
+                    let reader = new FileReader();
+                    reader.onload = (event) => {
+                        fileContent.value = event.target.result;
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert('Please select a .pumas file.');
+                    fileContent.value = '';
+                    fileNameSpan.textContent = 'No file selected';
+                }
+            } else {
+                fileContent.value = '';
+                fileNameSpan.textContent = 'No file selected';
+            }
+            setTimeout(() => {
+                const event = new Event('input', {
+                    bubbles: true,
+                    cancelable: true,
+                });
+                fileContent.dispatchEvent(event);
+            }, 500);
+        }
+    </script>
+    
     <main>
         <div class="container full-screen text-center">
             <div class="row align-items-center">
@@ -135,6 +286,7 @@
                 <div>
                     <div class="display-2">PUMAS<sup>by Luan Rabelo</sup></div>
                     <div class="h3"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
+                    <div class="h6">v1.0</div>
                     <div class="h5 mt-5">How to Cite PUMAS: Coming Soon…</div>
                     <div class="mt-5">
                         <i style="cursor: pointer;" id="btnStartPUMAS" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Click to Start PUMAS" class="fa-solid fa-circle-arrow-down fa-fade fa-4x"></i>
@@ -155,26 +307,51 @@
             });
         </script>
         <div class="mt-5 mb-2 mx-auto container-fluid formPUMAS">
-            <div class="mb-1 container">
-                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of GenBank Accession Numbers genomes</label><br>
-                <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> For a robust search for genomes in GenBank, we recommend to the use <b><a style="color: #000000;" href="https://luanrabelo.github.io/SynGenes" target="_blank">SynGenes</a></b>.</small><br>
+            <div class="mb-1 container-fluid">
+                <label for="vouchersList" class="h4"><span class="badge text-bg-dark">1</span> - Please insert the list of <b>GenBank Accession Numbers</b> for the genomes, or <button id="importPUMAS" class="btn btn-lg btn-dark">Click Here</button> to <b>import your previously saved PUMAS file</b>.</label><br>
+                <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> For a robust <b>search for genomes in GenBank</b>, we recommend the use of <b><a style="color: #000000;" href="https://luanrabelo.github.io/SynGenes" target="_blank">SynGenes</a></b>.</small><br>
                 <small id="infoText" class="text-muted"><i class="fa-solid fa-circle-info"></i> How to cite <b>SynGenes</b>: <b><a style="color: #000000;" href="https://doi.org/10.1186/s12859-024-05781-y" target="_blank">https://doi.org/10.1186/s12859-024-05781-y</a></b></small>
                 <textarea class="form-control" placeholder="" id="vouchersList" style="height: 20vh" spellcheck="false"></textarea>
                 <div id="errorDiv" class="text-danger mt-1"></div>
+                <script>
+                    $(document).ready(function () {
+                        const importPUMAS   = document.getElementById('importPUMAS');
+                        const fileContent   = document.getElementById('fileContent');
+                        const btnImport     = document.getElementById('btnImport');
+                        const mitochondrialSwitch   = document.getElementById('mitochondrialSwitch');
+                        const chloroplastSwitch     = document.getElementById('chloroplastSwitch');
+                        const importGeneSelect      = document.getElementById('importGeneSelect');
+                        const fileNameSpan          = document.getElementById('fileName');
+
+                        importPUMAS.addEventListener('click', function () {
+                            btnImport.disabled = true;
+                            mitochondrialSwitch.checked = false;
+                            mitochondrialSwitch.disabled = true;
+                            chloroplastSwitch.checked = false;
+                            chloroplastSwitch.disabled = true;
+                            importGeneSelect.disabled = true;
+                            fileNameSpan.textContent = '';
+                            $('#importGeneSelect').empty();
+                            $('#ModalImportPumas').modal('show');
+                            fileContent.value = '';
+
+                        });
+                    });
+                </script>
                 <div class="text-left mt-1" style="text-align: justify; line-height: 2;">
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Enter the <strong>NCBI - GenBank Accession Numbers for Mitochondrial or Chloroplast Genomes</strong> in the space provided above.
+                            <i class="fa-solid fa-circle-info"></i> Enter the NCBI <b>GenBank</b> <b>Accession Numbers</b> for <b>Mitochondrial</b> or <b>Chloroplast</b> genomes in the space provided above.
                         </small>
                     </p>
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Each Accession Number should be on a <strong>distinct line without any blank lines in between</strong>.
+                            <i class="fa-solid fa-circle-info"></i> Each Accession Number should be on a <b>distinct line</b>, </b>without any blank lines in between</b>.
                         </small>
                     </p>
                     <p>
                         <small id="infoText" class="text-muted">
-                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>17 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Coffea Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list above.
+                            <i class="fa-solid fa-circle-info"></i> Click in <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>17 genomes</b> from Zhang et. al. 2020">Mitochondrial</button> or <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="<i>Coffea</i> Genus with <b>23 genomes</b>">Chloroplast</button> to see an example </button> or <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again">Click here</button> to clear the list above.
                         </small>
                     </p>
                 </div>
@@ -229,7 +406,6 @@
                                 cp.disabled = false;
                             }
                         });
-                
                         resetVouchers.addEventListener('click', function () {
                             vouchers.value = "";
                             const event = new Event('input', {
@@ -237,7 +413,6 @@
                                 cancelable: true,
                             });
                             vouchers.dispatchEvent(event);
-                            
                             const cds       = document.getElementById('CDS');
                             const rRNAs     = document.getElementById('rRNA');
                             const tRNAs     = document.getElementById('tRNA');
@@ -268,7 +443,24 @@
                         });
                 
                         exampleMitochondrial.addEventListener('click', function () {
-                            const _vouchers = ["MN737137.1", "MN737145.1", "AB187570.1", "MN737141.1", "MN737139.1", "MN737143.1", "MN737144.1", "MN737133.1", "MN737138.1", "MN737136.1", "MN737142.1", "MN737134.1", "KU042041.1", "KY785880.1", "KY785879.1", "MN737132.1", "MN737140.1"];
+                            const _vouchers = [
+                                "MN737137.1", 
+                                "MN737145.1", 
+                                "AB187570.1", 
+                                "MN737141.1", 
+                                "MN737139.1", 
+                                "MN737143.1", 
+                                "MN737144.1", 
+                                "MN737133.1", 
+                                "MN737138.1", 
+                                "MN737136.1", 
+                                "MN737142.1", 
+                                "MN737134.1", 
+                                "KU042041.1", 
+                                "KY785880.1", 
+                                "KY785879.1", 
+                                "MN737132.1", 
+                                "MN737140.1"];
                             vouchers.value = "";
                             _vouchers.forEach((s, i) => setTimeout(() => {
                                 vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
@@ -284,12 +476,34 @@
                             cp.checked = false;
                         });
                         exampleChloroplast.addEventListener('click', function () {
-                            const _vouchers = ["PP708565.1", "NC_079620.1", "NC_079619.1", "NC_079618.1", "MN901638.1", "ON117418.1", "ON101708.1", "ON101707.1", "NC_030053.1", "NC_008535.1", "OL789882.1", "MW970412.1", "MW970411.1", "MN894552.1", "MN894551.1", "MN894550.1", "MK875244.1", "MK862266.1", "MK353212.1", "MK353209.1", "MK342634.1", "EF044213.1", "MN370912.1"];
+                            const _vouchers = [
+                                "PP708565.1", 
+                                "NC_079620.1", 
+                                "NC_079619.1", 
+                                "NC_079618.1", 
+                                "MN901638.1", 
+                                "ON117418.1", 
+                                "ON101708.1", 
+                                "ON101707.1", 
+                                "NC_030053.1", 
+                                "NC_008535.1", 
+                                "OL789882.1", 
+                                "MW970412.1", 
+                                "MW970411.1", 
+                                "MN894552.1", 
+                                "MN894551.1", 
+                                "MN894550.1", 
+                                "MK875244.1", 
+                                "MK862266.1", 
+                                "MK353212.1", 
+                                "MK353209.1", 
+                                "MK342634.1", 
+                                "EF044213.1", 
+                                "MN370912.1"];
                             vouchers.value = "";
                             _vouchers.forEach((s, i) => setTimeout(() => {
                                 vouchers.value += s + (i < _vouchers.length - 1 ? "\n" : "");
                             }, i * 1));
-                
                             setTimeout(() => {
                                 const event = new Event('input', {
                                     bubbles: true,
@@ -303,17 +517,17 @@
                     });
                 </script>
             </div>
-            <hr class="mt-2">
-            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3 container mx-auto">
+
+            <div class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3 container-fluid mx-auto">
                 <div class="col mt-2">
                     <label class="h4"><span class="badge text-bg-dark">2</span> - What analysis to perform?</label>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="mt" value="Mitochondrial" disabled>
-                        <label class="form-check-label ml-2 mr-2" for="mt">Mitochondrial analysis</label>
+                        <label class="form-check-label ml-2 mr-2" for="mt">Perform analysis on mitochondrial genome</label>
                     </div>
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="cp" value="Chloroplast" disabled>
-                        <label class="form-check-label ml-2 mr-2" for="cp">Chloroplast analysis</label>
+                        <label class="form-check-label ml-2 mr-2" for="cp">Perform analysis on chloroplast genomes</label>
                     </div>
                 </div>
                 <script>
@@ -350,7 +564,7 @@
                     });
                 </script>
                 <div class="col mt-2">
-                    <label class="h4"><span class="badge text-bg-dark">3</span> - <b>Gene(s) types</b> for analysis</label>
+                    <label class="h4"><span class="badge text-bg-dark">3</span> - <b>Type of genes</b> for analysis</label>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="CDS" id="CDS" disabled>
                         <label class="form-check-label" for="CDS">CDS</label>
@@ -420,7 +634,7 @@
                     });
                 </script>
                 <div class="col mt-2">
-                    <label class="h4"><span class="badge text-bg-dark">4</span> - Start <b>Genome Order</b> at:</label>
+                    <label class="h4"><span class="badge text-bg-dark">4</span> - Choose <b>Starting Gene</b> for Genome Order:</label>
                     <select class="form-select form-select-lg" id="geneList" disabled></select>
                 </div>
                 <script>
@@ -438,7 +652,6 @@
                         });
                     });
                 </script>
-
             </div>
             <div class="mt-2 text-center">
                 <div class="d-grid gap-2 col-xs-12 col-sm-12 col-sm-8 col-lg-6 mx-auto">
@@ -446,117 +659,40 @@
                 </div>
             </div>
             <script>
-                $(document).ready(function () {
-                    var data = null;
-                    const startSearch = document.getElementById('startSearch');
-                    startSearch.addEventListener('click', async function () {
-                        const vouchersList  = document.getElementById('vouchersList').value.trim();
-                        const geneStart     = document.getElementById('geneList').value;
-                        const typeGenome    = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
-                        const genelist      = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
-                        const Patterns      = document.getElementById('Patterns');
-                        var _geneListEdit = null;
-                        if (!vouchersList) {
-                            alert('Enter the GenBank Vouchers');
-                            return;
-                        }
-                        let cdsList = null;
-                        if (typeGenome === 'Mitochondrial') {
-                            _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
-                            cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
-                        } else if (typeGenome === 'Chloroplast') {
-                            _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
-                            cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19']
-                        } else {
-                            alert('Select the type of genome');
-                            return;
-                        }
-                        $('#LoadingPumas').modal('show');
-                        const vouchers = vouchersList.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-                        data = await fetchGenomicData(vouchers, genelist, typeGenome, geneStart);
-                        $('#LoadingPumas').modal('hide');
-                        if (typeGenome) {
-                            data.sort((a, b) => {
-                                const speciesA = Array.isArray(a.speciesNames) ? a.speciesNames.join(", ") : a.speciesNames;
-                                const speciesB = Array.isArray(b.speciesNames) ? b.speciesNames.join(", ") : b.speciesNames;
-                                return speciesA.localeCompare(speciesB);
-                            });
-                            createSVG(data, geneStart, _geneListEdit, Patterns.checked);
-                            if (typeGenome === 'Mitochondrial' || typeGenome === 'Chloroplast') {
-                                showResults(data, typeGenome);
-                            }
-                        } else {
-                            alert('Select the type of genome');
-                        }
-                    });
+                var data = null;
+                var originalData = null;
+                var geneStartGlobal = null; // Variável para armazenar o gene de início
             
+                $(document).ready(function () {
+                    let cdsList = null;
+                    let _geneListEdit = null;
+                    const btnImport = document.getElementById('btnImport');
+                    const fileContent = document.getElementById('fileContent');
                     const Patterns = document.getElementById('Patterns');
-                    Patterns.addEventListener('change', function () {
-                        const typeGenome    = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
-                        if (typeGenome === 'Mitochondrial') {
+                    const importGeneSelect = document.getElementById('importGeneSelect');
+                    const startSearch = document.getElementById('startSearch');
+                    const downloadFasta = document.getElementById('downloadFasta');
+                    const genesToFasta = document.getElementById('genesToFasta');
+                    const downloadInputFile = document.getElementById('downloadInputFile');
+                    const createInputFile = document.getElementById('createInputFile');
+                    const downloadPlot = document.getElementById('PatternsDownload');
+                    const PatternsSelect = document.getElementById('PatternsSelect');
+                    const PatternsDownloadFile = document.getElementById('PatternsDownloadFile');
+                    const downloadPUMASfile = document.getElementById('PUMASDownloadFile');
+            
+                    function setGeneLists(type) {
+                        if (type === 'Mitochondrial') {
                             _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
-                        } else if (typeGenome === 'Chloroplast') {
-                            _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                            cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'];
+                        } else if (type === 'Chloroplast') {
+                            _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
+                            cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
                         } else {
                             alert('Select the type of genome');
                             return;
                         }
-
-                        if (data) {
-                            createSVG(data, document.getElementById('geneList').value, _geneListEdit, Patterns.checked);
-                        }
-                    });
-                    const downloadFasta     = document.getElementById('downloadFasta');
-                    const genesToFasta      = document.getElementById('genesToFasta');
-                        genesToFasta.addEventListener('change', function () {
-                            downloadFasta.disabled = genesToFasta.value === 'NaN';
-                        });
-                        downloadFasta.addEventListener('click', function () {
-                        const _genesToFasta = document.getElementById('genesToFasta').value;
-                        const _data = Object.keys(data);
-                        const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
-
-                        let cdsList = null;
-
-                        if (typeGenome === 'Mitochondrial') {
-                            cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
-                        } else if (typeGenome === 'Chloroplast') {
-                            cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19']
-                        }
-
-                        if (_genesToFasta === "allCDS") {
-                            let geneData = cdsList.reduce((acc, gene) => {
-                                acc[gene] = '';
-                                return acc;
-                            }, {});
-                            _data.forEach(id => {
-                                const seq = data[id].geneSequences;
-                                const speciesName = data[id].speciesNames;
-                                cdsList.forEach(gene => {
-                                    if (seq.hasOwnProperty(gene)) {
-                                        geneData[gene] += `>${data[id].vouchers} ${speciesName}\n${seq[gene]}\n`;
-                                    }
-                                });
-                            });
-
-                            cdsList.forEach(gene => {
-                                if (geneData[gene]) {
-                                    downloadIndividualGene(gene, geneData[gene]);
-                                }
-                            });
-                        } else if (cdsList.includes(_genesToFasta)) {
-                            let dataSeq = '';
-                            _data.forEach(id => {
-                                const seq = data[id].geneSequences;
-                                if (seq.hasOwnProperty(_genesToFasta)) {
-                                    const speciesName = data[id].speciesNames;
-                                    dataSeq += `>${data[id].vouchers} ${speciesName}\n${seq[_genesToFasta]}\n`;
-                                }
-                            });
-                            downloadIndividualGene(_genesToFasta, dataSeq);
-                        }
-                    });
-
+                    }
+            
                     function downloadIndividualGene(geneName, dataSeq) {
                         const blob = new Blob([dataSeq], { type: 'text/plain' });
                         const url = window.URL.createObjectURL(blob);
@@ -567,38 +703,145 @@
                         a.click();
                         document.body.removeChild(a);
                     }
-                    const downloadInputFile = document.getElementById('downloadInputFile');
-                    const createInputFile = document.getElementById('createInputFile');
-
+            
+                    function reorderGeneOrder(geneOrder, startGene) {
+                        const startIndex = geneOrder.indexOf(startGene);
+                        if (startIndex === -1) return geneOrder;
+                        return geneOrder.slice(startIndex).concat(geneOrder.slice(0, startIndex));
+                    }
+            
+                    function handlePatternsChange() {
+                        const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+                        setGeneLists(typeGenome);
+                        if (data) {
+                            const startGene = geneStartGlobal || importGeneSelect.value;
+                            createSVG(data, startGene, _geneListEdit, Patterns.checked);
+                        }
+                    }
+            
+                    Patterns.addEventListener('change', handlePatternsChange);
+            
+                    btnImport.addEventListener('click', function () {
+                        const typeData = document.getElementById('mitochondrialSwitch').checked ? 'Mitochondrial' : 'Chloroplast';
+                        setGeneLists(typeData);
+                        data = JSON.parse(fileContent.value);
+                        originalData = JSON.parse(fileContent.value); // Armazena a ordem original
+                        geneStartGlobal = importGeneSelect.value; // Armazena o gene de início escolhido
+                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        setTimeout(() => {
+                            $('#ModalImportPumas').modal('hide');
+                        }, 500);
+                        if (typeData === 'Mitochondrial' || typeData === 'Chloroplast') {
+                            showResults(data, typeData);
+                        } else {
+                            alert('Select the type of genome');
+                        }
+                    });
+            
+                    startSearch.addEventListener('click', async function () {
+                        const vouchersList = document.getElementById('vouchersList').value.trim();
+                        const geneStart = document.getElementById('geneList').value;
+                        const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+                        const genelist = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
+            
+                        if (!vouchersList) {
+                            alert('Enter the GenBank Vouchers');
+                            return;
+                        }
+            
+                        setGeneLists(typeGenome);
+                        $('#LoadingPumas').modal('show');
+                        const vouchers = vouchersList.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                        data = await fetchGenomicData(vouchers, genelist, typeGenome, geneStart);
+                        originalData = [...data]; // Armazena a ordem original
+                        geneStartGlobal = geneStart; // Armazena o gene de início escolhido
+                        $('#LoadingPumas').modal('hide');
+            
+                        if (typeGenome) {
+                            createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                            showResults(data, typeGenome);
+                        } else {
+                            alert('Select the type of genome');
+                        }
+                    });
+            
+                    genesToFasta.addEventListener('change', function () {
+                        downloadFasta.disabled = genesToFasta.value === 'NaN';
+                    });
+            
+                    downloadFasta.addEventListener('click', function () {
+                        const _genesToFasta = document.getElementById('genesToFasta').value;
+                        const _data = Object.keys(data);
+                        let typeGenome = null;
+                        if (document.getElementById('mt').checked || document.getElementById('mitochondrialSwitch').checked) {
+                            typeGenome = 'Mitochondrial';
+                        } else if (document.getElementById('cp').checked || document.getElementById('chloroplastSwitch').checked) {
+                            typeGenome = 'Chloroplast';
+                        }
+                        //const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
+                        let _cdsList = null;
+            
+                        if (typeGenome === 'Mitochondrial') {
+                            _cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'];
+                        } else if (typeGenome === 'Chloroplast') {
+                            _cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
+                        }
+            
+                        if (_genesToFasta === "allCDS") {
+                            let geneData = _cdsList.reduce((acc, gene) => {
+                                acc[gene] = '';
+                                return acc;
+                            }, {});
+                            _data.forEach(id => {
+                                const seq = data[id].geneSequences;
+                                const speciesName = data[id].speciesNames;
+                                _cdsList.forEach(gene => {
+                                    if (seq.hasOwnProperty(gene)) {
+                                        geneData[gene] += `>${data[id].vouchers} ${speciesName}\n${seq[gene]}\n`;
+                                    }
+                                });
+                            });
+            
+                            _cdsList.forEach(gene => {
+                                if (geneData[gene]) {
+                                    downloadIndividualGene(gene, geneData[gene]);
+                                }
+                            });
+                        } else if (_cdsList.includes(_genesToFasta)) {
+                            let dataSeq = '';
+                            _data.forEach(id => {
+                                const seq = data[id].geneSequences;
+                                if (seq.hasOwnProperty(_genesToFasta)) {
+                                    const speciesName = id.speciesNames;
+                                    dataSeq += `>${data[id].vouchers} ${speciesName}\n${seq[_genesToFasta]}\n`;
+                                }
+                            });
+                            downloadIndividualGene(_genesToFasta, dataSeq);
+                        }
+                    });
+            
                     createInputFile.addEventListener('change', function () {
                         downloadInputFile.disabled = createInputFile.value === 'NaN';
                     });
-
+            
                     downloadInputFile.addEventListener('click', function () {
                         let geneOrderCounts = {};
-
+            
                         const geneMapQmgr = {
-                            'CR': 'D-loop',
-                            '-CR': '-D-loop',
-
+                            'CR': 'D-loop', '-CR': '-D-loop',
                             '12S': '12S', '-12S': '-12S',
                             '16S': '16S', '-16S': '-16S',
-
                             'ATP6': 'ATP6', '-ATP6': '-ATP6',
                             'ATP8': 'ATP8', '-ATP8': '-ATP8',
-
                             'COI': 'COX1', '-COI': '-COX1',
                             'COII': 'COX2', '-COII': '-COX2',
                             'COIII': 'COX3', '-COIII': '-COX3',
-
                             'ND1': 'ND1', '-ND1': '-ND1',
                             'ND2': 'ND2', '-ND2': '-ND2',
                             'ND3': 'ND3', '-ND3': '-ND3',
                             'ND4L': 'ND4L', 'ND4': 'ND4', '-ND4L': '-ND4L', '-ND4': '-ND4',
                             'ND5': 'ND5', 'ND6': 'ND6', '-ND5': '-ND5', '-ND6': '-ND6',
-
                             'CYTB': 'CYTB', '-CYTB': '-CYTB',
-
                             'Ala': 'A', '-Ala': '-A', 
                             'Arg': 'R', '-Arg': '-R',
                             'Asn': 'N', '-Asn': '-N',
@@ -619,30 +862,29 @@
                             'Trp': 'W', '-Trp': '-W',
                             'Tyr': 'Y', '-Tyr': '-Y',
                             'Val': 'V', '-Val': '-V',
-                            
                         };
                         const _createInputFile = document.getElementById('createInputFile').value;
                         const _data = Object.keys(data);
                         let dataSeq = '';
-
+            
                         _data.forEach((id) => {
                             let _geneOrder = data[id].geneOrder;
                             let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
-
+            
                             if (!geneOrderCounts[_geneOrderUnique]) {
                                 geneOrderCounts[_geneOrderUnique] = 0;
                             }
                             geneOrderCounts[_geneOrderUnique]++;
                         });
-
+            
                         _data.forEach((id) => {
                             let _geneOrder = data[id].geneOrder
                                 .split(',')
-                                .filter(gene => gene.trim() !== '-') // Remove standalone '-'
+                                .filter(gene => gene.trim() !== '-')
                                 .join(',');
                             
                             let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
-
+            
                             switch (_createInputFile) {
                                 case 'CREx':
                                     _geneOrderUnique = _geneOrderUnique.split(',').map(gene => geneMapQmgr[gene] || gene).join(' ');
@@ -658,39 +900,45 @@
                                     break;
                             }
                         });
-
-
-
-
-                    const blob = new Blob([dataSeq], { type: 'text/plain' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'PUMAS_' + _createInputFile + '.txt';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+            
+                        const blob = new Blob([dataSeq], { type: 'text/plain' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'PUMAS_' + _createInputFile + '.txt';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    });
+            
+                    downloadPlot.addEventListener('click', function () {
+                        const startGene = geneStartGlobal || importGeneSelect.value;
+                        if (PatternsSelect.value === 'SVG') {
+                            createAndDownloadSVG(_geneListEdit, startGene);
+                        } else if (PatternsSelect.value === 'PNG') {
+                            createAndDownloadPNG(_geneListEdit, startGene);
+                        }
+                    });
+            
+                    PatternsDownloadFile.addEventListener('click', function () {
+                        const startGene = geneStartGlobal || importGeneSelect.value;
+                        createAndDownloadText(data, startGene);
+                    });
+            
+                    downloadPUMASfile.addEventListener('click', function () {
+                        PUMASDownload(data);
+                    });
                 });
-
-                const downloadPlot = document.getElementById('PatternsDownload');
-                const PatternsSelect = document.getElementById('PatternsSelect');
-                const PatternsDownloadFile = document.getElementById('PatternsDownloadFile');
-                downloadPlot.addEventListener('click', function () {
-                    let geneStart     = document.getElementById('geneList').value;
-                    if (PatternsSelect.value === 'SVG') {
-                        createAndDownloadSVG(_geneListEdit, geneStart);
-                    } else if (PatternsSelect.value === 'PNG') {
-                        createAndDownloadPNG(_geneListEdit, geneStart);
-                    }
-
-                });
-
-                PatternsDownloadFile.addEventListener('click', function () {
-                    let geneStart     = document.getElementById('geneList').value;
-                    createAndDownloadText(_geneListEdit, geneStart);
-                });
-            });
             </script>
+            
+            
+            
+            
+            
+            
+            
+                        
+            
             
             <div id="PUMASResults" style="display: none;" class="mt-2 container-fluid mx-auto">
                 <hr>
@@ -706,7 +954,7 @@
                     </div>
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>format</b> to <b>create an Plot</b>"><span class="badge text-bg-dark">5.2</span> - Create an Input File</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>format</b> to <b>create a plot</b>"><span class="badge text-bg-dark">5.2</span> - Create an Input File</label>
                         <div class="input-group">
                             <select id="createInputFile" class="form-select form-select-lg" aria-label="">
                                 <option value="NaN" selected>Select a tool</option>
@@ -738,7 +986,7 @@
                     </div>
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="This is the puzzlelike figure observed below, that is, the data obtained directly from the gene order, with or without modifications (like gaps introduced by the user) of all genomes or solely the genome patterns."><span class="badge text-bg-dark">5.3</span> - Create a Puzzlelike Plot (image below)*</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="This is the puzzle-like figure shown below, representing the data obtained from gene order, with or without user-introduced modifications like gaps."><span class="badge text-bg-dark">5.3</span> - Create a Puzzle-like Plot (image below)*</label>
                         <div class="input-group">
                             <select id="genesToPlot" class="form-select form-select-lg" aria-label="">
                                 <option value="SVG" selected>SVG</option>
@@ -782,16 +1030,18 @@
                 </div>
 
                 <label class="h4"><span class="badge text-bg-dark">6</span> - Genomes Patterns</label>
-                <div class="row row-cols-3 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
-                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3 mt-2 mb-2">
+                <div class="row row-cols-4 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4">
+                    
+                    <div class="col mt-2 mb-2">
                         <label class="h4"><span class="badge text-bg-dark">6.1</span> - Show only Genome Patterns</label>
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" role="switch" id="Patterns">
                             <label class="form-check-label" for="Patterns">Show only Patterns</label>
                         </div>                          
                     </div>
-                    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 col-xxl-6 mt-2 mb-2">
-                        <label class="h4"><span class="badge text-bg-dark">6.2</span> - Genome Patterns <b>(Final Figure for Publication)</b></label>
+
+                    <div class="col mt-2 mb-2">
+                        <label class="h4"><span class="badge text-bg-dark">6.2</span> - Patterns <b>(Figure for Publication)</b></label>
                         <div class="input-group">
                             <select id="PatternsSelect" class="form-select form-select-lg" aria-label="" disabled>
                                 <option value="SVG" selected>SVG</option>
@@ -800,11 +1050,20 @@
                             <button id="PatternsDownload" class="btn btn-lg btn-dark" type="button" disabled>Download Figure</button>
                         </div>                    
                     </div>
-                    <div class="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3 mt-2 mb-2">
+
+                    <div class="col mt-2 mb-2">
                         <label class="h4"><span class="badge text-bg-dark">6.3</span> - Patterns File</label>
                         <div class="input-group">
-                            <button id="PatternsDownloadFile" class="btn btn-lg btn-dark" type="button" disabled>Download File</button>    
+                            <button id="PatternsDownloadFile" class="btn btn-lg btn-dark" type="button" disabled>Download</button>    
                         </div>                    
+                    </div>
+
+                    <div class="col mt-2 mb-2">
+                        <label class="h4"><span class="badge text-bg-dark">6.4</span> - Download PUMAS File</label>
+                        <div class="input-group">
+                            <button id="PUMASDownloadFile" class="btn btn-lg btn-dark" type="button">Download</button>
+                            <span class="input-group-text" id="timeSave" data-bs-toggle="tooltip" title="No save yet">-</span>
+                        </div>                                           
                     </div>
                 </div>
                 <script>
@@ -826,13 +1085,9 @@
                         });
                     });
                 </script>
-
             </div>
-
         </div>
-
         <div id="svgPlot"></div>
-
     </main>
 
     <div class="modal fade" id="ViewGenomeDraw" tabindex="-1" aria-hidden="true">

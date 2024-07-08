@@ -1566,8 +1566,8 @@ function createAndDownloadPNG(geneList, geneStart) {
     let context = canvas.getContext("2d");
     let img = new Image();
 
-    canvas.width = maxSvgWidth * 5;
-    canvas.height = totalHeight * 5;
+    canvas.width = maxSvgWidth * 2.5;
+    canvas.height = totalHeight * 2.5;
     context.fillStyle = "#FFFFFF"; // Fundo branco
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -1584,8 +1584,8 @@ function createAndDownloadPNG(geneList, geneStart) {
     img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
 }
 
-function createAndDownloadText(geneList, geneStart) {
-    let genomicData = [...currentGenomicData];
+function createAndDownloadText(data, geneStart) {
+    let genomicData = [...data];
     const patternMap = new Map();
     let patternCounter = 1;
 
@@ -1629,7 +1629,7 @@ function createAndDownloadText(geneList, geneStart) {
         }
 
         textContent += `${id}\n`;
-        textContent += `${genes.join(", ")}\n`;
+        textContent += `${genes.map((gene, i) => `${strands[i]}${gene}`).join("; ")}\n`;
         textContent += `${speciesNames.split("; ").map((name, i) => `${name} (${vouchers.split("; ")[i]})`).join("; ")}\n`;
         textContent += `\n\n\n\n`; // Quatro quebras de linha
     });
@@ -1643,3 +1643,63 @@ function createAndDownloadText(geneList, geneStart) {
     a.click();
     document.body.removeChild(a);
 }
+
+
+
+function PUMASDownload(dataObject) {
+    /**
+     * Sets up a download button to save data and update the time since the last save.
+     * @param {object} dataObject - a data object to be saved as a JSON file.
+    */
+    // Get references to the button and time display elements
+    const timeSave          = document.getElementById('timeSave');
+    let lastSaveTime        = null;
+    /**
+     * Updates the timeSave element to show how long ago the last save occurred.
+     * If more than 5 minutes have passed, changes the background color to red.
+     */
+    function updateTimeSave() {
+        if (lastSaveTime) {
+            const now       = new Date();
+            const diffMs    = now - lastSaveTime; // Calculate the difference in milliseconds
+            const diffMins  = Math.floor(diffMs / 60000); // Convert to minutes
+            // Update the timeSave element text
+            timeSave.innerText  = `Saved ${diffMins} min ago`;
+            const tooltipText   = diffMins > 5 ? `It has been more than 5 minutes since the last save` : `Saved ${diffMins} min ago`;
+            const tooltip       = bootstrap.Tooltip.getInstance(timeSave) || new bootstrap.Tooltip(timeSave);
+            tooltip.setContent({ '.tooltip-inner': tooltipText });
+            // Change background color if more than 5 minutes have passed
+            if (diffMins > 5) {
+                timeSave.style.backgroundColor = '#FF7F3E';
+            } else {
+                timeSave.style.backgroundColor = '#9DDE8B';
+            }
+        }
+    }
+    // Set an interval to update the timeSave element every minute
+    setInterval(updateTimeSave, 60000);
+    // Add an event listener to the download button
+    // Get the current date and time from the user's system
+    const now       = new Date();
+    const year      = now.getFullYear();
+    const month     = String(now.getMonth() + 1).padStart(2, '0'); // January is 0!
+    const day       = String(now.getDate()).padStart(2, '0');
+    const hours     = String(now.getHours()).padStart(2, '0');
+    const minutes   = String(now.getMinutes()).padStart(2, '0');
+    const seconds   = String(now.getSeconds()).padStart(2, '0');
+    const dataTime  = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+    // Create a Blob from the data and generate a download URL
+    const blob = new Blob([JSON.stringify(dataObject)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    // Create an anchor element and trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `PUMAS_${dataTime}.pumas`;
+    a.click();
+    // Revoke the object URL to free up memory
+    URL.revokeObjectURL(url);
+    // Update the last save time and refresh the timeSave element
+    lastSaveTime = new Date();
+    updateTimeSave();
+}
+
