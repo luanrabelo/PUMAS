@@ -938,10 +938,17 @@ function createAndDownloadSVG(geneList, geneStart) {
             let line = document.createElementNS(svgNS, "line");
             line.setAttribute("x1", xPosition);
             line.setAttribute("x2", xPosition + rectWidth);
-            line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-            line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-            line.setAttribute("stroke", "#000000");
-            line.setAttribute("stroke-width", "5");
+            if (gene == '' || gene == '-' || gene == 'GAP') {
+                line.setAttribute("y1", totalHeight + 0);
+                line.setAttribute("y2", totalHeight + 0);
+                line.setAttribute("stroke", "#000000");
+                //line.setAttribute("stroke-width", "5");
+            } else {
+                line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
+                line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
+                line.setAttribute("stroke", "#000000");
+                line.setAttribute("stroke-width", "5");
+            }
             svg.appendChild(line);
 
             xPosition += rectWidth;
@@ -1547,10 +1554,17 @@ function createAndDownloadPNG(geneList, geneStart) {
             let line = document.createElementNS(svgNS, "line");
             line.setAttribute("x1", xPosition);
             line.setAttribute("x2", xPosition + rectWidth);
-            line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-            line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-            line.setAttribute("stroke", "#000000");
-            line.setAttribute("stroke-width", "5");
+            if (gene == '' || gene == '-' || gene == 'GAP') {
+                line.setAttribute("y1", totalHeight + 0);
+                line.setAttribute("y2", totalHeight + 0);
+                line.setAttribute("stroke", "#000000");
+                //line.setAttribute("stroke-width", "5");
+            } else {
+                line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
+                line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
+                line.setAttribute("stroke", "#000000");
+                line.setAttribute("stroke-width", "5");
+            }
             svg.appendChild(line);
 
             xPosition += rectWidth;
