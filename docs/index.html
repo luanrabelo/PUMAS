@@ -276,7 +276,7 @@
         }
     </script>
     
-    <main>
+    <main class="container-fluid">
         <div class="container full-screen text-center">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center">
@@ -801,8 +801,8 @@
                                 return acc;
                             }, {});
                             _data.forEach(id => {
-                                const seq = data[id].geneSequences;
-                                const speciesName = data[id].speciesNames;
+                                let seq = data[id].geneSequences;
+                                let speciesName = data[id].speciesNames;
                                 _cdsList.forEach(gene => {
                                     if (seq.hasOwnProperty(gene)) {
                                         geneData[gene] += `>${data[id].vouchers} ${speciesName}\n${seq[gene]}\n`;
@@ -818,9 +818,9 @@
                         } else if (_cdsList.includes(_genesToFasta)) {
                             let dataSeq = '';
                             _data.forEach(id => {
-                                const seq = data[id].geneSequences;
+                                let seq = data[id].geneSequences;
                                 if (seq.hasOwnProperty(_genesToFasta)) {
-                                    const speciesName = id.speciesNames;
+                                    let speciesName = data[id].speciesNames;
                                     dataSeq += `>${data[id].vouchers} ${speciesName}\n${seq[_genesToFasta]}\n`;
                                 }
                             });
@@ -1009,10 +1009,10 @@
                                         const svgElements   = Array.from(document.querySelectorAll('.svg-container svg'));
                                         downloadCombinedSVG(svgElements)
                                     
-                                    } else if (genesToPlot.value === 'PDF') {
-                                        const svgElements = Array.from(document.querySelectorAll('.svg-container svg'));
-                                        mergeSVGsIntoPDF(svgElements);
-                                    }
+                                    } //else if (genesToPlot.value === 'PDF') {
+                                        //const svgElements = Array.from(document.querySelectorAll('.svg-container svg'));
+                                        //mergeSVGsIntoPDF(svgElements);
+                                    //}
                              });
                             });
                         </script>
