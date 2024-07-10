@@ -1601,8 +1601,8 @@ function createAndDownloadPNG(geneList, geneStart) {
     img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
 }
 
-function createAndDownloadText(data, geneStart) {
-    let genomicData = [...data];
+function createAndDownloadText(geneList, geneStart) {
+    let genomicData = [...currentGenomicData];
     const patternMap = new Map();
     let patternCounter = 1;
 
@@ -1655,11 +1655,12 @@ function createAndDownloadText(data, geneStart) {
     let url = window.URL.createObjectURL(blob);
     let a = document.createElement("a");
     a.href = url;
-    a.download = "PUMAS_GenomicPatterns.txt";
+    a.download = "GenomicPatterns.txt";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 }
+
 
 
 

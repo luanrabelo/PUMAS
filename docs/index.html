@@ -748,7 +748,7 @@
             
                     startSearch.addEventListener('click', async function () {
                         const vouchersList = document.getElementById('vouchersList').value.trim();
-                        const geneStart = document.getElementById('geneList').value;
+                        let geneStart = document.getElementById('geneList').value;
                         const typeGenome = document.getElementById('mt').checked ? 'Mitochondrial' : 'Chloroplast';
                         const genelist = ['CDS', 'rRNA', 'tRNA'].filter(gene => document.getElementById(gene).checked);
             
@@ -920,7 +920,7 @@
                     });
             
                     downloadPlot.addEventListener('click', function () {
-                        const startGene = geneStartGlobal || importGeneSelect.value;
+                        let startGene = geneStartGlobal || importGeneSelect.value;
                         if (PatternsSelect.value === 'SVG') {
                             createAndDownloadSVG(_geneListEdit, startGene);
                         } else if (PatternsSelect.value === 'PNG') {
@@ -929,7 +929,7 @@
                     });
             
                     PatternsDownloadFile.addEventListener('click', function () {
-                        const startGene = geneStartGlobal || importGeneSelect.value;
+                        let startGene = geneStartGlobal || importGeneSelect.value;
                         createAndDownloadText(data, startGene);
                     });
             
@@ -945,7 +945,7 @@
                 <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 mb-5">
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create an fasta file</b>"><span class="badge text-bg-dark">5.1</span> - Fasta File</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a fasta file</b>"><span class="badge text-bg-dark">5.1</span> - Fasta File</label>
                         <div class="input-group">
                             <select id="genesToFasta" class="form-select form-select-lg" id="fastaFileExport" aria-label=""></select>
                             <button id="downloadFasta" class="btn btn-dark" type="button" disabled>Download File</button>
@@ -1019,7 +1019,7 @@
                     </div>
 
                     <div class="col mt-2">
-                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>create a Individual plot</b>"><span class="badge text-bg-dark">5.4</span> - Create a Individual Plot</label>
+                        <label class="h5" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Select a <b>gene</b> to <b>Create an Individual Plot</b>"><span class="badge text-bg-dark">5.4</span> - Create an Individual Plot</label>
                         <div class="input-group">
                             <select id="individualPlot" class="form-select form-select-lg" aria-label=""></select>
                             <button id="downloadIndivivualPlot" class="btn btn-dark" type="button" disabled>View Plot</button>
@@ -1222,8 +1222,9 @@
                 <div class="col-12 col-md-3 col-sm-1">
                     <div class="h4">About:</div>
                     <div class="media">
-                        <img src="assets/PUMAS.png" class="mr-3 mx-auto d-block" alt="" width="35%">
-                        <div class="media-body text-center"><p><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</p></div>
+                        <img src="assets/PUMAS.png" class="mr-3 mx-auto d-block" alt="" width="25%">
+                        <div class="media-body text-center"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
+                        <div class="text-center"><small>v1.0</small></div>
                     </div>
                 </div>
                 <div class="col-12 col-md-5">
@@ -1268,21 +1269,19 @@
                     <div class="row">
                         <div class="col-md-6 text-center">
                             <div class="media">
-                                <img src="assets/UFPA.png" class="mr-3 mx-auto d-block"
+                                <img src="assets/UFPA.png" class="mr-3 mx-auto d-block mb-3"
                                     alt="Universidade Federal do Pará" width="30%">
                                 <div class="media-body">
-                                    <h5 class="mt-0">Universidade Federal do Pará</h5>
-                                    <p><i class="bi bi-globe2"></i> <a href="https://ufpa.br/" target="_blank">Universidade Federal do Pará</a></p>
+                                    <p><i class="bi bi-globe2"></i> <a class="h5" href="https://ufpa.br/" target="_blank">Universidade Federal do Pará</a></p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 text-center">
                             <div class="media">
-                                <img src="assets/LEVO.png" class="mr-3 mx-auto d-block" alt="Laboratório de Evolução"
+                                <img src="assets/LEVO.png" class="mr-3 mx-auto d-block mb-3" alt="Laboratório de Evolução"
                                     width="30%">
                                 <div class="media-body">
-                                    <h5 class="mt-0">Laboratório de Evolução</h5>
-                                    <p><i class="bi bi-globe2"></i> <a href="https://levo.ufpa.br/" target="_blank">Laboratório de Evolução</a></p>
+                                    <p><i class="bi bi-globe2"></i> <a class="h5" href="https://levo.ufpa.br/" target="_blank">Laboratório de Evolução</a></p>
                                 </div>
                             </div>
                         </div>
