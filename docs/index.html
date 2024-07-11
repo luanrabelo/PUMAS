@@ -1189,6 +1189,7 @@
                             <span class="input-group-text">Number of Genes/Gaps/Region to add</span>
                             <input type="number" class="form-control" id="quantidade" min="1" max="10" value="1">
                         </div>
+                        <small class="text-muted"><i class="fa-solid fa-circle-info"></i> It is important to highlight that the user has the possibility to include <b>1 to 10 gaps</b> easily in a single sequence, however, it is <b>only possible to delete one gap after another</b>. Therefore, include gaps wisely.</small>
                     <script>
                         $(document).ready(function () {
                             const light = document.getElementById('light');
@@ -1209,7 +1210,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-lg btn-primary" id="saveGeneButton">add the Gene or Region</button>
+                    <button type="button" class="btn btn-lg btn-success" id="saveGeneButton">add the Gene or Region</button>
                 </div>
             </div>
         </div>

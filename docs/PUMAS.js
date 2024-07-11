@@ -365,6 +365,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
         function adicionarElemento(index, lado, quantidade = 1) {
             $('#addGeneModal').modal('show');
+            const quantidadeInput = document.getElementById('quantidade');
+            quantidadeInput.value = 1;
             $('#saveGeneButton').off('click').on('click', function () {
                 const newGeneName = $('#geneNameInput').val();
                 const qtde = parseInt($('#quantidade').val()) || quantidade;
@@ -485,48 +487,57 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
 
         // Botão para mover para cima
-        let moveUpIcon = document.createElementNS(svgNS, "text");
-        moveUpIcon.textContent = '⬆';
+        let moveUpIcon = document.createElementNS(svgNS, "svg");
+        moveUpIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        moveUpIcon.setAttribute("viewBox", "0 0 320 512");
         moveUpIcon.setAttribute("x", "45");
-        moveUpIcon.setAttribute("y", "70");
-        moveUpIcon.setAttribute("fill", "#000000");
-        moveUpIcon.setAttribute("font-weight", "bold");
-        moveUpIcon.setAttribute("text-anchor", "middle");
+        moveUpIcon.setAttribute("y", "55");
+        moveUpIcon.setAttribute("width", "20");
+        moveUpIcon.setAttribute("height", "20");
         moveUpIcon.setAttribute("cursor", "pointer");
-        moveUpIcon.setAttribute("font-size", "25px");
-        if (!pattern) moveUpIcon.setAttribute("data-bs-toggle", "tooltip");
+        moveUpIcon.setAttribute("data-bs-toggle", "tooltip");
+        moveUpIcon.setAttribute("data-bs-placement", "top");
+        moveUpIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
+        moveUpIcon.setAttribute("data-bs-html", "true");
         moveUpIcon.setAttribute("title", "Move up");
+        moveUpIcon.innerHTML = `<path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>`;
         moveUpIcon.onclick = () => moveLine(dataIndex, -1);
         svg.appendChild(moveUpIcon);
 
         // Botão para mover para baixo
-        let moveDownIcon = document.createElementNS(svgNS, "text");
-        moveDownIcon.textContent = '⬇';
+        let moveDownIcon = document.createElementNS(svgNS, "svg");
+        moveDownIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        moveDownIcon.setAttribute("viewBox", "0 0 320 512");
         moveDownIcon.setAttribute("x", "75");
-        moveDownIcon.setAttribute("y", "70");
-        moveDownIcon.setAttribute("fill", "#000000");
-        moveDownIcon.setAttribute("font-weight", "bold");
-        moveDownIcon.setAttribute("text-anchor", "middle");
+        moveDownIcon.setAttribute("y", "55");
+        moveDownIcon.setAttribute("width", "20");
+        moveDownIcon.setAttribute("height", "20");
         moveDownIcon.setAttribute("cursor", "pointer");
-        moveDownIcon.setAttribute("font-size", "25px");
-        if (!pattern) moveDownIcon.setAttribute("data-bs-toggle", "tooltip");
+        moveDownIcon.setAttribute("data-bs-toggle", "tooltip");
+        moveDownIcon.setAttribute("data-bs-placement", "top");
+        moveDownIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
+        moveDownIcon.setAttribute("data-bs-html", "true");
         moveDownIcon.setAttribute("title", "Move down");
+        moveDownIcon.innerHTML = `<path d="M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z"/>`;
         moveDownIcon.onclick = () => moveLine(dataIndex, 1);
         svg.appendChild(moveDownIcon);
 
         if (!pattern) {
             // Botão para excluir a linha
-            let deleteIcon = document.createElementNS(svgNS, "text");
-            deleteIcon.textContent = '❌';
+            let deleteIcon = document.createElementNS(svgNS, "svg");
+            deleteIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            deleteIcon.setAttribute("viewBox", "0 0 448 512");
             deleteIcon.setAttribute("x", "15");
-            deleteIcon.setAttribute("y", "70");
-            deleteIcon.setAttribute("fill", "#FF7F3E");
-            deleteIcon.setAttribute("font-weight", "bold");
-            deleteIcon.setAttribute("text-anchor", "middle");
+            deleteIcon.setAttribute("y", "55");
+            deleteIcon.setAttribute("width", "20");
+            deleteIcon.setAttribute("height", "20");
             deleteIcon.setAttribute("cursor", "pointer");
-            deleteIcon.setAttribute("font-size", "20px");
-            if (!pattern) deleteIcon.setAttribute("data-bs-toggle", "tooltip");
+            deleteIcon.setAttribute("data-bs-toggle", "tooltip");
+            deleteIcon.setAttribute("data-bs-placement", "top");
+            deleteIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
+            deleteIcon.setAttribute("data-bs-html", "true");
             deleteIcon.setAttribute("title", "Delete line");
+            deleteIcon.innerHTML = `<path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>`;
             deleteIcon.onclick = () => deleteLine(dataIndex);
             svg.appendChild(deleteIcon);
         }
@@ -673,6 +684,26 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 svg.appendChild(btnEsquerda);
             }
 
+            if (!pattern) {
+                // Adiciona o ícone de edição abaixo do nome do gene
+                let editIcon = document.createElementNS(svgNS, "svg");
+                editIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+                editIcon.setAttribute("viewBox", "0 0 512 512");
+                editIcon.setAttribute("x", (currentX + pieceW / 2 - 12).toString());
+                editIcon.setAttribute("y", "120");
+                editIcon.setAttribute("width", "20");
+                editIcon.setAttribute("height", "20");
+                editIcon.setAttribute("cursor", "pointer");
+                editIcon.setAttribute("data-bs-toggle", "tooltip");
+                editIcon.setAttribute("data-bs-placement", "top");
+                editIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
+                editIcon.setAttribute("data-bs-html", "true");
+                editIcon.setAttribute("title", `Click to edit ${produto}`);
+                editIcon.innerHTML = `<path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>`;
+                editIcon.onclick = () => openEditModal(produto, index, genes, strands, lengths, data, geneOrder, pattern);
+                svg.appendChild(editIcon);
+            }
+
             currentX += pieceW;
         });
 
@@ -725,7 +756,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                         <div class="modal-body">
                             <label for="newGeneName">Rename <b>${geneName}</b> to:</label>
                             <select id="newGeneName" class="form-control form-control-lg">
-                                <option value="" selected>GAP (-)</option>
+                                <option value="NaN" selected>Select a gene</option>
                                 ${geneList.map(gene => `<option value="${gene}">${gene}</option>`).join('')}
                             </select>
                             <div class="form-check">
@@ -738,8 +769,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="saveEditGeneButton">Save changes</button>
+                            <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-lg btn-success" id="saveEditGeneButton">Save changes</button>
                         </div>
                     </div>
                 </div>
@@ -804,8 +835,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                             <input id="newPatternName" class="form-control form-control-lg" type="text" value="${data.id}">
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="saveEditPatternButton">Save changes</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-success" id="saveEditPatternButton">Save changes</button>
                         </div>
                     </div>
                 </div>
@@ -847,6 +878,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         }
     }
 }
+
+
 
 
 function createAndDownloadSVG(geneList, geneStart) {
