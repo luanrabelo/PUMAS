@@ -3,17 +3,117 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://kit.fontawesome.com/7d94912b47.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pumas: {
+                            dark:    '#202020',
+                            accent:  '#ff8f00',
+                            success: '#85C79A',
+                            danger:  '#FF6B6B',
+                            progress:'#4ECDC4',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            },
+            /* Disable visibility plugin so Tailwind does NOT generate
+               .collapse { visibility: collapse } which conflicts with
+               Bootstrap JS's collapse/accordion mechanism */
+            corePlugins: {
+                visibility: false,
+            },
+            blocklist: ['collapse'],
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css">
+    <script>
+    /* ── Bootstrap-less shim ──────────────────────────────────────────────── */
+    /* Modal */
+    $.fn.modal = function(action) {
+        return this.each(function() {
+            const el = this;
+            if (action === 'show') {
+                el.style.display = 'flex';
+                el.style.overflow = 'auto';
+                el.dispatchEvent(new Event('show.bs.modal', { bubbles: true }));
+                requestAnimationFrame(() => {
+                    el.classList.add('show');
+                    el.dispatchEvent(new Event('shown.bs.modal', { bubbles: true }));
+                });
+                document.body.classList.add('modal-open');
+                if (!document.querySelector('.modal-backdrop')) {
+                    const b = document.createElement('div');
+                    b.className = 'modal-backdrop fade show';
+                    document.body.appendChild(b);
+                }
+            } else if (action === 'hide') {
+                el.classList.remove('show');
+                setTimeout(() => {
+                    el.style.display = '';
+                    el.style.overflow = '';
+                    document.body.classList.remove('modal-open');
+                    const bd = document.querySelector('.modal-backdrop');
+                    if (bd) bd.remove();
+                }, 150);
+            }
+        });
+    };
+    /* bootstrap namespace compat */
+    window.bootstrap = {
+        Modal: function(el) {
+            return { show: () => $(el).modal('show'), hide: () => $(el).modal('hide') };
+        },
+        Tooltip: { getInstance: (el) => ({ dispose: () => { if (el._tippy) el._tippy.destroy(); } }) }
+    };
+    window.bootstrap.Modal.getInstance = (el) => ({
+        hide: () => $(el).modal('hide'),
+        show: () => $(el).modal('show')
+    });
+    /* data-bs-dismiss → close modal */
+    $(document).on('click', '[data-bs-dismiss="modal"]', function() {
+        const m = $(this).closest('.modal');
+        if (m.length) m.modal('hide');
+    });
+    /* data-bs-toggle="modal" → open target modal */
+    $(document).on('click', '[data-bs-toggle="modal"][data-bs-target]', function() {
+        const t = $(this).data('bsTarget') || $(this).attr('data-bs-target');
+        if (t) $(t).modal('show');
+    });
+    /* Accordion collapse */
+    $(document).on('click', '[data-bs-toggle="collapse"]', function() {
+        const sel = $(this).attr('data-bs-target') || $(this).attr('href');
+        const $el = $(sel);
+        if (!$el.length) return;
+        const $btn = $(this);
+        if ($el.hasClass('show')) {
+            $el.css('height', $el[0].scrollHeight + 'px').removeClass('show').addClass('collapsing');
+            $btn.addClass('collapsed').attr('aria-expanded','false');
+            requestAnimationFrame(() => $el.css('height','0'));
+            $el.one('transitionend', () => $el.removeClass('collapsing').addClass('collapse').css('height',''));
+        } else {
+            $el.removeClass('collapse').addClass('collapsing').css('height','0');
+            $btn.removeClass('collapsed').attr('aria-expanded','true');
+            requestAnimationFrame(() => $el.css('height', $el[0].scrollHeight + 'px'));
+            $el.one('transitionend', () => $el.removeClass('collapsing').addClass('collapse show').css('height',''));
+        }
+    });
+    </script>
+    <script src="https://kit.fontawesome.com/7d94912b47.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.css">
@@ -32,24 +132,53 @@
     <meta property="twitter:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMASsm.png" />
     <link rel="stylesheet" href="PUMAS.css">
 </head>
-<body class="bg-light container-fluid">
+<body class="bg-gray-50 font-sans">
     
-    <div class="modal fade" id="LoadingPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="LoadingPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header h3 text-white" style="background-color: #1A535C;">PUMAS</div>
-                <div class="modal-body text-center">
-                    <figure class="figure">
-                        <img src="assets/PUMAS.png" class="figure-img img-fluid rounded" alt="..." width="50%">
-                        <div class="h4"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
-                    </figure>
-                    <div id="loadingStepText" class="h5 mb-2 text-muted">Initializing...</div>
-                    <div class="progress">
-                        <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
-                    </div>
+            <div class="modal-content loading-modal-content">
+                <div class="modal-header loading-modal-header">
+                    <h2 class="loading-modal-title mb-0"><i class="fa-solid fa-dna fa-spin me-2"></i> PUMAS</h2>
                 </div>
-                <div class="modal-footer text-white" style="background-color: #1A535C;">
-                    <div class="h3">Please wait...</div>
+                <div class="modal-body loading-modal-body text-center">
+                    <figure class="figure">
+                        <img src="assets/PUMAS.png" class="figure-img img-fluid rounded" alt="PUMAS Logo" style="width:50%;max-width:240px;">
+                        <div class="loading-modal-subtitle"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
+                    </figure>
+                    <div id="loadingStepText" class="loading-step-text">Initializing...</div>
+                    <div class="progress" style="height:1.4rem;border-radius:0.5rem;background:#e9ecef;overflow:hidden;">
+                        <div id="progressBar" class="progress-bar" role="progressbar" style="width:0%;transition:width 0.4s ease;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <!-- Detailed step list -->
+                    <ul class="loading-step-list" id="loadingDetailedSteps">
+                        <li class="loading-step-item pending" id="lstep-config">
+                            <span class="loading-step-icon"><i class="fa-regular fa-circle"></i></span>
+                            <span>Configure analysis options and validate gene categories</span>
+                        </li>
+                        <li class="loading-step-item pending" id="lstep-pumas">
+                            <span class="loading-step-icon"><i class="fa-regular fa-circle"></i></span>
+                            <span>Load saved .pumas dataset</span>
+                        </li>
+                        <li class="loading-step-item pending" id="lstep-ncbi">
+                            <span class="loading-step-icon"><i class="fa-regular fa-circle"></i></span>
+                            <span>Fetch sequences from NCBI</span>
+                        </li>
+                        <li class="loading-step-item pending" id="lstep-gb">
+                            <span class="loading-step-icon"><i class="fa-regular fa-circle"></i></span>
+                            <span>Parse local GenBank / GBK files</span>
+                        </li>
+                        <li class="loading-step-item pending" id="lstep-merge">
+                            <span class="loading-step-icon"><i class="fa-regular fa-circle"></i></span>
+                            <span>Merge and organize datasets</span>
+                        </li>
+                        <li class="loading-step-item pending" id="lstep-viz">
+                            <span class="loading-step-icon"><i class="fa-regular fa-circle"></i></span>
+                            <span>Generate visualizations</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer loading-modal-footer">
+                    <div class="loading-modal-wait"><i class="fa-solid fa-spinner fa-spin me-1"></i> Please wait…</div>
                 </div>
             </div>
         </div>
@@ -57,20 +186,20 @@
 
 <!-- Old modal removed - PUMAS import is now inline in the accordion -->
     
-    <main class="container-fluid">
-        <div class="container full-screen text-center">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center">
+    <main class="w-full px-3">
+        <div class="full-screen text-center">
+            <div class="flex flex-wrap items-center">
+                <div class="w-full md:w-1/2 text-center">
                     <img src="assets/PUMAS.png" class="img-fluid" alt="PUMAS">
                 </div>
-            <div class="col-md-6 d-flex align-items-center">
+            <div class="w-full md:w-1/2 flex items-center">
                 <div>
                     <div class="display-2">PUMAS<sup>by Luan Rabelo</sup></div>
                     <div class="h3"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
                     <div class="h6">v1.0</div>
                     <div class="h5 mt-5">How to Cite PUMAS: Coming Soon…</div>
                     <div class="mt-5">
-                        <i style="cursor: pointer;" id="btnStartPUMAS" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Click to Start PUMAS" class="fa-solid fa-circle-arrow-down fa-fade fa-4x"></i>
+                        <i style="cursor: pointer;" id="btnStartPUMAS" data-tippy-content="Click here to scroll to the PUMAS analysis form" class="fa-solid fa-circle-arrow-down fa-fade fa-4x"></i>
                     </div>
                 </div>
               </div>
@@ -87,9 +216,9 @@
                 });
             });
         </script>
-        <div class="mt-5 mb-2 mx-auto formPUMAS">
+        <div class="mt-5 mb-2 formPUMAS">
             
-            <div class="mt-4 container-fluid px-0">
+            <div class="mt-4 w-full">
                 <label class="step-label">
                     <span class="badge text-bg-dark">1</span>
                     <span class="step-label-text">Select how to load your genomic data</span>
@@ -122,7 +251,8 @@
                                     </small>
                                 </p>
 
-                                <textarea class="form-control mt-2" placeholder="Enter one Accession Number per line (e.g. MN737137.1)" id="vouchersList" style="height: 20vh" spellcheck="false"></textarea>
+                                <textarea class="form-control mt-2" placeholder="Enter one Accession Number per line (e.g. MN737137.1)" id="vouchersList" style="height: 20vh" spellcheck="false"
+                                    data-tippy-content="Enter one NCBI GenBank accession number per line — no blank lines or extra spaces. Example: MN737137.1"></textarea>
                                 
                                 <div id="errorDiv" class="text-danger mt-1"></div>
                                 
@@ -135,11 +265,11 @@
                                 <p class="mt-2">
                                     <small class="step-info">
                                         <i class="fa-solid fa-circle-info"></i> Load examples:
-                                        <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Potamiscine with <b>17 genomes</b> from Zhang et. al. 2020">Mitochondrial</button>
+                                        <button type="button" id="exampleVouchersMitochondrial" class="btn btn-sm btn-dark" data-tippy-content="Potamiscine with <b>17 genomes</b> from Zhang et. al. 2020">Mitochondrial</button>
                                         or
-                                        <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="<i>Coffea</i> Genus with <b>23 genomes</b>">Chloroplast</button>
+                                        <button type="button" id="exampleVouchersChloroplast" class="btn btn-sm btn-dark" data-tippy-content="<i>Coffea</i> Genus with <b>23 genomes</b>">Chloroplast</button>
                                         |
-                                        <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" data-bs-title="Clear all the list and <b>Start</b> again"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                                        <button class="btn btn-sm btn-danger" type="button" id="resetVouchers" data-tippy-content="Clear all the list and <b>Start</b> again"><i class="fa-solid fa-rotate-left"></i> Reset</button>
                                     </small>
                                 </p>
                             </div>
@@ -164,7 +294,8 @@
                                     </small>
                                 </p>
                                 
-                                <div id="gbDropArea" class="drop-zone mt-3">
+                                <div id="gbDropArea" class="drop-zone mt-3"
+                                    data-tippy-content="Drag &amp; drop <b>.gb</b> or <b>.gbk</b> GenBank flat files here, or click to open the file picker">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="h5 mb-1">Drag & drop <b>.gb</b> / <b>.gbk</b> files or folders here</p>
                                     <p class="text-muted mb-0">or click to browse files | <a href="#" id="gbFolderBrowse" class="text-dark"><b>browse folders</b></a></p>
@@ -192,7 +323,8 @@
                                         <i class="fa-solid fa-circle-info"></i> Upload your previously saved <b>.pumas</b> file to restore a past analysis session. After loading, select the genome type and gene options in <b>Steps 2, 3 and 4</b> below.
                                     </small>
                                 </p>
-                                <div id="pumasDropArea" class="drop-zone mt-3">
+                                <div id="pumasDropArea" class="drop-zone mt-3"
+                                    data-tippy-content="Drag &amp; drop a previously saved <b>.pumas</b> session file to restore your analysis — including all edits and alignments">
                                     <i class="fa-solid fa-cloud-arrow-up"></i>
                                     <p class="h5 mb-1">Drag & drop your <b>.pumas</b> file here</p>
                                     <p class="text-muted mb-0">or click to browse and select a file</p>
@@ -273,9 +405,16 @@
                         // Enable Steps 2-3 if any data is loaded
                         const mt = document.getElementById('mt');
                         const cp = document.getElementById('cp');
+                        const resetData = document.getElementById('resetData');
                         if (hasAny) {
                             mt.disabled = false;
                             cp.disabled = false;
+                        } else {
+                            mt.disabled = true;
+                            cp.disabled = true;
+                        }
+                        if (resetData) {
+                            resetData.disabled = !hasAny;
                         }
                     }
                 </script>
@@ -343,6 +482,11 @@
                             const svgPlot   = document.getElementById('svgPlot');
                             const Patterns  = document.getElementById('Patterns');
                             geneList.value                  = 'NaN';
+                            document.getElementById('geneSearchInput').disabled = true;
+                            document.getElementById('geneSearchResults').innerHTML = '<span style="font-size:0.82rem;color:#9ca3af;">Enable genome type and gene categories first.</span>';
+                            document.getElementById('geneSearchResults').classList.add('disabled');
+                            document.getElementById('selectedGeneText').innerHTML = '<i class="fa-regular fa-hand-pointer"></i> No gene selected';
+                            document.getElementById('selectedGeneText').className = 'gene-selected-text';
                             mt.checked                      = false;
                             mt.disabled                     = true;
                             cp.checked                      = false;
@@ -642,7 +786,7 @@
                 </script>
             </div>
 
-            <div class="mt-4 container-fluid px-0">
+            <div class="mt-4 w-full">
                 <label class="step-label">
                     <span class="badge text-bg-dark">2</span>
                     <span class="step-label-text">Configure your analysis</span>
@@ -661,8 +805,8 @@
                         </h2>
                         <div id="collapseConfigureAnalysis" class="accordion-collapse collapse" aria-labelledby="headingConfigureAnalysis">
                             <div class="accordion-body">
-                                <div class="row g-3 analysis-grid">
-                                    <div class="col-12 col-lg-4">
+                                <div class="flex flex-wrap gap-4 analysis-grid">
+                                    <div class="w-full lg:w-[calc(33.333%-1rem)]">
                                         <div class="analysis-panel h-100">
                                             <div class="analysis-panel-header">
                                                 <span class="badge text-bg-step">2.1.1</span>
@@ -671,17 +815,19 @@
                                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Select whether the current run should analyze <b>mitochondrial</b> or <b>chloroplast</b> genomes. This choice controls the available gene catalog in the next column.</p>
                                             <div class="step-option-group">
                                                 <div class="form-check form-switch step-form-check">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="mt" value="Mitochondrial" disabled>
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="mt" value="Mitochondrial" disabled
+                                                        data-tippy-content="Analyze <b>mitochondrial</b> genomes — select this if your data includes animal or fungal mitogenomes">
                                                     <label class="form-check-label ml-5 mr-5" for="mt">Mitochondrial genome</label>
                                                 </div>
                                                 <div class="form-check form-switch step-form-check">
-                                                    <input class="form-check-input" type="checkbox" role="switch" id="cp" value="Chloroplast" disabled>
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="cp" value="Chloroplast" disabled
+                                                        data-tippy-content="Analyze <b>chloroplast</b> genomes — select this if your data includes plant plastid genomes">
                                                     <label class="form-check-label ml-2 mr-2" for="cp">Chloroplast genomes</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-lg-4">
+                                    <div class="w-full lg:w-[calc(33.333%-1rem)]">
                                         <div class="analysis-panel h-100">
                                             <div class="analysis-panel-header">
                                                 <span class="badge text-bg-step">2.1.2</span>
@@ -690,28 +836,46 @@
                                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Choose which gene groups should be extracted for the analysis. You can combine <b>CDS</b>, <b>rRNAs</b>, and <b>tRNAs</b> according to the biological question you want to test.</p>
                                             <div class="step-option-group">
                                                 <div class="form-check step-form-check">
-                                                    <input class="form-check-input" type="checkbox" value="CDS" id="CDS" disabled>
+                                                    <input class="form-check-input" type="checkbox" value="CDS" id="CDS" disabled
+                                                        data-tippy-content="Include <b>protein-coding genes</b> (CDS) in the analysis — these appear at full height in the puzzle view">
                                                     <label class="form-check-label" for="CDS">CDS</label>
                                                 </div>
                                                 <div class="form-check step-form-check">
-                                                    <input class="form-check-input" type="checkbox" value="rRNA" id="rRNA" disabled>
+                                                    <input class="form-check-input" type="checkbox" value="rRNA" id="rRNA" disabled
+                                                        data-tippy-content="Include <b>ribosomal RNA genes</b> (rRNA) — these appear at full height in the puzzle view">
                                                     <label class="form-check-label" for="rRNAs">rRNAs</label>
                                                 </div>
                                                 <div class="form-check step-form-check">
-                                                    <input class="form-check-input" type="checkbox" value="tRNA" id="tRNA" disabled>
+                                                    <input class="form-check-input" type="checkbox" value="tRNA" id="tRNA" disabled
+                                                        data-tippy-content="Include <b>transfer RNA genes</b> (tRNA) — these appear at <b>half the height</b> of other genes in the puzzle view">
                                                     <label class="form-check-label" for="rRNAs">tRNAs</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-lg-4">
+                                    <div class="w-full lg:w-[calc(33.333%-1rem)]">
                                         <div class="analysis-panel h-100">
                                             <div class="analysis-panel-header">
                                                 <span class="badge text-bg-step">2.1.3</span>
                                                 <span>Starting gene</span>
                                             </div>
                                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Pick the gene that should be treated as the starting point for the genome order.</p>
-                                            <select class="form-select step-select" id="geneList" disabled></select>
+                                            <!-- Hidden select maintained for value tracking (API compatibility) -->
+                                            <select id="geneList" disabled style="display:none;"></select>
+                                            <!-- Gene search UI -->
+                                            <div id="geneSearchWrapper">
+                                                <div style="position:relative;margin-bottom:0.5rem;">
+                                                    <i class="fa-solid fa-magnifying-glass" style="position:absolute;left:0.65rem;top:50%;transform:translateY(-50%);color:#9ca3af;pointer-events:none;font-size:0.85rem;"></i>
+                                                    <input type="text" id="geneSearchInput" placeholder="Search gene…" class="gene-search-input" disabled
+                                                        data-tippy-content="Select the gene that will be placed first in every genome row — all puzzle views rotate to start at this gene">
+                                                </div>
+                                                <div id="geneSearchResults" class="gene-search-results disabled">
+                                                    <span style="font-size:0.82rem;color:#9ca3af;">Enable genome type and gene categories first.</span>
+                                                </div>
+                                                <div id="selectedGeneText" class="gene-selected-text">
+                                                    <i class="fa-regular fa-hand-pointer"></i> No gene selected
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -734,13 +898,13 @@
                         const _mtGenes = {
                             "CDS": ["COI", "COII", "COIII", "CYTB", "ND1", "ND2", "ND3", "ND4", "ND4L", "ND5", "ND6", "ATP6", "ATP8"].sort(),
                             "rRNA": ["12S", "16S"].sort(),
-                            "tRNA": ["Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Lys", "Met", "Phe", "Pro", "Ser", "Thr", "Trp", "Tyr", "Val"].sort(),
+                            "tRNA": ["Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Leu1", "Leu2", "Lys", "Met", "Phe", "Pro", "Ser", "Ser1", "Ser2", "Thr", "Trp", "Tyr", "Val"].sort(),
                         };
 
                         const _cpGenes = {
                             "CDS": ["atpA", "atpB", "atpE", "atpF", "atpH", "atpI", "petA", "petB", "petD", "petE", "petG", "petL", "petN", "ndhA", "ndhB", "ndhC", "ndhD", "ndhE", "ndhF", "ndhG", "ndhH", "ndhI", "ndhJ", "ndhK", "psaA", "psaB", "psaC", "psaI", "psaJ", "psaM", "psb30", "psbA", "psbB", "psbC", "psbD", "psbE", "psbF", "psbH", "psbI", "psbJ", "psbK", "psbL", "psbM", "psbN", "psbZ", "accD", "ccsA", "cemA", "chlB", "chlL", "chlN", "clpP", "clpP1", "cysA", "cysT", "ftsH", "infA", "lhbA", "matK", "pafI", "pafII", "pbf1", "psb30", "ycf1", "ycf2", "ycf3", "ycf4", "ycf12", "ycf15"].sort(),
                             "rRNA": ["rrn16S", "rrn23S", "rrn4.5S", "rrn5S", "rpoA", "rpoB", "rpoC1", "rpoC2", "rpl2", "rpl14", "rpl16", "rpl20", "rpl22", "rpl23", "rpl32", "rpl33", "rpl36", "rps2", "rps3", "rps4", "rps7", "rps8", "rps11", "rps12", "rps14", "rps15", "rps16", "rps18", "rps19"].sort(),
-                            "tRNA": ["Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Lys", "Met", "Phe", "Pro", "Ser", "Thr", "Trp", "Tyr", "Val"].sort(),
+                            "tRNA": ["Ala", "Arg", "Asn", "Asp", "Cys", "Gln", "Glu", "Gly", "His", "Ile", "Leu", "Leu1", "Leu2", "Lys", "Met", "Phe", "Pro", "Ser", "Ser1", "Ser2", "Thr", "Trp", "Tyr", "Val"].sort(),
                         };
 
                         function toggleInputs(disableMt, disableCp, disableOthers) {
@@ -753,9 +917,30 @@
 
                         function renderGeneList(filterText = '') {
                             const filter = filterText.trim().toLowerCase();
-                            const previousValue = geneList.value;
-                            $('#geneList').empty();
-                            $('#geneList').append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+                            const container = document.getElementById('geneSearchResults');
+                            const hiddenSelect = document.getElementById('geneList');
+                            const searchInput = document.getElementById('geneSearchInput');
+                            const wrapper = document.getElementById('geneSearchWrapper');
+                            const currentVal = hiddenSelect.value;
+
+                            // Rebuild hidden select options (for API compatibility)
+                            $(hiddenSelect).empty().append($('<option>').text('Choose a gene').attr('value', 'NaN'));
+
+                            const hasCategories = Object.keys(activeGeneOptions).length > 0;
+
+                            if (!hasCategories) {
+                                container.innerHTML = '<span style="font-size:0.82rem;color:#9ca3af;">Enable genome type and gene categories first.</span>';
+                                container.classList.add('disabled');
+                                searchInput.disabled = true;
+                                hiddenSelect.disabled = true;
+                                startSearch.disabled = true;
+                                return;
+                            }
+
+                            container.innerHTML = '';
+                            container.classList.remove('disabled');
+                            searchInput.disabled = false;
+                            hiddenSelect.disabled = false;
 
                             let hasVisibleGenes = false;
                             Object.keys(activeGeneOptions).forEach(function (type) {
@@ -764,30 +949,74 @@
                                 });
 
                                 if (filteredGenes.length > 0) {
+                                    hasVisibleGenes = true;
+
+                                    // Add to hidden select
                                     const optgroup = $('<optgroup>').attr('label', type);
                                     filteredGenes.forEach(function (gene) {
                                         optgroup.append($('<option>').text(gene).attr('value', gene));
                                     });
-                                    $('#geneList').append(optgroup);
-                                    hasVisibleGenes = true;
+                                    $(hiddenSelect).append(optgroup);
+
+                                    // Add category label
+                                    const catLabel = document.createElement('div');
+                                    catLabel.className = 'gene-category-label';
+                                    catLabel.textContent = type;
+                                    container.appendChild(catLabel);
+
+                                    // Add gene pills row
+                                    const pillsRow = document.createElement('div');
+                                    pillsRow.className = 'gene-pills-row';
+                                    filteredGenes.forEach(function (gene) {
+                                        const pill = document.createElement('span');
+                                        pill.textContent = gene;
+                                        pill.className = 'gene-pill' + (gene === currentVal ? ' selected' : '');
+                                        pill.dataset.gene = gene;
+                                        pill.addEventListener('click', function () {
+                                            hiddenSelect.value = gene;
+                                            hiddenSelect.dispatchEvent(new Event('change'));
+                                        });
+                                        pillsRow.appendChild(pill);
+                                    });
+                                    container.appendChild(pillsRow);
                                 }
                             });
 
-                            geneList.disabled = !hasVisibleGenes;
                             if (!hasVisibleGenes) {
-                                $('#geneList').append($('<option>').text('No genes found').attr('value', 'NaN'));
-                                geneList.value = 'NaN';
-                                geneList.style.backgroundColor = '';
+                                container.innerHTML = '<span style="font-size:0.82rem;color:#9ca3af;">No genes match your search.</span>';
+                                hiddenSelect.value = 'NaN';
+                                updateSelectedGeneDisplay('NaN');
                                 startSearch.disabled = true;
                                 return;
                             }
 
-                            if ([...geneList.options].some(option => option.value === previousValue)) {
-                                geneList.value = previousValue;
+                            // Restore previous selection if still valid
+                            const optionExists = [...hiddenSelect.options].some(o => o.value === currentVal);
+                            if (optionExists && currentVal !== 'NaN') {
+                                hiddenSelect.value = currentVal;
                             } else {
-                                geneList.value = 'NaN';
-                                geneList.style.backgroundColor = '';
+                                hiddenSelect.value = 'NaN';
+                                updateSelectedGeneDisplay('NaN');
                                 startSearch.disabled = true;
+                            }
+                        }
+
+                        function updateSelectedGeneDisplay(gene) {
+                            const el = document.getElementById('selectedGeneText');
+                            const results = document.getElementById('geneSearchResults');
+                            if (gene && gene !== 'NaN') {
+                                el.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#47a37a;"></i> Starting gene: <strong>' + gene + '</strong>';
+                                el.className = 'gene-selected-text has-value';
+                                // Highlight selected pill
+                                results.querySelectorAll('.gene-pill').forEach(function(p) {
+                                    p.classList.toggle('selected', p.dataset.gene === gene);
+                                });
+                            } else {
+                                el.innerHTML = '<i class="fa-regular fa-hand-pointer"></i> No gene selected';
+                                el.className = 'gene-selected-text';
+                                results.querySelectorAll('.gene-pill').forEach(function(p) {
+                                    p.classList.remove('selected');
+                                });
                             }
                         }
 
@@ -830,12 +1059,16 @@
                         rRNAs.addEventListener('change', updateGeneList);
                         tRNAs.addEventListener('change', updateGeneList);
 
-                        geneList.addEventListener('change', function () {
-                            if (geneList.value !== 'NaN') {
-                                geneList.style.backgroundColor = '#9DDE8B';
+                        document.getElementById('geneSearchInput').addEventListener('input', function () {
+                            renderGeneList(this.value);
+                        });
+
+                        document.getElementById('geneList').addEventListener('change', function () {
+                            const val = this.value;
+                            updateSelectedGeneDisplay(val);
+                            if (val !== 'NaN') {
                                 startSearch.disabled = false;
                             } else {
-                                geneList.style.backgroundColor = '#FF7F3E';
                                 startSearch.disabled = true;
                             }
                         });
@@ -843,10 +1076,12 @@
                 </script>
             </div>
             <div class="mt-2 text-center">
-                <div class="d-grid gap-2 col-xs-12 col-sm-12 col-md-8 col-lg-6 mx-auto">
-                    <div class="d-flex gap-2">
-                        <button id="startSearch" class="btn btn-lg btn-dark text-center flex-grow-1" type="button" disabled><i class="fa-solid fa-magnifying-glass"></i> Run PUMAS</button>
-                        <button id="resetData" class="btn btn-lg btn-outline-danger text-center" type="button" data-bs-toggle="modal" data-bs-target="#resetConfirmModal"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Data</button>
+                <div class="grid gap-2 w-full sm:w-8/12 md:w-6/12 mx-auto">
+                    <div class="flex gap-2">
+                        <button id="startSearch" class="flex-1 bg-[#202020] text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-[#333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed" type="button" disabled
+                            data-tippy-content="Fetch GenBank records and build the gene-order puzzle — requires at least one accession, genome type, and gene category selected"><i class="fa-solid fa-magnifying-glass"></i> Run PUMAS</button>
+                        <button id="resetData" class="border-2 border-red-500 text-red-500 font-semibold py-3 px-4 rounded-lg text-lg hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" type="button" data-bs-toggle="modal" data-bs-target="#resetConfirmModal" disabled
+                            data-tippy-content="Clear all loaded genomes and reset the entire analysis — you will be asked to confirm before any data is deleted"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Data</button>
                     </div>
                 </div>
             </div>
@@ -858,19 +1093,261 @@
                 $(document).ready(function () {
                     let cdsList = null;
                     let _geneListEdit = null;
+                    let pendingFastaHeaderFormat = 'simple';
                     const btnImport = document.getElementById('btnImport');
                     const fileContent = document.getElementById('fileContent');
                     const Patterns = document.getElementById('Patterns');
                     const importGeneSelect = document.getElementById('importGeneSelect');
                     const startSearch = document.getElementById('startSearch');
                     const downloadFasta = document.getElementById('downloadFasta');
-                    const genesToFasta = document.getElementById('genesToFasta');
                     const downloadInputFile = document.getElementById('downloadInputFile');
                     const createInputFile = document.getElementById('createInputFile');
                     const downloadPlot = document.getElementById('PatternsDownload');
                     const PatternsSelect = document.getElementById('PatternsSelect');
                     const PatternsDownloadFile = document.getElementById('PatternsDownloadFile');
                     const downloadPUMASfile = document.getElementById('PUMASDownloadFile');
+                    const autoAlignOrders = document.getElementById('autoAlignOrders');
+                    const undoAlignOrders = document.getElementById('undoAlignOrders');
+                    const toggleSynteny = document.getElementById('toggleSynteny');
+                    const resetDataBtn = document.getElementById('resetData');
+
+                    let preAlignData = null; // snapshot before auto-alignment (for undo)
+
+                    function updateAutoAlignButtonState() {
+                        const hasEnoughGenomes = Array.isArray(data) && data.length > 1;
+                        const canAlign = hasEnoughGenomes && preAlignData === null;
+                        autoAlignOrders.disabled = !canAlign;
+                        undoAlignOrders.disabled = preAlignData === null;
+                        toggleSynteny.disabled = !hasEnoughGenomes;
+                        document.getElementById('syntenyModeSelect').disabled = !showSyntenyLinks || !hasEnoughGenomes;
+                        toggleSynteny.innerHTML = showSyntenyLinks
+                            ? '<i class="fa-solid fa-eye-slash"></i> Hide Synteny'
+                            : '<i class="fa-solid fa-bezier-curve"></i> Show Synteny';
+                    }
+
+                    function normalizeEntryValue(value) {
+                        if (Array.isArray(value)) {
+                            return value[0] || '';
+                        }
+                        return value || '';
+                    }
+
+                    function formatGeneDisplayName(geneName) {
+                        return String(geneName || '')
+                            .replace(/^tRNA-Leu([12])$/i, 'tRNA-Leu-$1')
+                            .replace(/^tRNA-Ser([12])$/i, 'tRNA-Ser-$1')
+                            .replace(/^Leu([12])$/i, 'Leu-$1')
+                            .replace(/^Ser([12])$/i, 'Ser-$1');
+                    }
+
+                    function escapeHtml(value) {
+                        return String(value || '')
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+                    }
+
+                    function getCanonicalGeneOptions(typeGenome) {
+                        const base = Array.isArray(_geneListEdit) ? [..._geneListEdit] : [];
+                        const optionSet = new Set(base);
+                        const trnaAminoAcids = ['Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+
+                        trnaAminoAcids.forEach(aa => {
+                            if (optionSet.has(aa) || optionSet.has(`tRNA-${aa}`)) {
+                                optionSet.add(`tRNA-${aa}`);
+                            }
+                        });
+
+                        if (typeGenome === 'Mitochondrial') {
+                            ['Leu1', 'Leu2', 'Ser1', 'Ser2'].forEach(extra => {
+                                optionSet.add(extra);
+                                optionSet.add(`tRNA-${extra}`);
+                            });
+                        }
+                        return Array.from(optionSet).sort((a, b) => a.localeCompare(b));
+                    }
+
+                    function applyUnknownMappingsToResult(result, mappingByPlaceholder) {
+                        if (!result || !Array.isArray(result.unresolvedGenes) || result.unresolvedGenes.length === 0) return;
+
+                        result.unresolvedGenes.forEach(item => {
+                            const oldName = item.placeholderName;
+                            const newName = mappingByPlaceholder[oldName];
+                            if (!newName) return;
+
+                            const oldSeq = result.geneSequences[oldName];
+                            if (oldSeq) {
+                                if (!result.geneSequences[newName] || oldSeq.length > result.geneSequences[newName].length) {
+                                    result.geneSequences[newName] = oldSeq;
+                                }
+                                delete result.geneSequences[oldName];
+                            }
+
+                            if (result.geneData[oldName]) {
+                                if (!result.geneData[newName]) result.geneData[newName] = [];
+                                result.geneData[newName] = result.geneData[newName].concat(
+                                    result.geneData[oldName].map(x => ({ ...x, geneName: newName }))
+                                );
+                                delete result.geneData[oldName];
+                            }
+
+                            result.genes = result.genes.map(g => g === oldName ? newName : g);
+                            result.geneOrder = result.geneOrder.split(',').map(token => {
+                                if (token === oldName) return newName;
+                                if (token === `-${oldName}`) return `-${newName}`;
+                                return token;
+                            }).join(',');
+                        });
+
+                        result.unresolvedGenes = [];
+                    }
+
+                    function showMissingGenesModal(missingLines) {
+                        if (!missingLines || missingLines.length === 0) return;
+                        const list = document.getElementById('fastaMissingGenesList');
+                        list.innerHTML = '';
+                        missingLines.forEach(line => {
+                            const li = document.createElement('li');
+                            li.textContent = line;
+                            list.appendChild(li);
+                        });
+                        const modal = new bootstrap.Modal(document.getElementById('fastaMissingGenesModal'));
+                        modal.show();
+                    }
+
+                    function showDuplicateGenesModal(results) {
+                        const lines = [];
+                        (results || []).forEach(result => {
+                            const geneData = result.geneData || {};
+                            const source = result.sourceFile || normalizeEntryValue(result.vouchers) || '-';
+                            const species = normalizeEntryValue(result.speciesNames) || '-';
+
+                            Object.keys(geneData).forEach(gene => {
+                                if (gene.startsWith('__UNK_')) return;
+                                const copies = geneData[gene];
+                                if (!Array.isArray(copies) || copies.length < 2) return;
+                                const labels = [...copies]
+                                    .sort((a, b) => b.length - a.length)
+                                    .map((_, idx) => `${formatGeneDisplayName(gene)} (${idx + 1})`);
+                                lines.push({ source, species, labels: labels.join(', ') });
+                            });
+                        });
+
+                        if (lines.length === 0) return;
+                        const list = document.getElementById('duplicateGenesList');
+                        list.innerHTML = '';
+                        lines.forEach(line => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `${escapeHtml(line.source)} | <i>${escapeHtml(line.species)}</i>: ${line.labels}`;
+                            list.appendChild(li);
+                        });
+                        const modal = new bootstrap.Modal(document.getElementById('duplicateGenesModal'));
+                        modal.show();
+                    }
+
+                    async function resolveUnknownGenes(allResults, typeGenome) {
+                        const unresolvedRows = [];
+                        allResults.forEach((result, resultIndex) => {
+                            (result.unresolvedGenes || []).forEach(item => {
+                                unresolvedRows.push({ ...item, resultIndex });
+                            });
+                        });
+
+                        if (unresolvedRows.length === 0) return;
+
+                        const tbody = document.getElementById('unknownGenesTableBody');
+                        tbody.innerHTML = '';
+                        const options = getCanonicalGeneOptions(typeGenome);
+                        const normalizeMapToken = (value) => String(value || '').trim().toLowerCase();
+
+                        // Auto-map rows that already match an existing canonical option.
+                        const autoMappedByResult = new Map();
+                        const rowsToAsk = [];
+                        unresolvedRows.forEach(row => {
+                            const rawToken = normalizeMapToken(row.rawGeneName);
+                            const directMatch = options.find(opt => normalizeMapToken(opt) === rawToken);
+                            if (directMatch) {
+                                if (!autoMappedByResult.has(row.resultIndex)) autoMappedByResult.set(row.resultIndex, {});
+                                autoMappedByResult.get(row.resultIndex)[row.placeholderName] = directMatch;
+                            } else {
+                                rowsToAsk.push(row);
+                            }
+                        });
+
+                        autoMappedByResult.forEach((mapping, idx) => {
+                            applyUnknownMappingsToResult(allResults[idx], mapping);
+                        });
+
+                        if (rowsToAsk.length === 0) return;
+
+                        rowsToAsk.forEach((row, idx) => {
+                            const tr = document.createElement('tr');
+                            const speciesText = row.speciesName || '-';
+                            const selectedRaw = row.rawGeneName || '';
+                            const optionsHtml = options.map(opt => {
+                                const selected = normalizeMapToken(opt) === normalizeMapToken(selectedRaw) ? ' selected' : '';
+                                return `<option value="${opt}"${selected}>${opt}</option>`;
+                            }).join('');
+                            tr.innerHTML = `
+                                <td>${row.sourceFile || '-'}</td>
+                                <td><i>${speciesText}</i></td>
+                                <td>${row.genomeSize || '-'}</td>
+                                <td>${row.rawGeneName || '-'}</td>
+                                <td>
+                                    <select class="form-select form-select-sm" id="unknownGeneSelect_${idx}" data-placeholder="${row.placeholderName}" data-result-index="${row.resultIndex}">
+                                        <option value="">Select gene</option>
+                                        ${optionsHtml}
+                                    </select>
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+
+                        const modalElement = document.getElementById('unknownGenesModal');
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+
+                        await new Promise(resolve => {
+                            const applyBtn = document.getElementById('applyUnknownGeneMappings');
+                            const onApply = () => {
+                                const selects = Array.from(tbody.querySelectorAll('select[data-placeholder]'));
+                                const hasMissing = selects.some(sel => !sel.value);
+                                if (hasMissing) {
+                                    alert('Please select the correct gene name for all unknown entries.');
+                                    return;
+                                }
+
+                                const byResult = new Map();
+                                selects.forEach(sel => {
+                                    const resultIndex = Number(sel.getAttribute('data-result-index'));
+                                    const placeholder = sel.getAttribute('data-placeholder');
+                                    if (!byResult.has(resultIndex)) byResult.set(resultIndex, {});
+                                    byResult.get(resultIndex)[placeholder] = sel.value;
+                                });
+
+                                byResult.forEach((mapping, idx) => {
+                                    applyUnknownMappingsToResult(allResults[idx], mapping);
+                                });
+
+                                modal.hide();
+                                applyBtn.removeEventListener('click', onApply);
+                                resolve();
+                            };
+                            applyBtn.addEventListener('click', onApply);
+                        });
+                    }
+
+                    function buildFastaHeader(format, accession, speciesName, geneName, genomeLabel) {
+                        if (format === 'extended') {
+                            return `>${accession} | ${speciesName} | ${geneName} | ${genomeLabel}`;
+                        }
+                        if (format === 'minimal') {
+                            return `>${accession}`;
+                        }
+                        return `>${accession} ${speciesName}`;
+                    }
             
                     function setGeneLists(type) {
                         if (type === 'Mitochondrial') {
@@ -913,6 +1390,7 @@
                         if (data) {
                             const startGene = geneStartGlobal;
                             createSVG(data, startGene, _geneListEdit, Patterns.checked);
+                            updateAutoAlignButtonState();
                         }
                     }
             
@@ -931,6 +1409,69 @@
                         geneStartGlobal = document.getElementById('geneList').value;
                         createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
                         showResults(data, typeData);
+                        updateAutoAlignButtonState();
+                    });
+
+                    autoAlignOrders.addEventListener('click', function () {
+                        if (!Array.isArray(data) || data.length < 2) {
+                            alert('At least two genome orders are required for auto alignment.');
+                            return;
+                        }
+                        // Save per-genome gene data snapshot for undo (keyed by index in current array)
+                        // We store snapshots alongside a reference to each genome object so undo can
+                        // restore gene data without changing array order
+                        preAlignData = data.map(genome => ({
+                            ref: genome,
+                            genes: JSON.parse(JSON.stringify(genome.genes)),
+                            strands: JSON.parse(JSON.stringify(genome.strands)),
+                            lengths: JSON.parse(JSON.stringify(genome.lengths)),
+                            originalGeneNames: JSON.parse(JSON.stringify(genome.originalGeneNames || genome.genes)),
+                            geneOrder: genome.geneOrder,
+                            pseudoGenes: JSON.parse(JSON.stringify(genome.pseudoGenes || []))
+                        }));
+                        autoAlignGenomeOrders(data);
+                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        updateAutoAlignButtonState();
+                    });
+
+                    undoAlignOrders.addEventListener('click', function () {
+                        if (!preAlignData) return;
+                        // Restore gene data per genome without changing current array order
+                        // Build a lookup from genome object reference to its pre-align snapshot
+                        const snapMap = new Map();
+                        preAlignData.forEach(snap => snapMap.set(snap.ref, snap));
+                        data.forEach(genome => {
+                            const snap = snapMap.get(genome);
+                            if (snap) {
+                                genome.genes = snap.genes;
+                                genome.strands = snap.strands;
+                                genome.lengths = snap.lengths;
+                                genome.originalGeneNames = snap.originalGeneNames;
+                                genome.geneOrder = snap.geneOrder;
+                                genome.pseudoGenes = snap.pseudoGenes;
+                            }
+                        });
+                        preAlignData = null;
+                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        updateAutoAlignButtonState();
+                    });
+
+                    toggleSynteny.addEventListener('click', function () {
+                        if (!Array.isArray(data) || data.length < 2) {
+                            alert('At least two genome orders are required for synteny links.');
+                            return;
+                        }
+                        showSyntenyLinks = !showSyntenyLinks;
+                        document.getElementById('syntenyModeSelect').disabled = !showSyntenyLinks;
+                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        updateAutoAlignButtonState();
+                    });
+
+                    document.getElementById('syntenyModeSelect').addEventListener('change', function () {
+                        syntenyMode = this.value;
+                        if (showSyntenyLinks) {
+                            createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        }
                     });
             
                     startSearch.addEventListener('click', async function () {
@@ -962,15 +1503,37 @@
                         const totalSteps = vouchers.length + gbCount + (hasPumas ? 1 : 0);
                         let currentStep = 0;
 
-                        function updateProgress(stepText) {
+                        function markLoadingStep(stepId, state) {
+                            const el = document.getElementById(stepId);
+                            if (!el) return;
+                            el.className = 'loading-step-item ' + state;
+                            const icon = el.querySelector('.loading-step-icon');
+                            if (!icon) return;
+                            if (state === 'active')  icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#4ECDC4;"></i>';
+                            if (state === 'done')    icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#47a37a;"></i>';
+                            if (state === 'pending') icon.innerHTML = '<i class="fa-regular fa-circle"></i>';
+                        }
+
+                        function updateProgress(stepText, activeStepId) {
                             loadingStep.textContent = stepText;
                             const percentage = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
                             progressBar.style.width = percentage + '%';
                             progressBar.setAttribute('aria-valuenow', percentage);
                             progressBar.textContent = `${percentage.toFixed(0)}%`;
+                            if (activeStepId) {
+                                // Mark previous active steps as done
+                                ['lstep-config','lstep-pumas','lstep-ncbi','lstep-gb','lstep-merge','lstep-viz'].forEach(id => {
+                                    const el = document.getElementById(id);
+                                    if (el && el.classList.contains('active')) markLoadingStep(id, 'done');
+                                });
+                                markLoadingStep(activeStepId, 'active');
+                            }
                         }
 
-                        updateProgress('Configuring analysis options and validating selected gene categories...');
+                        updateProgress('Configuring analysis options and validating selected gene categories...', 'lstep-config');
+
+                        // Reset any previous alignment snapshot
+                        preAlignData = null;
 
                         $('#LoadingPumas').modal('show');
                         // Small delay to let the modal render
@@ -980,14 +1543,14 @@
 
                         // Step 1: PUMAS file (if present) — processed first as base data
                         if (hasPumas) {
-                            updateProgress('Reading saved .pumas file and recovering previous dataset...');
+                            updateProgress('Reading saved .pumas file and recovering previous dataset...', 'lstep-pumas');
                             try {
                                 const pumasData = JSON.parse(pumasContent);
                                 data = pumasData;
                                 originalData = JSON.parse(pumasContent);
                                 geneStartGlobal = geneStart;
                                 currentStep++;
-                                updateProgress('PUMAS file loaded and internal data structures initialized.');
+                                updateProgress('PUMAS file loaded and internal data structures initialized.', 'lstep-pumas');
                             } catch (e) {
                                 alert('Error parsing PUMAS file: ' + e.message);
                                 $('#LoadingPumas').modal('hide');
@@ -997,20 +1560,20 @@
 
                         // Step 2: Fetch accession numbers from NCBI
                         if (vouchers.length > 0) {
-                            updateProgress(`Internet query: requesting ${vouchers.length} genome(s) from NCBI...`);
+                            updateProgress(`Internet query: requesting ${vouchers.length} genome(s) from NCBI...`, 'lstep-ncbi');
                             const ncbiResults = await fetchGenomicData(vouchers, genelist, typeGenome, geneStart);
                             if (ncbiResults && ncbiResults.length > 0) {
                                 allResults = allResults.concat(ncbiResults);
                             }
                             currentStep += vouchers.length;
-                            updateProgress(`NCBI query finished. Standardizing gene names and metadata from online records...`);
+                            updateProgress(`NCBI query finished. Standardizing gene names and metadata from online records...`, 'lstep-ncbi');
                         }
 
                         // Step 3: Parse GB/GBK files
                         if (gbCount > 0) {
                             for (let i = 0; i < gbFilesData.length; i++) {
-                                updateProgress(`Reading local GenBank file ${i + 1}/${gbCount}: ${gbFilesData[i].name}`);
-                                const result = parseGenBankFile(gbFilesData[i].text, genelist, typeGenome, geneStart);
+                                updateProgress(`Reading local GenBank file ${i + 1}/${gbCount}: ${gbFilesData[i].name}`, 'lstep-gb');
+                                const result = parseGenBankFile(gbFilesData[i].text, genelist, typeGenome, geneStart, gbFilesData[i].name);
                                 if (result && result.genes.length > 0) {
                                     allResults.push(result);
                                 }
@@ -1025,8 +1588,11 @@
                             }
                         }
 
+                        await resolveUnknownGenes(allResults, typeGenome);
+                        showDuplicateGenesModal(allResults);
+
                         // Combine results: if we have PUMAS data plus other data, merge
-                        updateProgress('Organizing and merging datasets from all selected sources...');
+                        updateProgress('Organizing and merging datasets from all selected sources...', 'lstep-merge');
                         if (hasPumas && allResults.length > 0) {
                             // data is already the PUMAS object; add new results
                             const maxKey = Math.max(...Object.keys(data).map(Number).filter(n => !isNaN(n)), -1);
@@ -1044,17 +1610,14 @@
                             return;
                         }
 
-                        updateProgress('Generating visualizations, summaries, and final output structures...');
+                        updateProgress('Generating visualizations, summaries, and final output structures...', 'lstep-viz');
                         await new Promise(r => setTimeout(r, 50));
 
                         $('#LoadingPumas').modal('hide');
-
-                        if (typeGenome) {
-                            createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
-                            showResults(data, typeGenome);
-                        } else {
-                            alert('Select the type of genome');
-                        }
+                        ['lstep-config','lstep-pumas','lstep-ncbi','lstep-gb','lstep-merge','lstep-viz'].forEach(id => markLoadingStep(id, 'done'));
+                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        showResults(data, typeGenome);
+                        updateAutoAlignButtonState();
                     });
             
                     // Reset Data functionality
@@ -1075,6 +1638,11 @@
                         
                         // Clear gene list input
                         document.getElementById('geneList').value = 'NaN';
+                        document.getElementById('geneSearchInput').disabled = true;
+                        document.getElementById('geneSearchResults').innerHTML = '<span style="font-size:0.82rem;color:#9ca3af;">Enable genome type and gene categories first.</span>';
+                        document.getElementById('geneSearchResults').classList.add('disabled');
+                        document.getElementById('selectedGeneText').innerHTML = '<i class="fa-regular fa-hand-pointer"></i> No gene selected';
+                        document.getElementById('selectedGeneText').className = 'gene-selected-text';
                         
                         // Reset Step 1 - Data input controls
                         document.getElementById('mt').checked = false;
@@ -1102,6 +1670,8 @@
                         data = null;
                         originalData = null;
                         geneStartGlobal = null;
+                        showSyntenyLinks = false;
+                        preAlignData = null;
                         gbFilesData = [];
                         
                         // Hide results if shown
@@ -1112,15 +1682,22 @@
                         
                         // Disable Run PUMAS button
                         document.getElementById('startSearch').disabled = true;
+                        autoAlignOrders.disabled = true;
+                        undoAlignOrders.disabled = true;
+                        toggleSynteny.disabled = true;
+                        document.getElementById('syntenyModeSelect').disabled = true;
+                        toggleSynteny.innerHTML = '<i class="fa-solid fa-bezier-curve"></i> Show Synteny';
                         
                         // Clear SVG containers if any
-                        const svgContainer = document.querySelector('.svg-container');
+                        document.querySelectorAll('.genome-row, .synteny-bridge-row').forEach(el => el.remove());
+                        const svgContainer = document.getElementById('svgContainer');
                         if (svgContainer) {
                             svgContainer.innerHTML = '';
                         }
                         
                         // Show success message
                         alert('All data has been reset successfully. You can now start a new analysis.');
+                        updateDataSummary();
                     });
             
                     // Add event listener for createInputFile to show tool info
@@ -1137,93 +1714,175 @@
                         }
                     });
             
-                    genesToFasta.addEventListener('change', function () {
-                        downloadFasta.disabled = genesToFasta.value === 'NaN';
-                    });
-            
                     downloadFasta.addEventListener('click', function () {
                         // Show modal for selecting FASTA header format
                         const fastaModal = new bootstrap.Modal(document.getElementById('fastaHeaderModal'), {});
                         fastaModal.show();
                     });
             
-                    // Handle FASTA export with selected header format
-                    const fastaExportButtons = document.querySelectorAll('[data-fasta-format]');
-                    fastaExportButtons.forEach(btn => {
-                        btn.addEventListener('click', function () {
-                            const headerFormat = this.getAttribute('data-fasta-format');
-                            const _genesToFasta = document.getElementById('genesToFasta').value;
-                            const _data = Object.keys(data);
-                            let typeGenome = null;
-                            if (document.getElementById('mt').checked) {
-                                typeGenome = 'Mitochondrial';
-                            } else if (document.getElementById('cp').checked) {
-                                typeGenome = 'Chloroplast';
+                    // ---- FASTA Header Builder ----
+                    const fastaFields = [
+                        { id: 'accession', label: 'Accession' },
+                        { id: 'species',   label: 'Species'   },
+                        { id: 'gene',      label: 'Gene'      },
+                        { id: 'genome',    label: 'Genome'    },
+                    ];
+                    let fastaSelectedFieldIds = ['accession', 'species'];
+                    let fastaDragSrcIdx = null;
+
+                    function renderFastaFields() {
+                        const availableContainer = document.getElementById('fastaAvailableFields');
+                        const selectedContainer  = document.getElementById('fastaSelectedFields');
+                        if (!availableContainer) return;
+
+                        availableContainer.innerHTML = '';
+                        selectedContainer.innerHTML  = '';
+
+                        fastaFields.forEach(function(f) {
+                            if (fastaSelectedFieldIds.includes(f.id)) return;
+                            const tag = document.createElement('span');
+                            tag.className = 'fasta-field-available';
+                            tag.textContent = f.label;
+                            tag.addEventListener('click', function() {
+                                fastaSelectedFieldIds.push(f.id);
+                                renderFastaFields();
+                                updateFastaPreview();
+                            });
+                            availableContainer.appendChild(tag);
+                        });
+
+                        fastaSelectedFieldIds.forEach(function(fid, idx) {
+                            const f = fastaFields.find(x => x.id === fid);
+                            if (!f) return;
+                            const tag = document.createElement('span');
+                            tag.className = 'fasta-field-selected';
+                            tag.innerHTML = f.label + ' <i class="fa-solid fa-xmark" style="margin-left:0.3rem;font-size:0.7rem;opacity:0.7;"></i>';
+                            tag.draggable = true;
+                            tag.dataset.idx = idx;
+                            tag.addEventListener('click', function() {
+                                fastaSelectedFieldIds.splice(idx, 1);
+                                renderFastaFields();
+                                updateFastaPreview();
+                            });
+                            tag.addEventListener('dragstart', function() { fastaDragSrcIdx = idx; tag.style.opacity='0.5'; });
+                            tag.addEventListener('dragend', function() { tag.style.opacity=''; });
+                            selectedContainer.appendChild(tag);
+                        });
+                    }
+
+                    window.onFastaFieldDrop = function(e) {
+                        e.preventDefault();
+                        const dropZone = document.getElementById('fastaSelectedFields');
+                        dropZone.classList.remove('dragover');
+                        const tags = [...dropZone.querySelectorAll('.fasta-field-selected')];
+                        let dropIdx = tags.length;
+                        tags.forEach(function(tag, i) {
+                            const rect = tag.getBoundingClientRect();
+                            if (e.clientX < rect.left + rect.width / 2) {
+                                if (dropIdx === tags.length) dropIdx = i;
                             }
-                            let _cdsList = null;
-            
-                            if (typeGenome === 'Mitochondrial') {
-                                _cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'];
-                            } else if (typeGenome === 'Chloroplast') {
-                                _cdsList = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
-                            }
-            
-                            if (_genesToFasta === "allCDS") {
-                                let geneData = _cdsList.reduce((acc, gene) => {
-                                    acc[gene] = '';
-                                    return acc;
-                            }, {});
-                            _data.forEach(id => {
-                                let seq = data[id].geneSequences;
-                                let speciesName = data[id].speciesNames;
-                                let accession = data[id].vouchers;
-                                _cdsList.forEach(gene => {
-                                    if (seq.hasOwnProperty(gene)) {
-                                        let header = '';
-                                        if (headerFormat === 'simple') {
-                                            header = `>${accession} ${speciesName}`;
-                                        } else if (headerFormat === 'extended') {
-                                            header = `>${accession} | ${speciesName} | ${gene} | mitochondrial`;
-                                        } else if (headerFormat === 'minimal') {
-                                            header = `>${accession}`;
-                                        }
-                                        geneData[gene] += `${header}\n${seq[gene]}\n`;
-                                    }
-                                });
-                            });
-            
-                            _cdsList.forEach(gene => {
-                                if (geneData[gene]) {
-                                    downloadIndividualGene(gene, geneData[gene]);
-                                }
-                            });
-                        } else if (_cdsList.includes(_genesToFasta)) {
-                            let dataSeq = '';
-                            _data.forEach(id => {
-                                let seq = data[id].geneSequences;
-                                if (seq.hasOwnProperty(_genesToFasta)) {
-                                    let speciesName = data[id].speciesNames;
-                                    let accession = data[id].vouchers;
-                                    let header = '';
-                                    if (headerFormat === 'simple') {
-                                        header = `>${accession} ${speciesName}`;
-                                    } else if (headerFormat === 'extended') {
-                                        header = `>${accession} | ${speciesName} | ${_genesToFasta} | mitochondrial`;
-                                    } else if (headerFormat === 'minimal') {
-                                        header = `>${accession}`;
-                                    }
-                                    dataSeq += `${header}\n${seq[_genesToFasta]}\n`;
-                                }
-                            });
-                            downloadIndividualGene(_genesToFasta, dataSeq);
+                        });
+                        if (fastaDragSrcIdx === null || fastaDragSrcIdx === dropIdx) return;
+                        const moved = fastaSelectedFieldIds.splice(fastaDragSrcIdx, 1)[0];
+                        fastaSelectedFieldIds.splice(dropIdx > fastaDragSrcIdx ? dropIdx - 1 : dropIdx, 0, moved);
+                        fastaDragSrcIdx = null;
+                        renderFastaFields();
+                        updateFastaPreview();
+                    };
+
+                    function updateFastaPreview() {
+                        const sep = document.querySelector('input[name="fastaFieldSeparator"]:checked')?.value || '|';
+                        const preview = document.getElementById('fastaHeaderPreview');
+                        if (!preview) return;
+                        const sampleValues = { accession: 'AB123456.1', species: 'Geothelphusa dehaani', gene: 'COI', genome: 'mitochondrial' };
+                        const parts = fastaSelectedFieldIds.map(id => sampleValues[id] || id);
+                        preview.textContent = parts.length > 0 ? '>' + parts.join(' ' + sep + ' ') : '> (empty — select at least one field)';
+                    }
+
+                    document.querySelectorAll('input[name="fastaFieldSeparator"]').forEach(function(radio) {
+                        radio.addEventListener('change', updateFastaPreview);
+                    });
+
+                    document.getElementById('fastaHeaderModal').addEventListener('show.bs.modal', function() {
+                        renderFastaFields();
+                        updateFastaPreview();
+                    });
+
+                    document.getElementById('confirmFastaDownload').addEventListener('click', function () {
+                        const sep = document.querySelector('input[name="fastaFieldSeparator"]:checked')?.value || '|';
+                        const selectedGenes = Array.from(document.querySelectorAll('.fasta-gene-toggle:checked')).map(cb => cb.value);
+
+                        if (selectedGenes.length === 0) {
+                            alert('Select at least one gene to export.');
+                            return;
+                        }
+                        if (fastaSelectedFieldIds.length === 0) {
+                            alert('Add at least one header field.');
+                            return;
                         }
 
-                        // Hide the modal after export
-                        const fastaModal = bootstrap.Modal.getInstance(document.getElementById('fastaHeaderModal'));
-                        if (fastaModal) {
-                            fastaModal.hide();
+                        const _data = Object.keys(data || {});
+                        let typeGenome = null;
+                        if (document.getElementById('mt').checked) {
+                            typeGenome = 'Mitochondrial';
+                        } else if (document.getElementById('cp').checked) {
+                            typeGenome = 'Chloroplast';
                         }
+                        const genomeLabel = typeGenome ? typeGenome.toLowerCase() : 'genome';
+                        const missingMessages = [];
+                        const geneData = {};
+                        selectedGenes.forEach(gene => { geneData[gene] = ''; });
+
+                        _data.forEach(id => {
+                            const row = data[id];
+                            const seq = row.geneSequences || {};
+                            const speciesName = normalizeEntryValue(row.speciesNames);
+                            const accession  = normalizeEntryValue(row.vouchers);
+                            const sourceName = row.sourceFile || accession;
+
+                            selectedGenes.forEach(gene => {
+                                if (Object.prototype.hasOwnProperty.call(seq, gene)) {
+                                    const fieldValues = { accession, species: speciesName, gene, genome: genomeLabel };
+                                    const parts = fastaSelectedFieldIds.map(fid => fieldValues[fid] || '');
+                                    const header = '>' + parts.join(' ' + sep + ' ');
+                                    geneData[gene] += `${header}\n${seq[gene]}\n`;
+                                } else {
+                                    missingMessages.push(`${gene}: ${sourceName} | ${speciesName} (not added to FASTA)`);
+                                }
+                            });
                         });
+
+                        const zip = new JSZip();
+                        selectedGenes.forEach(gene => {
+                            if (geneData[gene]) {
+                                zip.file(`PUMAS_${gene}.fasta`, geneData[gene]);
+                            }
+                        });
+
+                        zip.generateAsync({ type: 'blob' }).then(function (content) {
+                            const url = window.URL.createObjectURL(content);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'PUMAS_FASTA.zip';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            window.URL.revokeObjectURL(url);
+                        });
+
+                        if (missingMessages.length > 0) {
+                            showMissingGenesModal(missingMessages);
+                        }
+
+                        const fastaModal = bootstrap.Modal.getInstance(document.getElementById('fastaHeaderModal'));
+                        if (fastaModal) fastaModal.hide();
+                    });
+
+                    document.getElementById('fastaSelectAllGenes').addEventListener('click', function () {
+                        document.querySelectorAll('.fasta-gene-toggle').forEach(cb => { cb.checked = true; });
+                    });
+                    document.getElementById('fastaDeselectAllGenes').addEventListener('click', function () {
+                        document.querySelectorAll('.fasta-gene-toggle').forEach(cb => { cb.checked = false; });
                     });
             
                     createInputFile.addEventListener('change', function () {
@@ -1341,9 +2000,9 @@
             <div class="modal fade" id="resetConfirmModal" tabindex="-1" aria-labelledby="resetConfirmLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content bg-light">
-                        <div class="modal-header border-danger bg-danger bg-opacity-10">
-                            <h1 class="modal-title fs-5" id="resetConfirmLabel"><i class="fa-solid fa-exclamation-triangle text-danger"></i> Reset All Data</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="resetConfirmLabel"><i class="fa-solid fa-arrow-rotate-left me-2"></i>Reset All Data</h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <p class="mb-3"><strong>Are you sure you want to reset all data?</strong></p>
@@ -1361,207 +2020,327 @@
                             </div>
                         </div>
                         <div class="modal-footer border-top">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="confirmResetBtn"><i class="fa-solid fa-arrow-rotate-left"></i> Yes, Reset Everything</button>
+                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" style="padding:0.5rem 1rem;border:none;border-radius:0.5rem;background:#dc2626;color:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;font-weight:600;" id="confirmResetBtn"><i class="fa-solid fa-arrow-rotate-left"></i> Yes, Reset Everything</button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Modal para seleção de formato de cabeçalho FASTA -->
+            <!-- FASTA Header Builder Modal -->
             <div class="modal fade" id="fastaHeaderModal" tabindex="-1" aria-labelledby="fastaHeaderLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
-                        <div class="modal-header border-bottom bg-light">
-                            <h1 class="modal-title fs-5" id="fastaHeaderLabel"><i class="fa-solid fa-file-dna"></i> FASTA Sequence Header Format</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="fastaHeaderLabel">
+                                <i class="fa-solid fa-file-dna me-2"></i>FASTA Header Builder
+                            </h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <p class="text-muted mb-3">Choose how you want to format the sequence header for your FASTA file:</p>
-                            
-                            <div class="mb-3 border rounded p-3 cursor-pointer" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='white'">
-                                <h6 class="mb-2">
-                                    <i class="fa-solid fa-check-circle text-success"></i> <strong>Simple Format (Recommended)</strong>
-                                </h6>
-                                <p class="text-muted small mb-2">Header: <code>>accession species_name</code></p>
-                                <p class="text-muted small mb-0">Example: <code>>NC_001943 Homo sapiens</code></p>
-                                <button class="btn btn-sm btn-outline-dark mt-2" data-fasta-format="simple">Select Format</button>
+                        <div class="modal-body" style="padding:1.25rem;">
+                            <p style="font-size:0.85rem;color:#6b7280;margin-bottom:1rem;">Compose the header for your FASTA sequences by selecting and ordering the fields below.</p>
+
+                            <!-- Gene selection -->
+                            <div style="margin-bottom:1rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                                    <label style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;"><i class="fa-solid fa-dna me-1"></i> Select Genes to Export</label>
+                                    <div style="display:flex;gap:0.4rem;">
+                                        <button type="button" id="fastaSelectAllGenes" style="font-size:0.75rem;padding:0.2rem 0.6rem;border:1px solid #d1d5db;border-radius:0.375rem;background:#fff;cursor:pointer;font-family:inherit;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">Select all</button>
+                                        <button type="button" id="fastaDeselectAllGenes" style="font-size:0.75rem;padding:0.2rem 0.6rem;border:1px solid #d1d5db;border-radius:0.375rem;background:#fff;cursor:pointer;font-family:inherit;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">Deselect all</button>
+                                    </div>
+                                </div>
+                                <div id="fastaGeneTogglesContainer" style="border:1px solid #e5e7eb;border-radius:0.5rem;padding:0.75rem;max-height:200px;overflow-y:auto;min-height:44px;background:#fafafa;">
+                                    <span style="font-size:0.82rem;color:#9ca3af;">Run analysis first to see available genes.</span>
+                                </div>
                             </div>
 
-                            <div class="mb-3 border rounded p-3 cursor-pointer" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='white'">
-                                <h6 class="mb-2">
-                                    <i class="fa-solid fa-check-circle text-success"></i> <strong>Extended Format</strong>
-                                </h6>
-                                <p class="text-muted small mb-2">Header: <code>>accession | species_name | gene_name | additional_info</code></p>
-                                <p class="text-muted small mb-0">Example: <code>>NC_001943 | Homo sapiens | COI | mitochondrial</code></p>
-                                <button class="btn btn-sm btn-outline-dark mt-2" data-fasta-format="extended">Select Format</button>
+                            <!-- Available Fields -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Available Fields</label>
+                                <div id="fastaAvailableFields" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:36px;"></div>
                             </div>
 
-                            <div class="mb-3 border rounded p-3 cursor-pointer" style="cursor: pointer; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='white'">
-                                <h6 class="mb-2">
-                                    <i class="fa-solid fa-check-circle text-success"></i> <strong>Minimal Format</strong>
-                                </h6>
-                                <p class="text-muted small mb-2">Header: <code>>accession</code></p>
-                                <p class="text-muted small mb-0">Example: <code>>NC_001943</code></p>
-                                <button class="btn btn-sm btn-outline-dark mt-2" data-fasta-format="minimal">Select Format</button>
+                            <!-- Header Composition -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Header Composition <span style="font-weight:400;text-transform:none;letter-spacing:0;">(drag to reorder, click to remove)</span></label>
+                                <div id="fastaSelectedFields" class="fasta-field-dropzone" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:44px;padding:0.5rem;" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="onFastaFieldDrop(event)"></div>
                             </div>
+
+                            <!-- Separator -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Separator</label>
+                                <div style="display:flex;gap:1rem;">
+                                    <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.85rem;">
+                                        <input type="radio" name="fastaFieldSeparator" value="|" checked style="accent-color:#202020;"> Pipe (<code>|</code>)
+                                    </label>
+                                    <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.85rem;">
+                                        <input type="radio" name="fastaFieldSeparator" value="_" style="accent-color:#202020;"> Underscore (<code>_</code>)
+                                    </label>
+                                    <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.85rem;">
+                                        <input type="radio" name="fastaFieldSeparator" value="-" style="accent-color:#202020;"> Dash (<code>-</code>)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Live Preview -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Preview</label>
+                                <div id="fastaHeaderPreview" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:0.5rem;padding:0.5rem 0.75rem;font-family:monospace;font-size:0.8rem;color:#374151;word-break:break-all;min-height:32px;">&gt;Accession | Species</div>
+                            </div>
+
+                            <!-- Instructions -->
+                            <details style="margin-bottom:1rem;">
+                                <summary style="font-size:0.8rem;font-weight:600;color:#202020;cursor:pointer;"><i class="fa-solid fa-circle-info me-1"></i> Instructions</summary>
+                                <div style="margin-top:0.5rem;font-size:0.78rem;color:#6b7280;padding-left:1rem;line-height:1.6;">
+                                    <p><strong>1.</strong> Click an available field to add it to the header composition.</p>
+                                    <p><strong>2.</strong> Click a selected field (dark) to remove it.</p>
+                                    <p><strong>3.</strong> Drag selected fields to reorder them.</p>
+                                    <p><strong>4.</strong> Choose a separator between fields.</p>
+                                    <p><strong>5.</strong> The preview shows how the header will appear for the first record.</p>
+                                </div>
+                            </details>
                         </div>
-                        <div class="modal-footer border-top bg-light">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <div class="modal-footer">
+                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">Cancel</button>
+                            <button type="button" id="confirmFastaDownload" style="padding:0.5rem 1rem;border:none;border-radius:0.5rem;background:#202020;color:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;font-weight:600;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='#202020'">
+                                <i class="fa-solid fa-download me-1"></i> Download FASTA
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div id="PUMASResults" style="display: none;" class="mt-5 container-fluid mx-auto">
+
+            <div class="modal fade" id="unknownGenesModal" tabindex="-1" aria-labelledby="unknownGenesModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="unknownGenesModalLabel"><i class="fa-solid fa-triangle-exclamation me-2"></i>Unknown Gene Names Detected</h5>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-3">Select the correct canonical name for each unknown gene before continuing.</p>
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>File</th>
+                                            <th>Species</th>
+                                            <th>Genome size</th>
+                                            <th>Unknown gene</th>
+                                            <th>Map to</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="unknownGenesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" style="padding:0.5rem 1rem;border:none;border-radius:0.5rem;background:#202020;color:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;font-weight:600;" id="applyUnknownGeneMappings">Apply mappings and continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="fastaMissingGenesModal" tabindex="-1" aria-labelledby="fastaMissingGenesLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="fastaMissingGenesLabel"><i class="fa-solid fa-circle-exclamation me-2"></i>Missing Genes for FASTA Export</h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Some genomes are missing selected genes and were not added to exported FASTA. Consider re-annotating these genomes.</p>
+                            <ul id="fastaMissingGenesList" class="small mb-0"></ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="duplicateGenesModal" tabindex="-1" aria-labelledby="duplicateGenesLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="duplicateGenesLabel"><i class="fa-solid fa-copy me-2"></i>Duplicated Genes Detected</h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Duplicated genes were found and labeled by size rank (largest first) as <strong>(1)</strong>, <strong>(2)</strong>, etc.</p>
+                            <ul id="duplicateGenesList" class="small mb-0"></ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="PUMASResults" style="display: none;" class="mt-5 w-full mx-auto">
                 <hr>
                 <label class="step-label">
                     <span class="badge text-bg-dark">3</span>
                     <span class="step-label-text">Export Results</span>
                 </label>
                 <p class="step-info">
-                    <i class="fa-solid fa-circle-info"></i> After running your analysis, export your results in various formats for further analysis or publication-ready figures.</p>
+                    <i class="fa-solid fa-circle-info"></i> After running your analysis, export your results in various formats, generate publication-ready figures, and control genome visualizations.</p>
 
-                <div class="row g-3 analysis-grid">
-                    <div class="col-12 col-lg-6">
+                <div class="flex flex-wrap gap-4 analysis-grid">
+
+                    <!-- Card 3.1: Download Files (50%) -->
+                    <div class="w-full lg:w-[calc(50%-0.5rem)]">
                         <div class="analysis-panel h-100">
                             <div class="analysis-panel-header">
                                 <span class="badge text-bg-step">3.1</span>
-                                <span>Fasta File</span>
+                                <span>Download Files</span>
                             </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Select a gene to export its sequences in FASTA format. You can choose how to format the sequence header.</p>
-                            <div class="mb-3">
-                                <label for="genesToFasta" class="form-label">Select Gene</label>
-                                <select id="genesToFasta" class="form-select step-select" aria-label="Select gene for FASTA export"></select>
-                            </div>
-                            <button id="downloadFasta" class="btn btn-dark w-100" type="button" disabled><i class="fa-solid fa-download"></i> Download FASTA</button>
-                        </div>
-                    </div>
+                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Export gene sequences as FASTA, generate input files for external tools, download pattern data, or save your entire session.</p>
 
-                    <div class="col-12 col-lg-6">
-                        <div class="analysis-panel h-100">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">3.2</span>
-                                <span>Input File for External Tools</span>
-                            </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Create input files for analysis tools like CREx, CREx2, TreeREx, or qMGR.</p>
                             <div class="mb-3">
-                                <label for="createInputFile" class="form-label">Select Tool</label>
-                                <select id="createInputFile" class="form-select step-select" aria-label="Select tool for input file">
-                                    <option value="NaN" selected>Choose a tool</option>
+                                <label class="form-label fw-semibold"><i class="fa-solid fa-dna me-1"></i> FASTA Sequences</label>
+                                <button id="downloadFasta" class="btn btn-dark w-100" type="button" disabled
+                                    data-tippy-content="Download all selected genes as FASTA sequences in a .zip archive">
+                                    <i class="fa-solid fa-download"></i> Download FASTA
+                                </button>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="createInputFile" class="form-label fw-semibold"><i class="fa-solid fa-tools me-1"></i> Input File for External Tools</label>
+                                <select id="createInputFile" class="form-select step-select mb-2" aria-label="Select tool for input file"
+                                    data-tippy-content="Choose a tool to generate a compatible input file">
+                                    <option value="NaN" selected>Choose a tool…</option>
                                     <option value="CREx">CREx / CREx2 / TreeREx</option>
                                     <option value="qMGR">qMGR</option>
                                 </select>
+                                <div id="textInfo" style="display: none; text-align: justify; margin-bottom: 0.75rem; padding: 0.75rem; background-color: #f8f9fa; border-radius: 0.5rem; border-left: 3px solid #202020;"></div>
+                                <button id="downloadInputFile" class="btn btn-dark w-100" type="button" disabled
+                                    data-tippy-content="Download the input file for the selected external tool">
+                                    <i class="fa-solid fa-download"></i> Download Tool File
+                                </button>
                             </div>
-                            <div id="textInfo" style="display: none; text-align: justify; margin-bottom: 1rem; padding: 0.75rem; background-color: #f8f9fa; border-radius: 0.5rem; border-left: 3px solid #202020;"></div>
-                            <button id="downloadInputFile" class="btn btn-dark w-100" type="button" disabled><i class="fa-solid fa-download"></i> Download File</button>
+
+                            <div>
+                                <label class="form-label fw-semibold"><i class="fa-solid fa-floppy-disk me-1"></i> Save Session</label>
+                                <div class="flex gap-2">
+                                    <button id="PatternsDownloadFile" class="btn btn-dark flex-1" type="button" disabled
+                                        data-tippy-content="Download the current patterns as a text file">
+                                        <i class="fa-solid fa-download"></i> Patterns File
+                                    </button>
+                                    <button id="PUMASDownloadFile" class="btn btn-dark flex-1" type="button"
+                                        data-tippy-content="Save your entire analysis as a .pumas file to resume later">
+                                        <i class="fa-solid fa-floppy-disk"></i> Save PUMAS
+                                    </button>
+                                    <span class="input-group-text" id="timeSave" data-tippy-content="No save yet">-</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-12 col-lg-6">
+                    <!-- Card 3.2: Figures & Plots (50%) -->
+                    <div class="w-full lg:w-[calc(50%-0.5rem)]">
                         <div class="analysis-panel h-100">
+                            <div class="analysis-panel-header">
+                                <span class="badge text-bg-step">3.2</span>
+                                <span>Figures &amp; Plots</span>
+                            </div>
+                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Generate publication-ready puzzle-like plots, download pattern figures, or open an interactive circular/linear genome viewer.</p>
+
+                            <div class="mb-3">
+                                <label for="genesToPlot" class="form-label fw-semibold"><i class="fa-solid fa-puzzle-piece me-1"></i> Puzzle-like Plot</label>
+                                <select id="genesToPlot" class="form-select step-select mb-2" aria-label="Select plot format"
+                                    data-tippy-content="Choose the output format for the puzzle-like gene order plot">
+                                    <option value="SVG" selected>SVG (Scalable Vector)</option>
+                                    <option value="PNG">PNG (Raster Image)</option>
+                                </select>
+                                <button id="downloadPlot" class="btn btn-dark w-100" type="button"
+                                    data-tippy-content="Download the current puzzle-like gene arrangement as an image">
+                                    <i class="fa-solid fa-download"></i> Download Plot
+                                </button>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="PatternsSelect" class="form-label fw-semibold"><i class="fa-solid fa-layer-group me-1"></i> Publication-Ready Figure <small class="text-muted">(Patterns only)</small></label>
+                                <select id="PatternsSelect" class="form-select step-select mb-2" aria-label="Select patterns export format" disabled
+                                    data-tippy-content="Enable &#39;Show only Patterns&#39; in Analysis Controls to use this option">
+                                    <option value="SVG" selected>SVG (Scalable Vector)</option>
+                                    <option value="PNG">PNG (Raster Image)</option>
+                                </select>
+                                <button id="PatternsDownload" class="btn btn-dark w-100" type="button" disabled
+                                    data-tippy-content="Download the patterns figure — requires Patterns mode to be active">
+                                    <i class="fa-solid fa-download"></i> Download Figure
+                                </button>
+                            </div>
+
+                            <div>
+                                <label for="individualPlot" class="form-label fw-semibold"><i class="fa-solid fa-circle-dot me-1"></i> Individual Genome Plot</label>
+                                <select id="individualPlot" class="form-select step-select mb-2" aria-label="Select genome for individual plot"
+                                    data-tippy-content="Select a genome to view as a circular or linear CGView visualization"></select>
+                                <button id="downloadIndivivualPlot" class="btn btn-dark w-100" type="button" disabled
+                                    data-tippy-content="Open an interactive circular/linear viewer for the selected genome">
+                                    <i class="fa-solid fa-chart-simple"></i> View Plot
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3.3: Analysis Controls (100%) -->
+                    <div class="w-full">
+                        <div class="analysis-panel">
                             <div class="analysis-panel-header">
                                 <span class="badge text-bg-step">3.3</span>
-                                <span>Puzzle-like Plot</span>
+                                <span>Analysis Controls</span>
                             </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Generate publication-ready figures showing gene order patterns with or without user modifications.</p>
-                            <div class="mb-3">
-                                <label for="genesToPlot" class="form-label">Export Format</label>
-                                <select id="genesToPlot" class="form-select step-select" aria-label="Select plot format">
-                                    <option value="SVG" selected>SVG (Scalable Vector)</option>
-                                    <option value="PNG">PNG (Raster Image)</option>
-                                </select>
-                            </div>
-                            <button id="downloadPlot" class="btn btn-dark w-100" type="button"><i class="fa-solid fa-download"></i> Download Plot</button>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-6">
-                        <div class="analysis-panel h-100">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">3.4</span>
-                                <span>Individual Gene Plot</span>
-                            </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Create a detailed visualization of a single gene's pattern across all genomes.</p>
-                            <div class="mb-3">
-                                <label for="individualPlot" class="form-label">Select Gene</label>
-                                <select id="individualPlot" class="form-select step-select" aria-label="Select gene for individual plot"></select>
-                            </div>
-                            <button id="downloadIndivivualPlot" class="btn btn-dark w-100" type="button" disabled><i class="fa-solid fa-chart-simple"></i> View Plot</button>
-                        </div>
-                    </div>
-                </div>
-
-                <hr class="my-5">
-                <label class="step-label">
-                    <span class="badge text-bg-dark">4</span>
-                    <span class="step-label-text">Genome Patterns</span>
-                </label>
-
-                <div class="row g-3 analysis-grid">
-                    
-                    <div class="col-12 col-lg-6">
-                        <div class="analysis-panel h-100">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">4.1</span>
-                                <span>Filter by Patterns</span>
-                            </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Display only genome patterns instead of all sequences to highlight shared gene organizations.</p>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="Patterns">
-                                <label class="form-check-label" for="Patterns">Show only Patterns</label>
-                            </div>                          
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-6">
-                        <div class="analysis-panel h-100">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">4.2</span>
-                                <span>Publication-Ready Figure</span>
-                            </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Export genome patterns as high-quality figures suitable for publication.</p>
-                            <div class="mb-3">
-                                <label for="PatternsSelect" class="form-label">Export Format</label>
-                                <select id="PatternsSelect" class="form-select step-select" aria-label="Select patterns export format" disabled>
-                                    <option value="SVG" selected>SVG (Scalable Vector)</option>
-                                    <option value="PNG">PNG (Raster Image)</option>
-                                </select>
-                            </div>
-                            <button id="PatternsDownload" class="btn btn-dark w-100" type="button" disabled><i class="fa-solid fa-download"></i> Download Figure</button>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-6">
-                        <div class="analysis-panel h-100">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">4.3</span>
-                                <span>Patterns Data File</span>
-                            </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Export pattern data in text format for further analysis or documentation.</p>
-                            <button id="PatternsDownloadFile" class="btn btn-dark w-100" type="button" disabled><i class="fa-solid fa-download"></i> Download File</button>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-6">
-                        <div class="analysis-panel h-100">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">4.4</span>
-                                <span>Save Analysis</span>
-                            </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Download your complete analysis as a PUMAS file to share or import later.</p>
-                            <div class="d-flex gap-2">
-                                <button id="PUMASDownloadFile" class="btn btn-dark flex-grow-1" type="button"><i class="fa-solid fa-download"></i> Download PUMAS</button>
-                                <span class="input-group-text" id="timeSave" data-bs-toggle="tooltip" title="No save yet">-</span>
+                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Filter genomes to show only shared patterns, align all sequences automatically, or visualize synteny links between matching genes.</p>
+                            <div class="flex flex-wrap gap-6 items-start">
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="form-label fw-semibold"><i class="fa-solid fa-filter me-1"></i> Pattern Filter</label>
+                                    <div class="form-check form-switch mt-1">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="Patterns"
+                                            data-tippy-content="When enabled, only unique gene order patterns are shown — identical genome arrangements are collapsed into a single representative">
+                                        <label class="form-check-label" for="Patterns">Show only Patterns</label>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-[260px]">
+                                    <label class="form-label fw-semibold"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Genome Alignment</label>
+                                    <div class="flex gap-2 mt-1">
+                                        <button id="autoAlignOrders" class="btn btn-dark flex-1" type="button" disabled
+                                            data-tippy-content="Automatically insert GAP pieces so all genome rows align on shared genes">
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Align
+                                        </button>
+                                        <button id="undoAlignOrders" class="btn btn-outline-dark flex-1" type="button" disabled
+                                            data-tippy-content="Remove all GAP pieces and restore the original gene order">
+                                            <i class="fa-solid fa-rotate-left"></i> Undo Align
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-[180px]">
+                                    <label class="form-label fw-semibold"><i class="fa-solid fa-bezier-curve me-1"></i> Synteny</label>
+                                    <div class="mt-1">
+                                        <button id="toggleSynteny" class="btn btn-dark w-100" type="button" disabled
+                                            data-tippy-content="Draw colored connections between identical genes across adjacent genome rows">
+                                            <i class="fa-solid fa-bezier-curve"></i> Show Synteny
+                                        </button>
+                                    </div>
+                                    <div class="mt-1">
+                                        <select id="syntenyModeSelect" class="form-select form-select-sm" disabled>
+                                            <option value="mauve">Mauve Style</option>
+                                            <option value="trapezoid">Trapezoid Style</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <script>
                     $(document).ready(function () {
                         const PatternsSelect = document.getElementById('PatternsSelect');
                         const PatternsDownload = document.getElementById('PatternsDownload');
                         const PatternsDownloadFile = document.getElementById('PatternsDownloadFile');
+                        const autoAlignOrders = document.getElementById('autoAlignOrders');
+                        const undoAlignOrders = document.getElementById('undoAlignOrders');
+                        const toggleSynteny = document.getElementById('toggleSynteny');
                         const Patterns = document.getElementById('Patterns');
                         Patterns.addEventListener('change', function () {
                             if (Patterns.checked) {
@@ -1573,6 +2352,7 @@
                                 PatternsDownload.disabled = true;
                                 PatternsDownloadFile.disabled = true;
                             }
+                            updateAutoAlignButtonState();
                         });
                     });
                 </script>
@@ -1584,21 +2364,20 @@
     <div class="modal fade" id="ViewGenomeDraw" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-            <h5 id="ViewPlotTitle" class="modal-title"></h5>
-        </div>
-        <div class="modal-body">
-            <figure class="figure">
-                <figcaption id="ViewPlotFigureCaption" class="figure-caption"></figcaption>
-            </figure>
-            <div id="LinearGenome"></div>
-        </div>
-        <div class="modal-footer bg-dark">
-        <button type="button" class="btn btn-lg btn-light" id="ViewPlotColor">Invert Map Colors</button>
-        <button type="button" class="btn btn-lg btn-light" id="ViewPlotFormat">Toggle Linear/Circular Format</button>
-        <button type="button" class="btn btn-lg btn-light" id="ViewPlotDownload">Download PNG</button>
-        <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button></div>
-        </div>
+                <div class="modal-header bg-dark text-white">
+                    <h5 id="ViewPlotTitle" class="modal-title"></h5>
+                </div>
+                <div class="modal-body">
+                    <div id="ViewPlotFigureCaption" class="figure-caption text-center" style="font-size:0.82rem;color:#6b7280;padding:0.2rem 0;width:95%;"></div>
+                    <div id="LinearGenome"></div>
+                </div>
+                <div class="modal-footer bg-dark">
+                    <button type="button" class="btn btn-lg btn-light" id="ViewPlotColor"><i class="fa-solid fa-circle-half-stroke"></i> Invert Colors</button>
+                    <button type="button" class="btn btn-lg btn-light" id="ViewPlotFormat"><i class="fa-solid fa-rotate"></i> Linear/Circular</button>
+                    <button type="button" class="btn btn-lg btn-light" id="ViewPlotDownload"><i class="fa-solid fa-download"></i> Download PNG</button>
+                    <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1709,86 +2488,73 @@
     </div>
 
 
-    <footer class="footer text-white bg-dark mt-5">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-12 col-md-3 col-sm-1">
-                    <div class="h4">About:</div>
-                    <div class="media">
-                        <img src="assets/PUMAS.png" class="mr-3 mx-auto d-block" alt="" width="25%">
-                        <div class="media-body text-center"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
-                        <div class="text-center"><small>v1.0</small></div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-5">
-                    <div class="h4">Developers:</div>
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <div class="media">
-                                <img src="assets/Luan.png" class="mr-3 mx-auto d-block" alt="Luan Rabelo" width="25%">
-                                <div class="media-body">
-                                    <h5 class="mt-0">Luan Rabelo</h5>
-                                    <p><i class="bi bi-envelope"></i> <a href="mailto:luanrabelo@outlook.com">luanrabelo@outlook.com</a></p>
-                                    <p><i class="bi bi-twitter-x"></i> <a href="https://x.com/luanrabelo" target="_blank">@luanrabelo</a></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="media">
-                                <img src="assets/Marcelo.png" class="mr-3 mx-auto d-block" alt="Marcelo Vallinoto"
-                                    width="25%">
-                                <div class="media-body">
-                                    <h5 class="mt-0">Marcelo Vallinoto</h5>
-                                    <p><i class="bi bi-envelope"></i> <a href="mailto:mvallino@ufpa.br">mvallino@ufpa.br</a></p>
-                                    <p><i class="bi bi-twitter-x"></i> <a href="https://x.com/mvallinoto01" target="_blank">@mvallinoto01</a></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="media">
-                                <img src="assets/Davidson.png" class="mr-3 mx-auto d-block" alt="Davidson Sodré"
-                                    width="25%">
-                                <div class="media-body">
-                                    <h5 class="mt-0">Davidson Sodré</h5>
-                                    <p><i class="bi bi-envelope"></i> <a href="mailto:davidson.sodre@ufra.edu.br">davidson.sodre@ufra.edu.br</a></p>
-                                    <p><i class="bi bi-twitter-x"></i> <a href="https://x.com/_DSodre_" target="_blank">@_DSodre_</a></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-4 verticalDivider">
-                    <div class="h4">Institutions:</div>
-                    <div class="row">
-                        <div class="col-md-6 text-center">
-                            <div class="media">
-                                <img src="assets/UFPA.png" class="mr-3 mx-auto d-block mb-3"
-                                    alt="Universidade Federal do Pará" width="30%">
-                                <div class="media-body">
-                                    <p><i class="bi bi-globe2"></i> <a class="h5" href="https://ufpa.br/" target="_blank">Universidade Federal do Pará</a></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 text-center">
-                            <div class="media">
-                                <img src="assets/LEVO.png" class="mr-3 mx-auto d-block mb-3" alt="Laboratório de Evolução"
-                                    width="30%">
-                                <div class="media-body">
-                                    <p><i class="bi bi-globe2"></i> <a class="h5" href="https://levo.ufpa.br/" target="_blank">Laboratório de Evolução</a></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <small class="text-center bg-white text-black">PUMAS Page was created by Luan Rabelo.</small>
+    <footer class="text-white bg-dark mt-5 py-8 px-4">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+            <div class="md:col-span-3 text-center">
+                <div class="text-xl font-bold mb-3">About:</div>
+                <img src="assets/PUMAS.png" class="mx-auto block mb-2" style="width:60%;max-width:150px;" alt="PUMAS Logo">
+                <div class="text-center"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
+                <div class="text-center text-sm mt-1">v1.0</div>
             </div>
+            <div class="md:col-span-5">
+                <div class="text-xl font-bold mb-3">Developers:</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <img src="assets/Luan.png" class="mx-auto block rounded-full mb-2" style="width:60px;height:60px;object-fit:cover;" alt="Luan Rabelo">
+                        <h5 class="text-sm font-semibold">Luan Rabelo</h5>
+                        <p class="text-xs"><i class="fa-solid fa-envelope me-1"></i><a href="mailto:luanrabelo@outlook.com" class="text-gray-300 hover:text-white">luanrabelo@outlook.com</a></p>
+                        <p class="text-xs"><i class="fa-brands fa-x-twitter me-1"></i><a href="https://x.com/luanrabelo" target="_blank" class="text-gray-300 hover:text-white">@luanrabelo</a></p>
+                    </div>
+                    <div class="text-center">
+                        <img src="assets/Marcelo.png" class="mx-auto block rounded-full mb-2" style="width:60px;height:60px;object-fit:cover;" alt="Marcelo Vallinoto">
+                        <h5 class="text-sm font-semibold">Marcelo Vallinoto</h5>
+                        <p class="text-xs"><i class="fa-solid fa-envelope me-1"></i><a href="mailto:mvallino@ufpa.br" class="text-gray-300 hover:text-white">mvallino@ufpa.br</a></p>
+                        <p class="text-xs"><i class="fa-brands fa-x-twitter me-1"></i><a href="https://x.com/mvallinoto01" target="_blank" class="text-gray-300 hover:text-white">@mvallinoto01</a></p>
+                    </div>
+                    <div class="text-center">
+                        <img src="assets/Davidson.png" class="mx-auto block rounded-full mb-2" style="width:60px;height:60px;object-fit:cover;" alt="Davidson Sodré">
+                        <h5 class="text-sm font-semibold">Davidson Sodré</h5>
+                        <p class="text-xs"><i class="fa-solid fa-envelope me-1"></i><a href="mailto:davidson.sodre@ufra.edu.br" class="text-gray-300 hover:text-white">davidson.sodre@ufra.edu.br</a></p>
+                        <p class="text-xs"><i class="fa-brands fa-x-twitter me-1"></i><a href="https://x.com/_DSodre_" target="_blank" class="text-gray-300 hover:text-white">@_DSodre_</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="md:col-span-4 md:border-l md:border-gray-600 md:pl-6">
+                <div class="text-xl font-bold mb-3">Institutions:</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center">
+                        <img src="assets/UFPA.png" class="mx-auto block mb-2" style="width:70%;max-width:100px;" alt="Universidade Federal do Pará">
+                        <p><i class="fa-solid fa-globe me-1"></i><a class="text-sm font-semibold text-gray-300 hover:text-white" href="https://ufpa.br/" target="_blank">Universidade Federal do Pará</a></p>
+                    </div>
+                    <div class="text-center">
+                        <img src="assets/LEVO.png" class="mx-auto block mb-2" style="width:70%;max-width:100px;" alt="Laboratório de Evolução">
+                        <p><i class="fa-solid fa-globe me-1"></i><a class="text-sm font-semibold text-gray-300 hover:text-white" href="https://levo.ufpa.br/" target="_blank">Laboratório de Evolução</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-6">
+            <small class="bg-white text-black px-3 py-1 rounded">PUMAS Page was created by Luan Rabelo.</small>
         </div>
     </footer>
 </body>
 <script src="PUMAS.js"></script>
 <script>
     $(document).ready(function () {
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        /* Initialize Tippy on all elements that carry tooltip data */
+        function initTippy() {
+            tippy('[data-tippy-content]', {
+                allowHTML: true,
+                theme: 'light-border',
+                placement: 'top',
+                arrow: true,
+                delay: [200, 0],
+                maxWidth: 300,
+            });
+        }
+        initTippy();
+        /* Re-init after dynamic content is injected (SVG labels, modals, etc.) */
+        window.reinitTippy = initTippy;
     });
 </script>
 </html>

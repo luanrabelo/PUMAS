@@ -2,7 +2,7 @@ const MitochondrialGenes = {
     "-": [],
     "OL": [],
     "OH": [],
-    "12S": ['small subunit ribosomal RNA', 's-rRNA', '12S ribosormal RNA', 'small ribosomal RNA subunit RNA', '12SrRNA', '12 ribosomal RNA', 'rrnS', '12S ribosomal RNA subunit', '12S', 'small ribosomal RNA', 'small subunit ribosormal RNA', '12 rRNA', '12 S ribosomal RNA', '12S small subunit ribosomal RNA', 'trnS', 'Product small subunit ribosomal RNA', '12S-rRNA', 'rRNA-12S', '12S ribosonal RNA', '12Srrn', '12S ribosome RNA', '12S ribsomal RNA', '12S rRNA', '12S ribosomal RNA', '12S ribosomal ribonucleic acid'],
+    "12S": ['small subunit ribosomal RNA', 's-rRNA', '12S ribosormal RNA', 'small ribosomal RNA subunit RNA', '12SrRNA', '12 ribosomal RNA', 'rrnS', '12S ribosomal RNA subunit', '12S', 'small ribosomal RNA', 'small subunit ribosormal RNA', '12 rRNA', '12 S ribosomal RNA', '12S small subunit ribosomal RNA', 'Product small subunit ribosomal RNA', '12S-rRNA', 'rRNA-12S', '12S ribosonal RNA', '12Srrn', '12S ribosome RNA', '12S ribsomal RNA', '12S rRNA', '12S ribosomal RNA', '12S ribosomal ribonucleic acid'],
     "16S": ['large subunit ribosomal RNA', 'l-rRNA', '16S bibosomal RNA', 'large ribosomal RNA subunit RNA', 'rrnL', '16S ribosomal RNA subunit', '16S rivbosomal RNA', 'l6S ribosomal RNA', '16S', '16S ribosamal RNA', 'large ribosomal RNA', '16S rRNA', '16 S ribosomal RNA', '16S large subunit ribosomal RNA', 'l-RNA', '16S-rRNA', '16Srrn', '16S ribosommal RNA', '16S ribosomal ribonucleic acid', '16S ribosomal RNA', '16S ribosome RNA', '16S recombinant RNA', '16S ribosomal RNA gene', '16S recombinant ribonucleic acid'],
     "ATP6": ['ATPase F0 subunit 6', 'ATP synthase F0 subunit 6', 'ATP synthase subunit 6', 'ATPase 6', 'ATP6', 'ATP synthase FO subunit 6', 'ATP synthase protein 6', 'ATPase subunits 6', 'ATP subunit 6', 'ATPase subunit-6', 'ATP synthase subunit F0 6', 'adenosine triphosphatase subunit 6', 'ATP synthase subunit-6', 'ATP sythase F0 subunit 6', 'ATPase 6 protein', 'ATP synthase 6', 'ATP synthetase F0 Subunit 6', 'ATPase subuint 6', 'ATPase sununit 6', 'ATPase6 protein', 'ATP Synthase Membrane Subunit 6', 'TP synthase F0 subunit 6', 'ATP sybthase F0 subunit 6', 'ATP6ase', 'ATP synthase A chain protein 6', 'ATP synthetase subunit 6', 'F0/F1 ATP synthase subunit 6', 'disrupted ATP synthase F0 subunit 6', 'ATPsynthase F0 subunit 6', 'F1 ATPase subunit 6', 'ATP sythase subunit 6', 'adenine triphosphatase subunit 6', 'F0-ATP synthase subunit 6', 'F0-ATP synthase subunit6', 'F0-ATPase subunit6', 'ATP 6synthase 6', 'adenosine triphosphate subunit 6', 'ATPase subunit 6', 'ATPase6', 'adenosine triphosphate synthase-6'],
     "ATP8": ['ATPase F0 subunit 8', 'ATP synthase F0 subunit 8', 'ATP synthase subunit 8', 'ATPase 8', 'ATP8', 'ATP synthase FO submit 8', 'ATPase8', 'ATP synthase protein 8', 'ATPase subunits 8', 'ATP subunit 8', 'ATPase subunit-8', 'ATP synthase subunit F0 8', 'adenosine triphosphatase subunit 8', 'ATP synthase subunit-8', 'ATP sythase F0 subunit 8', 'ATP synthase FO subunit 8', 'ATPase 8 protein', 'adenosine triphoshatase subunit 8', 'ATP synthase 8', 'ATPase subunit8', 'ATP synthetase F0 Subunit 8', 'adenosine triphosphate subunit 8', 'ATPase8 protein', 'ATP Synthase Membrane Subunit 8', 'TP synthase F0 subunit 8', 'product ATP synthase F0 subunit 8', 'ATP sybthase F0 subunit 8', 'ATP8ase', 'ATP synthetase subunit 8', 'F0/F1 ATP synthase subunit 8', 'ATPsynthase F0 subunit 8', 'F1 ATPase subunit 8', 'ATP sythase subunit 8', 'adenine triphosphatase subunit 8', 'ATP syntahse F0 subunit 8', 'F0-ATP synthase subunit 8', 'F0-ATP synthase subunit8', 'ATPase subunit 8', 'F0-ATPase subunit8', 'ATP synthase F0 subunit'],
@@ -157,6 +157,168 @@ var colorMitochondrial = {
 };
 
 
+function getGeneDictionary(genomeType) {
+    return genomeType === 'Chloroplast' ? ChloroplastGenes : MitochondrialGenes;
+}
+
+function normalizeToken(value) {
+    return String(value || '').trim().toLowerCase();
+}
+
+function canonicalGeneFeatureType(geneName, genomeType) {
+    if (!geneName) return 'unknown';
+    if (genomeType === 'Mitochondrial') {
+        if (geneName === '12S' || geneName === '16S') return 'rRNA';
+        if (geneName === 'OL' || geneName === 'OH' || geneName === 'CR' || geneName === '-') return 'misc';
+        if (geneName === 'tRNA-Met' || /^[A-Z][a-z]{2}$/.test(geneName) || /^Leu[12]$/.test(geneName) || /^Ser[12]$/.test(geneName)) {
+            return 'tRNA';
+        }
+        return 'CDS';
+    }
+
+    if (geneName === 'tRNA-Met' || /^[A-Z][a-z]{2}$/.test(geneName) || /^Leu[12]$/.test(geneName) || /^Ser[12]$/.test(geneName)) {
+        return 'tRNA';
+    }
+    if (/^rrn/i.test(geneName)) return 'rRNA';
+    if (geneName === '-') return 'misc';
+    return 'CDS';
+}
+
+function featureKeyType(featureKey) {
+    if (featureKey === 'tRNA') return 'tRNA';
+    if (featureKey === 'rRNA') return 'rRNA';
+    if (featureKey === 'CDS') return 'CDS';
+    return 'misc';
+}
+
+function canonicalGeneMatchesFeature(geneName, featureKey, genomeType) {
+    return canonicalGeneFeatureType(geneName, genomeType) === featureKeyType(featureKey);
+}
+
+function parseAnticodonValue(rawValue) {
+    if (!rawValue) return '';
+    const value = String(rawValue).toUpperCase();
+    const seqMatch = value.match(/SEQ:([A-Z]{3})/);
+    if (seqMatch) return seqMatch[1];
+    const parenMatch = value.match(/\(([A-Z]{3})\)/);
+    if (parenMatch) return parenMatch[1];
+    const bareMatch = value.match(/\b([A-Z]{3})\b/);
+    return bareMatch ? bareMatch[1] : '';
+}
+
+function resolveGenericTrnaName(geneQualifier, product, note) {
+    const evidence = `${String(geneQualifier || '')} ${String(product || '')} ${String(note || '')}`.toLowerCase();
+    const oneLetterToAminoAcid = {
+        a: 'Ala', r: 'Arg', n: 'Asn', d: 'Asp', c: 'Cys', q: 'Gln', e: 'Glu', g: 'Gly', h: 'His',
+        i: 'Ile', l: 'Leu', k: 'Lys', m: 'Met', f: 'Phe', p: 'Pro', s: 'Ser', t: 'Thr', w: 'Trp', y: 'Tyr', v: 'Val'
+    };
+    const threeLetterToAminoAcid = {
+        ala: 'Ala', arg: 'Arg', asn: 'Asn', asp: 'Asp', cys: 'Cys', gln: 'Gln', glu: 'Glu', gly: 'Gly', his: 'His',
+        ile: 'Ile', leu: 'Leu', lys: 'Lys', met: 'Met', phe: 'Phe', pro: 'Pro', ser: 'Ser', thr: 'Thr', trp: 'Trp', tyr: 'Tyr', val: 'Val'
+    };
+
+    const threeLetterMatch = evidence.match(/(?:trna|trn|transfer\s+rna)[-_\s(]*([a-z]{3})\b/);
+    if (threeLetterMatch && threeLetterToAminoAcid[threeLetterMatch[1]]) {
+        const aminoAcid = threeLetterToAminoAcid[threeLetterMatch[1]];
+        return aminoAcid === 'Met' && evidence.includes('fmet') ? 'tRNA-Met' : aminoAcid;
+    }
+
+    const oneLetterMatch = evidence.match(/\btrn([acdefghiklmnpqrstvwy])(?:[^a-z]|$)/);
+    if (oneLetterMatch && oneLetterToAminoAcid[oneLetterMatch[1]]) {
+        const aminoAcid = oneLetterToAminoAcid[oneLetterMatch[1]];
+        return aminoAcid === 'Met' && evidence.includes('fmet') ? 'tRNA-Met' : aminoAcid;
+    }
+
+    return null;
+}
+
+function resolveLeuSerFromEvidence(geneQualifier, product, anticodonRaw, note) {
+    const evidence = `${String(geneQualifier || '')} ${String(product || '')} ${String(note || '')}`.toLowerCase();
+    const anti = parseAnticodonValue(anticodonRaw);
+
+    // Tier 1 — anticodon codon/code keywords in evidence text (DNA and RNA forms)
+    if (evidence.includes('uur') || evidence.includes('(uaa)') || evidence.includes('taa') || evidence.includes('uaa') || /trnl[-_](?:uaa|uur)/i.test(evidence)) return 'Leu1';
+    if (evidence.includes('cun') || evidence.includes('(uag)') || evidence.includes('tag') || evidence.includes('uag') || /trnl[-_](?:uag|cun)/i.test(evidence)) return 'Leu2';
+    if (evidence.includes('agn') || evidence.includes('(gct)') || evidence.includes('gcu') || evidence.includes('gct') || /trns[-_](?:gct|gcu|agn)/i.test(evidence)) return 'Ser1';
+    if (evidence.includes('ucn') || evidence.includes('(tga)') || evidence.includes('uga') || evidence.includes('tga') || /trns[-_](?:tga|uga|ucn)/i.test(evidence)) return 'Ser2';
+
+    // Tier 2 — explicit numbered tRNA name tags
+    if (evidence.includes('trnl1') || evidence.includes('leu1') || /\btrnl[-_]?1\b/.test(evidence)) return 'Leu1';
+    if (evidence.includes('trnl2') || evidence.includes('leu2') || /\btrnl[-_]?2\b/.test(evidence)) return 'Leu2';
+    if (evidence.includes('trns1') || evidence.includes('ser1') || /\btrns[-_]?1\b/.test(evidence)) return 'Ser1';
+    if (evidence.includes('trns2') || evidence.includes('ser2') || /\btrns[-_]?2\b/.test(evidence)) return 'Ser2';
+
+    // Tier 3 — parsed anticodon qualifier value
+    if (anti === 'TAA' || anti === 'UAA') return 'Leu1';
+    if (anti === 'TAG' || anti === 'UAG') return 'Leu2';
+    if (anti === 'GCT' || anti === 'GCU' || anti === 'TCT' || anti === 'TCU') return 'Ser1';
+    if (anti === 'TGA' || anti === 'UGA' || anti === 'AGA') return 'Ser2';
+
+    // Tier 4 — undifferentiated fallback (cannot distinguish isoform)
+    if (evidence.includes('leu') || evidence.includes('trnl')) return 'Leu';
+    if (evidence.includes('ser') || evidence.includes('trns')) return 'Ser';
+    return null;
+}
+
+function resolveCanonicalGeneName({ featureKey, product, geneQualifier, anticodon, note, genomeType }) {
+    const dict = getGeneDictionary(genomeType);
+    const productNorm = normalizeToken(product);
+    const geneNorm = normalizeToken(geneQualifier);
+
+    if (featureKey === 'tRNA') {
+        const leuSer = resolveLeuSerFromEvidence(geneQualifier, product, anticodon, note);
+        if (leuSer) return leuSer;
+    }
+
+    // 1) Exact canonical key match.
+    for (const key in dict) {
+        if (!canonicalGeneMatchesFeature(key, featureKey, genomeType)) continue;
+        if (normalizeToken(key) === productNorm || normalizeToken(key) === geneNorm) {
+            return key;
+        }
+    }
+
+    // 2) Match via dictionary aliases.
+    for (const key in dict) {
+        if (!canonicalGeneMatchesFeature(key, featureKey, genomeType)) continue;
+        const aliases = Array.isArray(dict[key]) ? dict[key] : [];
+        if (aliases.some(alias => normalizeToken(alias) === productNorm || normalizeToken(alias) === geneNorm)) {
+            return key;
+        }
+    }
+
+    // 3) Generic handling for tRNAs that are not explicit canonical keys.
+    if (featureKey === 'tRNA') {
+        const trnaGene = resolveGenericTrnaName(geneQualifier, product, note);
+        if (trnaGene) return trnaGene;
+    }
+
+    return null;
+}
+
+function labelDuplicateCopies(entries) {
+    const grouped = new Map();
+    entries.forEach((item, index) => {
+        if (!grouped.has(item.geneName)) grouped.set(item.geneName, []);
+        grouped.get(item.geneName).push({ ...item, _index: index });
+    });
+
+    const copyLabels = new Array(entries.length).fill(null);
+    grouped.forEach((items, geneName) => {
+        if (items.length <= 1) {
+            copyLabels[items[0]._index] = geneName;
+            return;
+        }
+        const sorted = [...items].sort((a, b) => b.length - a.length);
+        sorted.forEach((entry, i) => {
+            copyLabels[entry._index] = `${geneName} (${i + 1})`;
+        });
+    });
+
+    return copyLabels;
+}
+
+
 async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
     let progress = 0;
     function updateProgressBar(current, total) {
@@ -182,6 +344,10 @@ async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
             const geneStrands = [];
             const geneLengths = [];
             const geneNames = [];
+            const originalGeneNames = [];
+            const unresolvedGenes = [];
+            const featureEntries = [];
+            let unknownCounter = 0;
 
             features.forEach(feature => {
                 const featureKey = feature.querySelector("INSDFeature_key").textContent;
@@ -191,38 +357,56 @@ async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
                     const end = parseInt(feature.querySelector("INSDInterval > INSDInterval_to").textContent);
                     const strand = start > end ? '-' : '+';
                     const length = Math.abs(end - start) + 1;
-                    let geneName = null;
-
+                    const qualifierMap = {};
                     qualifiers.forEach(qualifier => {
-                        if (qualifier.querySelector("INSDQualifier_name").textContent === "product") {
-                            geneName = qualifier.querySelector("INSDQualifier_value").textContent;
-                            if (genomeType === 'Mitochondrial') {
-                                for (const key in MitochondrialGenes) {
-                                    if (MitochondrialGenes[key].includes(geneName)) {
-                                        geneName = key;
-                                        break;
-                                    }
-                                }
-                            } else if (genomeType === 'Chloroplast') {
-                                for (const key in ChloroplastGenes) {
-                                    if (ChloroplastGenes[key].includes(geneName)) {
-                                        geneName = key;
-                                        break;
-                                    }
-                                }
-                            }
-                            geneNames.push(geneName);
-                        }
+                        const qNameNode = qualifier.querySelector("INSDQualifier_name");
+                        const qValueNode = qualifier.querySelector("INSDQualifier_value");
+                        if (!qNameNode || !qValueNode) return;
+                        qualifierMap[qNameNode.textContent] = qValueNode.textContent;
                     });
 
-                    if (geneName) {
-                        const geneSeq = strand === '+' ? sequence.substring(start, end) : sequence.substring(end - 1, start + 1);
-                        geneSequences[geneName] = geneSeq.toUpperCase();
-                        if (!geneData[geneName]) {
-                            geneData[geneName] = [];
-                        }
-                        geneData[geneName].push({ length, start, end, strand, geneName });
+                    const product = qualifierMap.product || '';
+                    const geneQualifier = qualifierMap.gene || '';
+                    const anticodon = qualifierMap.anticodon || '';
+                    const note = qualifierMap.note || '';
+
+                    let geneName = resolveCanonicalGeneName({
+                        featureKey,
+                        product,
+                        geneQualifier,
+                        anticodon,
+                        note,
+                        genomeType
+                    });
+
+                    if (!geneName) {
+                        geneName = `__UNK_${voucherId}_${unknownCounter++}__`;
+                        unresolvedGenes.push({
+                            placeholderName: geneName,
+                            sourceFile: voucherId,
+                            speciesName: '',
+                            genomeSize: sequence.length,
+                            rawGeneName: product || geneQualifier || featureKey,
+                            featureKey,
+                            anticodon
+                        });
                     }
+
+                    const geneSeq = strand === '+' ? sequence.substring(start, end) : sequence.substring(end - 1, start + 1);
+                    const normalizedSeq = geneSeq.toUpperCase();
+
+                    if (!geneSequences[geneName] || normalizedSeq.length > geneSequences[geneName].length) {
+                        geneSequences[geneName] = normalizedSeq;
+                    }
+
+                    if (!geneData[geneName]) {
+                        geneData[geneName] = [];
+                    }
+                    geneData[geneName].push({ length, start, end, strand, geneName });
+
+                    featureEntries.push({ geneName, length, strand, start, end });
+                    geneNames.push(geneName);
+                    originalGeneNames.push(product || geneQualifier || featureKey || geneName);
                     geneStrands.push(strand);
                     geneLengths.push(length);
                 }
@@ -230,6 +414,14 @@ async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
 
             const speciesNames = Array.from(xml.querySelectorAll("INSDSeq_organism")).map(org => org.textContent);
             const vouchers = Array.from(xml.querySelectorAll("INSDSeq_accession-version")).map(voucher => voucher.textContent);
+            unresolvedGenes.forEach(item => {
+                item.speciesName = speciesNames[0] || '';
+            });
+
+            const duplicateLabels = labelDuplicateCopies(featureEntries);
+            const duplicateGenes = featureEntries
+                .map((entry, idx) => ({ ...entry, label: duplicateLabels[idx] }))
+                .filter(item => /\(\d+\)$/.test(item.label));
 
             // Reorder geneNames and geneStrands to start with geneStart
             const geneStartIndex = geneNames.indexOf(geneStart);
@@ -254,12 +446,17 @@ async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
                 geneOrder: geneOrderStr,
                 vouchers,
                 genes: geneNames,
+                originalGeneNames,
                 strands: geneStrands,
                 lengths: geneLengths,
                 sequence,
                 geneSequences,
                 geneData,
-                pseudoGenes: processPseudoGenes(geneData)
+                pseudoGenes: processPseudoGenes(geneData),
+                duplicateGenes,
+                unresolvedGenes,
+                genomeSize: sequence.length,
+                sourceFile: voucherId
             };
 
         } catch (error) {
@@ -271,7 +468,17 @@ async function fetchGenomicData(ids, geneList, genomeType, geneStart) {
         }
     };
 
-    const results = await Promise.all(ids.map(processVoucher));
+    // Process in batches of 3 to avoid NCBI rate-limiting (max ~3 req/sec)
+    const results = [];
+    const batchSize = 3;
+    for (let i = 0; i < ids.length; i += batchSize) {
+        const batch = ids.slice(i, i + batchSize);
+        const batchResults = await Promise.all(batch.map(processVoucher));
+        results.push(...batchResults);
+        if (i + batchSize < ids.length) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
     return results.filter(result => result !== null);
 }
 
@@ -287,7 +494,7 @@ function processPseudoGenes(geneData) {
 }
 
 
-function parseGenBankFile(fileText, geneList, genomeType, geneStart) {
+function parseGenBankFile(fileText, geneList, genomeType, geneStart, sourceFile = 'GenBank file') {
     const lines = fileText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
 
     let organism = '';
@@ -447,64 +654,67 @@ function parseGenBankFile(fileText, geneList, genomeType, geneStart) {
     const geneStrands = [];
     const geneLengths = [];
     const geneNames = [];
+    const originalGeneNames = [];
+    const unresolvedGenes = [];
+    const featureEntries = [];
+    let unknownCounter = 0;
 
     features.forEach(feature => {
         if (!geneList.includes(feature.key)) return;
 
-        // Use product qualifier; fallback to gene qualifier for tRNAs and other features
-        const product = feature.qualifiers.product || feature.qualifiers.gene;
-        if (!product) return;
+        const product = feature.qualifiers.product || '';
+        const geneQualifier = feature.qualifiers.gene || '';
+        const note = feature.qualifiers.note || '';
+        if (!product && !geneQualifier) return;
 
         const { start, end, strand } = parseLocation(feature.location);
         if (start === Infinity || end === -Infinity) return;
 
         const length = Math.abs(end - start) + 1;
-        let geneName = product;
+        let geneName = resolveCanonicalGeneName({
+            featureKey: feature.key,
+            product,
+            geneQualifier,
+            anticodon: feature.qualifiers.anticodon || '',
+            note,
+            genomeType
+        });
 
-        // Normalize tRNA gene names from /gene qualifiers (e.g., "trnF", "trnF(gaa)")
-        if (feature.key === 'tRNA' && geneName && !geneName.startsWith('tRNA-')) {
-            const trnMap = {
-                'A':'Ala','R':'Arg','N':'Asn','D':'Asp','C':'Cys','Q':'Gln','E':'Glu',
-                'G':'Gly','H':'His','I':'Ile','L':'Leu','K':'Lys','M':'Met','F':'Phe',
-                'P':'Pro','S':'Ser','T':'Thr','W':'Trp','Y':'Tyr','V':'Val'
-            };
-            const trnMatch = geneName.match(/^trn([A-Z])/i);
-            if (trnMatch) {
-                const aa = trnMap[trnMatch[1].toUpperCase()];
-                if (aa) geneName = 'tRNA-' + aa;
-            }
-        }
-
-        // Resolve gene name using dictionaries
-        if (genomeType === 'Mitochondrial') {
-            for (const key in MitochondrialGenes) {
-                if (MitochondrialGenes[key].includes(product)) {
-                    geneName = key;
-                    break;
-                }
-            }
-        } else if (genomeType === 'Chloroplast') {
-            for (const key in ChloroplastGenes) {
-                if (ChloroplastGenes[key].includes(product)) {
-                    geneName = key;
-                    break;
-                }
-            }
+        if (!geneName) {
+            geneName = `__UNK_${sourceFile.replace(/[^a-zA-Z0-9]/g, '_')}_${unknownCounter++}__`;
+            unresolvedGenes.push({
+                placeholderName: geneName,
+                sourceFile,
+                speciesName: organism,
+                genomeSize: sequence.length,
+                rawGeneName: product || geneQualifier || feature.key,
+                featureKey: feature.key,
+                anticodon: feature.qualifiers.anticodon || ''
+            });
         }
 
         geneNames.push(geneName);
+        originalGeneNames.push(product || geneQualifier || feature.key || geneName);
         geneStrands.push(strand);
         geneLengths.push(length);
 
-        if (geneName) {
-            const geneSeq = strand === '+' ? sequence.substring(start, end) : sequence.substring(end - 1, start + 1);
-            geneSequences[geneName] = geneSeq.toUpperCase();
-            if (!geneData[geneName]) {
-                geneData[geneName] = [];
-            }
-            geneData[geneName].push({ length, start, end, strand, geneName });
+        const geneSeq = strand === '+' ? sequence.substring(start, end) : sequence.substring(end - 1, start + 1);
+        const normalizedSeq = geneSeq.toUpperCase();
+        if (!geneSequences[geneName] || normalizedSeq.length > geneSequences[geneName].length) {
+            geneSequences[geneName] = normalizedSeq;
         }
+
+        if (!geneData[geneName]) {
+            geneData[geneName] = [];
+        }
+        geneData[geneName].push({ length, start, end, strand, geneName });
+        featureEntries.push({ geneName, length, strand, start, end });
     });
+
+    const duplicateLabels = labelDuplicateCopies(featureEntries);
+    const duplicateGenes = featureEntries
+        .map((entry, idx) => ({ ...entry, label: duplicateLabels[idx] }))
+        .filter(item => /\(\d+\)$/.test(item.label));
 
     // Reorder genes starting from geneStart (same logic as fetchGenomicData)
     const geneStartIndex = geneNames.indexOf(geneStart);
@@ -528,21 +738,433 @@ function parseGenBankFile(fileText, geneList, genomeType, geneStart) {
         geneOrder: geneOrderStr,
         vouchers: [accession],
         genes: geneNames,
+        originalGeneNames,
         strands: geneStrands,
         lengths: geneLengths,
         sequence,
         geneSequences,
         geneData,
-        pseudoGenes: processPseudoGenes(geneData)
+        pseudoGenes: processPseudoGenes(geneData),
+        duplicateGenes,
+        unresolvedGenes,
+        genomeSize: sequence.length,
+        sourceFile
     };
 }
 
 
 let currentGenomicData = []; // Variável global para armazenar a ordem atualizada
+let showSyntenyLinks = false;
+let syntenyMode = 'mauve'; // 'mauve' or 'trapezoid'
+let genomeLabelWidth = 220; // resizable label width (px), persists across re-renders
+
+function normalizedColorGeneKey(geneName) {
+    const name = String(geneName || '').trim();
+    if (!name || name === '-' || name === 'gap') return '-';
+    if (Object.prototype.hasOwnProperty.call(colorMitochondrial, name)) return name;
+
+    if (name.startsWith('tRNA-')) {
+        const aa = name.replace('tRNA-', '');
+        if (Object.prototype.hasOwnProperty.call(colorMitochondrial, `tRNA-${aa}`)) return `tRNA-${aa}`;
+        return name;
+    }
+
+    if (/^[A-Z][a-z]{2}$/.test(name)) {
+        const trnaName = `tRNA-${name}`;
+        if (Object.prototype.hasOwnProperty.call(colorMitochondrial, trnaName)) return trnaName;
+    }
+
+    if (name === 'Leu1' || name === 'Leu2') return 'tRNA-Leu';
+    if (name === 'Ser1' || name === 'Ser2') return 'tRNA-Ser';
+
+    return name;
+}
+
+function getGeneColor(geneName) {
+    const normalized = normalizedColorGeneKey(geneName);
+    return colorMitochondrial[normalized] || "#FFFFFF";
+}
+
+function toSignedToken(gene, strand) {
+    const cleanGene = String(gene || '').trim();
+    if (!cleanGene || cleanGene === '-') return '-';
+    const shortGene = cleanGene.startsWith('tRNA-') ? cleanGene.replace('tRNA-', '') : cleanGene;
+    return strand === '-' ? `-${shortGene}` : shortGene;
+}
+
+function tokenizeGenome(genes, strands) {
+    return (genes || []).map((gene, idx) => toSignedToken(gene, (strands || [])[idx] || '+'));
+}
+
+function needlemanWunschAlign(referenceTokens, sequenceTokens) {
+    const matchScore = 4;
+    const mismatchScore = -2;
+    const gapOpen = -4;
+    const gapExtend = -1;
+
+    const m = referenceTokens.length;
+    const n = sequenceTokens.length;
+
+    function scoreMatch(a, b) {
+        if (a === b) return matchScore;
+        // Partial credit: same gene but different strand
+        const aBase = a.replace(/^-/, '');
+        const bBase = b.replace(/^-/, '');
+        if (aBase === bBase) return 1;
+        return mismatchScore;
+    }
+
+    // Three state matrices for affine gap: D (diagonal/match), Ix (gap in seq), Iy (gap in ref)
+    const D = Array.from({ length: m + 1 }, () => Array(n + 1).fill(-Infinity));
+    const Ix = Array.from({ length: m + 1 }, () => Array(n + 1).fill(-Infinity)); // gap in sequence (consume ref)
+    const Iy = Array.from({ length: m + 1 }, () => Array(n + 1).fill(-Infinity)); // gap in reference (consume seq)
+    // Traceback: 0=diag, 1=up(Ix), 2=left(Iy) — tracks which state gives best score
+    const traceD = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+    const traceIx = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+    const traceIy = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+    D[0][0] = 0;
+    for (let i = 1; i <= m; i++) {
+        Ix[i][0] = gapOpen + (i - 1) * gapExtend;
+        D[i][0] = Ix[i][0];
+        traceD[i][0] = 1; // came from Ix
+    }
+    for (let j = 1; j <= n; j++) {
+        Iy[0][j] = gapOpen + (j - 1) * gapExtend;
+        D[0][j] = Iy[0][j];
+        traceD[0][j] = 2; // came from Iy
+    }
+
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            const s = scoreMatch(referenceTokens[i - 1], sequenceTokens[j - 1]);
+
+            // Ix: gap in sequence (consume ref[i], skip seq)
+            const ixFromD = D[i - 1][j] + gapOpen;
+            const ixFromIx = Ix[i - 1][j] + gapExtend;
+            if (ixFromD >= ixFromIx) {
+                Ix[i][j] = ixFromD;
+                traceIx[i][j] = 0; // opened from D
+            } else {
+                Ix[i][j] = ixFromIx;
+                traceIx[i][j] = 1; // extended from Ix
+            }
+
+            // Iy: gap in reference (consume seq[j], skip ref)
+            const iyFromD = D[i][j - 1] + gapOpen;
+            const iyFromIy = Iy[i][j - 1] + gapExtend;
+            if (iyFromD >= iyFromIy) {
+                Iy[i][j] = iyFromD;
+                traceIy[i][j] = 0; // opened from D
+            } else {
+                Iy[i][j] = iyFromIy;
+                traceIy[i][j] = 2; // extended from Iy
+            }
+
+            // D: match/mismatch (diagonal)
+            const dFromD = D[i - 1][j - 1] + s;
+            const dFromIx = Ix[i - 1][j - 1] + s;
+            const dFromIy = Iy[i - 1][j - 1] + s;
+            const bestD = Math.max(dFromD, dFromIx, dFromIy);
+            D[i][j] = bestD;
+            if (bestD === dFromD) traceD[i][j] = 0;
+            else if (bestD === dFromIx) traceD[i][j] = 1;
+            else traceD[i][j] = 2;
+        }
+    }
+
+    // Find best ending state
+    const finalScores = [D[m][n], Ix[m][n], Iy[m][n]];
+    let state = finalScores.indexOf(Math.max(...finalScores)); // 0=D, 1=Ix, 2=Iy
+
+    // Traceback
+    const alignedReference = [];
+    const alignedSequence = [];
+    let i = m, j = n;
+
+    while (i > 0 || j > 0) {
+        if (i === 0) {
+            alignedReference.unshift('-');
+            alignedSequence.unshift(sequenceTokens[j - 1]);
+            j--;
+            continue;
+        }
+        if (j === 0) {
+            alignedReference.unshift(referenceTokens[i - 1]);
+            alignedSequence.unshift('-');
+            i--;
+            continue;
+        }
+
+        if (state === 0) { // D state: diagonal
+            const prevState = traceD[i][j];
+            alignedReference.unshift(referenceTokens[i - 1]);
+            alignedSequence.unshift(sequenceTokens[j - 1]);
+            i--; j--;
+            state = prevState;
+        } else if (state === 1) { // Ix state: gap in sequence
+            const prevState = traceIx[i][j];
+            alignedReference.unshift(referenceTokens[i - 1]);
+            alignedSequence.unshift('-');
+            i--;
+            state = prevState;
+        } else { // Iy state: gap in reference
+            const prevState = traceIy[i][j];
+            alignedReference.unshift('-');
+            alignedSequence.unshift(sequenceTokens[j - 1]);
+            j--;
+            state = prevState;
+        }
+    }
+
+    return { alignedReference, alignedSequence };
+}
+
+function applyAlignedTokensToGenome(genome, alignedTokens) {
+    const sourceGenes = Array.isArray(genome.genes) ? genome.genes.slice() : [];
+    const sourceStrands = Array.isArray(genome.strands) ? genome.strands.slice() : [];
+    const sourceLengths = Array.isArray(genome.lengths) ? genome.lengths.slice() : [];
+    const sourceOriginalGeneNames = Array.isArray(genome.originalGeneNames) ? genome.originalGeneNames.slice() : sourceGenes.slice();
+
+    const nextGenes = [];
+    const nextStrands = [];
+    const nextLengths = [];
+    const nextOriginalGeneNames = [];
+    let cursor = 0;
+
+    alignedTokens.forEach(token => {
+        if (token === '-') {
+            nextGenes.push('-');
+            nextStrands.push('+');
+            nextLengths.push(0);
+            nextOriginalGeneNames.push('-');
+            return;
+        }
+
+        const gene = sourceGenes[cursor] || '-';
+        nextGenes.push(gene);
+        nextStrands.push(sourceStrands[cursor] || '+');
+        nextLengths.push(Number(sourceLengths[cursor] || 0));
+        nextOriginalGeneNames.push(sourceOriginalGeneNames[cursor] || gene);
+        cursor++;
+    });
+
+    genome.genes = nextGenes;
+    genome.strands = nextStrands;
+    genome.lengths = nextLengths;
+    genome.originalGeneNames = nextOriginalGeneNames;
+    genome.geneOrder = alignedTokens.join(',');
+}
+
+function pairwiseSimilarity(tokensA, tokensB) {
+    const setA = new Set(tokensA.filter(t => t !== '-'));
+    const setB = new Set(tokensB.filter(t => t !== '-'));
+    if (setA.size === 0 && setB.size === 0) return 1;
+    let intersection = 0;
+    setA.forEach(t => { if (setB.has(t)) intersection++; });
+    return intersection / (setA.size + setB.size - intersection);
+}
+
+function pairwiseNWScore(tokensA, tokensB) {
+    // Quick NW score for ordering — counts matches in alignment
+    const { alignedReference, alignedSequence } = needlemanWunschAlign(tokensA, tokensB);
+    let matches = 0;
+    for (let k = 0; k < alignedReference.length; k++) {
+        if (alignedReference[k] !== '-' && alignedSequence[k] !== '-' && alignedReference[k] === alignedSequence[k]) {
+            matches++;
+        }
+    }
+    return matches;
+}
+
+function autoAlignGenomeOrders(genomicData) {
+    if (!Array.isArray(genomicData) || genomicData.length < 2) return;
+
+    const allTokens = genomicData.map(g => tokenizeGenome(g.genes || [], g.strands || []));
+    const n = allTokens.length;
+
+    // Compute pairwise similarity
+    const sim = Array.from({ length: n }, () => Array(n).fill(0));
+    for (let i = 0; i < n; i++) {
+        sim[i][i] = 1;
+        for (let j = i + 1; j < n; j++) {
+            const s = pairwiseSimilarity(allTokens[i], allTokens[j]);
+            sim[i][j] = s;
+            sim[j][i] = s;
+        }
+    }
+
+    // Find most central genome as seed
+    let bestSeed = 0, bestAvg = -1;
+    for (let i = 0; i < n; i++) {
+        let avg = 0;
+        for (let j = 0; j < n; j++) avg += sim[i][j];
+        avg /= n;
+        if (avg > bestAvg) { bestAvg = avg; bestSeed = i; }
+    }
+
+    // Greedy nearest-neighbor ordering
+    const visited = new Set();
+    const order = [bestSeed];
+    visited.add(bestSeed);
+    for (let step = 1; step < n; step++) {
+        const last = order[order.length - 1];
+        let bestNext = -1, bestSim = -1;
+        for (let j = 0; j < n; j++) {
+            if (!visited.has(j) && sim[last][j] > bestSim) {
+                bestSim = sim[last][j];
+                bestNext = j;
+            }
+        }
+        order.push(bestNext);
+        visited.add(bestNext);
+    }
+
+    // Reorder genomicData in-place
+    const reordered = order.map(i => genomicData[i]);
+    const reorderedTokens = order.map(i => allTokens[i]);
+    for (let i = 0; i < n; i++) genomicData[i] = reordered[i];
+
+    // --- Progressive MSA using column-indexed approach ---
+    // Represent the MSA as a 2D array: msa[row][col] = token or '-'
+    // Start with genome 0 as the initial single-row MSA
+    let msa = [reorderedTokens[0].slice()];
+
+    for (let idx = 1; idx < n; idx++) {
+        const newSeq = reorderedTokens[idx];
+
+        // Build a "profile" (consensus) from current MSA columns for NW alignment
+        // The profile is just the list of non-gap tokens from each column (majority vote)
+        const msaCols = msa[0].length;
+        const profile = [];
+        const colMap = []; // colMap[k] = original column index in MSA for profile position k
+        for (let c = 0; c < msaCols; c++) {
+            // Find the most common non-gap token in this column
+            const counts = new Map();
+            for (let r = 0; r < msa.length; r++) {
+                const tok = msa[r][c];
+                if (tok !== '-') {
+                    counts.set(tok, (counts.get(tok) || 0) + 1);
+                }
+            }
+            if (counts.size > 0) {
+                let bestTok = '-', bestCount = 0;
+                counts.forEach((count, tok) => {
+                    if (count > bestCount) { bestCount = count; bestTok = tok; }
+                });
+                profile.push(bestTok);
+                colMap.push(c);
+            }
+        }
+
+        // Align newSeq against the profile
+        const { alignedReference: alignedProfile, alignedSequence: alignedNew } = needlemanWunschAlign(profile, newSeq);
+
+        // Build new MSA by weaving together old columns and new gaps
+        const newMsaCols = alignedProfile.length;
+        const newMsa = msa.map(() => []);
+        const newRow = [];
+
+        let profileIdx = 0; // index into colMap
+        let lastMsaCol = -1;
+
+        for (let k = 0; k < newMsaCols; k++) {
+            if (alignedProfile[k] !== '-') {
+                // This position maps to a real MSA column
+                const msaCol = colMap[profileIdx];
+
+                // First, insert any all-gap MSA columns between lastMsaCol and msaCol
+                for (let c = lastMsaCol + 1; c < msaCol; c++) {
+                    for (let r = 0; r < msa.length; r++) {
+                        newMsa[r].push(msa[r][c]);
+                    }
+                    newRow.push('-'); // new sequence gets gap for these gap-only columns
+                }
+
+                // Now add the mapped column
+                for (let r = 0; r < msa.length; r++) {
+                    newMsa[r].push(msa[r][msaCol]);
+                }
+                newRow.push(alignedNew[k]);
+
+                lastMsaCol = msaCol;
+                profileIdx++;
+            } else {
+                // Gap in profile = insertion in new sequence: add new column with gaps for all existing rows
+                for (let r = 0; r < msa.length; r++) {
+                    newMsa[r].push('-');
+                }
+                newRow.push(alignedNew[k]);
+            }
+        }
+
+        // Append any remaining MSA columns after the last mapped one
+        for (let c = lastMsaCol + 1; c < msaCols; c++) {
+            for (let r = 0; r < msa.length; r++) {
+                newMsa[r].push(msa[r][c]);
+            }
+            newRow.push('-');
+        }
+
+        newMsa.push(newRow);
+        msa = newMsa;
+    }
+
+    // Apply MSA rows to genomes
+    genomicData.forEach((genome, idx) => {
+        applyAlignedTokensToGenome(genome, msa[idx]);
+    });
+}
+
+function normalizeSyntenyGeneName(gene) {
+    const value = String(gene || '').trim();
+    if (!value || value === '-' || value.toLowerCase() === 'gap') return null;
+    return value.replace(/^tRNA-/, '').toLowerCase();
+}
+
+function buildSyntenyPairs(topGenes, bottomGenes, topCenters, bottomCenters, topLeftEdges, bottomLeftEdges, topRightEdges, bottomRightEdges) {
+    const topMap = new Map();
+    const bottomMap = new Map();
+
+    (topGenes || []).forEach((gene, index) => {
+        const key = normalizeSyntenyGeneName(gene);
+        if (!key) return;
+        if (!topMap.has(key)) topMap.set(key, []);
+        topMap.get(key).push({ index, gene, center: topCenters[index], left: topLeftEdges ? topLeftEdges[index] : topCenters[index], right: topRightEdges ? topRightEdges[index] : topCenters[index] });
+    });
+
+    (bottomGenes || []).forEach((gene, index) => {
+        const key = normalizeSyntenyGeneName(gene);
+        if (!key) return;
+        if (!bottomMap.has(key)) bottomMap.set(key, []);
+        bottomMap.get(key).push({ index, gene, center: bottomCenters[index], left: bottomLeftEdges ? bottomLeftEdges[index] : bottomCenters[index], right: bottomRightEdges ? bottomRightEdges[index] : bottomCenters[index] });
+    });
+
+    const pairs = [];
+    topMap.forEach((topEntries, key) => {
+        const bottomEntries = bottomMap.get(key) || [];
+        const qty = Math.min(topEntries.length, bottomEntries.length);
+        for (let i = 0; i < qty; i++) {
+            pairs.push({
+                gene: topEntries[i].gene,
+                x1_center: topEntries[i].center,
+                x2_center: bottomEntries[i].center,
+                x1_left: topEntries[i].left,
+                x2_left: bottomEntries[i].left,
+                x1_right: topEntries[i].right,
+                x2_right: bottomEntries[i].right
+            });
+        }
+    });
+
+    return pairs;
+}
 
 function createSVG(genomicData, geneStart, geneList, pattern = false) {
+    const svgNS = "http://www.w3.org/2000/svg";
     const patternMap = new Map();
     let patternCounter = 1;
+    const originalGenomicData = genomicData; // preserve reference before pattern dedup
 
     if (pattern) {
         genomicData.forEach(data => {
@@ -552,6 +1174,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 patternMap.set(geneOrder, {
                     id: `Pattern ${toRoman(patternCounter++)}`,
                     genes: [...genes],
+                    originalGeneNames: Array.isArray(data.originalGeneNames) ? [...data.originalGeneNames] : [...genes],
                     strands: [...strands],
                     lengths: [...lengths],
                     pseudoGenes: [...pseudoGenes],
@@ -566,6 +1189,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
             vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
             genes: patternData.genes,
+            originalGeneNames: patternData.originalGeneNames,
             strands: patternData.strands,
             lengths: patternData.lengths,
             pseudoGenes: patternData.pseudoGenes,
@@ -576,10 +1200,11 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
     currentGenomicData = [...genomicData];
 
-    const pieceWidth = 125;
-    const pieceHeight = pieceWidth / 2;
-    const tRNAWidth = pieceWidth;
+    const pieceWidth = 100;
+    const pieceHeight = 46;
+    const tRNAWidth = 50;
     let maxGeneOrderLength = 0;
+    const renderedRows = [];
 
     genomicData.forEach(data => {
         const { genes } = data;
@@ -591,10 +1216,10 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
     const totalWidth = maxGeneOrderLength + 50;
 
-    document.querySelectorAll('.svg-container').forEach(container => container.remove());
+    document.querySelectorAll('.genome-row, .svg-container, .synteny-bridge, .synteny-bridge-row').forEach(el => el.remove());
 
     genomicData.forEach((data, dataIndex) => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
+        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id, originalGeneNames } = data;
         const nomeEspecie = Array.isArray(speciesNames) ? speciesNames.join(", ") : speciesNames;
         const safeVoucher = String(speciesNames).replace(/[^a-zA-Z0-9-_]/g, '_');
         const preferidos = [geneStart];
@@ -602,17 +1227,19 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         if (startGene) {
             const indexInicio = genes.indexOf(startGene);
             genes = [...genes.slice(indexInicio), ...genes.slice(0, indexInicio)];
+            originalGeneNames = Array.isArray(originalGeneNames)
+                ? [...originalGeneNames.slice(indexInicio), ...originalGeneNames.slice(0, indexInicio)]
+                : [...genes];
             strands = [...strands.slice(indexInicio), ...strands.slice(0, indexInicio)];
             lengths = [...lengths.slice(indexInicio), ...lengths.slice(0, indexInicio)];
         }
 
-        const svgNS = "http://www.w3.org/2000/svg";
         let svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("id", `svg-${safeVoucher}`);
 
         svg.setAttribute("width", totalWidth.toString());
-        svg.setAttribute("height", "150");
-        svg.setAttribute("viewBox", `0 50 ${totalWidth} 150`);
+        svg.setAttribute("height", "60");
+        svg.setAttribute("viewBox", `0 75 ${totalWidth} 60`);
 
         function adicionarElemento(index, lado, quantidade = 1) {
             $('#addGeneModal').modal('show');
@@ -632,59 +1259,63 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 };
 
                 if (pattern) {
-                    patternMap.get(geneOrder).species.forEach(speciesData => {
-                        genomicData.forEach(genome => {
-                            if (genome.geneOrder === geneOrder) {
-                                updateGenes(genome.genes, genome.strands, genome.lengths);
-                            }
-                        });
+                    originalGenomicData.forEach(genome => {
+                        if (genome.geneOrder === geneOrder) {
+                            updateGenes(genome.genes, genome.strands, genome.lengths);
+                            genome.geneOrder = genome.genes.map((g, i) => toSignedToken(g, genome.strands[i])).join(',');
+                        }
                     });
                 } else {
                     updateGenes(genes, strands, lengths);
                 }
 
-                const newGeneOrder = geneOrder.split(',').slice();
-                for (let i = 0; i < qtde; i++) {
-                    newGeneOrder.splice(newGenePosition + i, 0, newGeneStrand === '-' ? `-${newGeneName}` : newGeneName);
-                }
-                data.geneOrder = newGeneOrder.join(',');
+                data.geneOrder = genes.map((gene, idx) => toSignedToken(gene, strands[idx])).join(',');
 
                 data.genes = genes;
+                data.originalGeneNames = originalGeneNames;
                 data.strands = strands;
                 data.lengths = lengths;
 
                 updatePseudoGenes();
 
-                createSVG(genomicData, geneStart, geneList, pattern);
+                createSVG(originalGenomicData, geneStart, geneList, pattern);
                 $('#addGeneModal').modal('hide');
             });
         }
 
         function removerElemento(index) {
             const elementToRemove = document.querySelector(`#svg-${safeVoucher} .gene-path[data-index="${index}"]`);
-            if (elementToRemove) {
-                const tooltipInstance = bootstrap.Tooltip.getInstance(elementToRemove);
-                if (tooltipInstance) {
-                    tooltipInstance.dispose();
-                }
+            if (elementToRemove && elementToRemove._tippy) {
+                elementToRemove._tippy.destroy();
             }
 
             if (confirm("Are you sure you want to remove this gene?")) {
+                if (pattern) {
+                    // Propagate deletion to all individual species in this pattern
+                    originalGenomicData.forEach(genome => {
+                        if (genome.geneOrder === geneOrder) {
+                            genome.genes.splice(index, 1);
+                            genome.strands.splice(index, 1);
+                            genome.lengths.splice(index, 1);
+                            genome.geneOrder = genome.genes.map((gene, idx) => toSignedToken(gene, genome.strands[idx])).join(',');
+                        }
+                    });
+                }
+
                 genes.splice(index, 1);
                 strands.splice(index, 1);
                 lengths.splice(index, 1);
 
-                const newGeneOrder = geneOrder.split(',').slice();
-                newGeneOrder.splice(index, 1);
-                data.geneOrder = newGeneOrder.join(',');
+                data.geneOrder = genes.map((gene, idx) => toSignedToken(gene, strands[idx])).join(',');
 
                 data.genes = genes;
+                data.originalGeneNames = originalGeneNames;
                 data.strands = strands;
                 data.lengths = lengths;
 
                 updatePseudoGenes();
 
-                createSVG(genomicData, geneStart, geneList, pattern);
+                createSVG(originalGenomicData, geneStart, geneList, pattern);
             }
         }
 
@@ -708,155 +1339,96 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
         updatePseudoGenes();
 
-        let textEspecie = document.createElementNS(svgNS, "text");
-        textEspecie.setAttribute("x", "100");
-        textEspecie.setAttribute("y", "70");
-        textEspecie.setAttribute("fill", "black");
-        textEspecie.setAttribute("font-size", "20px");
-
-        let italicEspecie = document.createElementNS(svgNS, "tspan");
-        if (pattern) {
-            italicEspecie.setAttribute("font-weight", "bold");
-        } else {
-            italicEspecie.setAttribute("font-style", "italic");
-        }
-        italicEspecie.textContent = `${pattern ? id + '' : nomeEspecie}`;
-        textEspecie.appendChild(italicEspecie);
-
-        if (!pattern) {
-            let boldVoucher = document.createElementNS(svgNS, "tspan");
-            boldVoucher.setAttribute("font-weight", "bold");
-            boldVoucher.innerHTML = `
-                (<a href="https://www.ncbi.nlm.nih.gov/nuccore/${vouchers}" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-html="true" title="View in GenBank">${vouchers}</a>)
-            `;
-            textEspecie.appendChild(boldVoucher);
-        }
-
-        if (!pattern && pseudoGenes.length > 0) {
-            let _pseudoGenes = pseudoGenes.map(pseudoGene => pseudoGene.gene.replace('tRNA-', '')).join(', ');
-            textEspecie.innerHTML += ` - Duplicated Genes or Regions: ${_pseudoGenes}`;
-        }
-
-        // Botão para mover para cima
-        let moveUpIcon = document.createElementNS(svgNS, "svg");
-        moveUpIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        moveUpIcon.setAttribute("viewBox", "0 0 320 512");
-        moveUpIcon.setAttribute("x", "45");
-        moveUpIcon.setAttribute("y", "55");
-        moveUpIcon.setAttribute("width", "20");
-        moveUpIcon.setAttribute("height", "20");
-        moveUpIcon.setAttribute("cursor", "pointer");
-        moveUpIcon.setAttribute("data-bs-toggle", "tooltip");
-        moveUpIcon.setAttribute("data-bs-placement", "top");
-        moveUpIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
-        moveUpIcon.setAttribute("data-bs-html", "true");
-        moveUpIcon.setAttribute("title", "Move up");
-        moveUpIcon.innerHTML = `<path d="M318 177.5c3.8-8.8 2-19-4.6-26l-136-144C172.9 2.7 166.6 0 160 0s-12.9 2.7-17.4 7.5l-136 144c-6.6 7-8.4 17.2-4.6 26S14.4 192 24 192H96l0 288c0 17.7 14.3 32 32 32h64c17.7 0 32-14.3 32-32l0-288h72c9.6 0 18.2-5.7 22-14.5z"/>`;
-        moveUpIcon.onclick = () => moveLine(dataIndex, -1);
-        svg.appendChild(moveUpIcon);
-
-        // Botão para mover para baixo
-        let moveDownIcon = document.createElementNS(svgNS, "svg");
-        moveDownIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        moveDownIcon.setAttribute("viewBox", "0 0 320 512");
-        moveDownIcon.setAttribute("x", "75");
-        moveDownIcon.setAttribute("y", "55");
-        moveDownIcon.setAttribute("width", "20");
-        moveDownIcon.setAttribute("height", "20");
-        moveDownIcon.setAttribute("cursor", "pointer");
-        moveDownIcon.setAttribute("data-bs-toggle", "tooltip");
-        moveDownIcon.setAttribute("data-bs-placement", "top");
-        moveDownIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
-        moveDownIcon.setAttribute("data-bs-html", "true");
-        moveDownIcon.setAttribute("title", "Move down");
-        moveDownIcon.innerHTML = `<path d="M2 334.5c-3.8 8.8-2 19 4.6 26l136 144c4.5 4.8 10.8 7.5 17.4 7.5s12.9-2.7 17.4-7.5l136-144c6.6-7 8.4-17.2 4.6-26s-12.5-14.5-22-14.5l-72 0 0-288c0-17.7-14.3-32-32-32L128 0C110.3 0 96 14.3 96 32l0 288-72 0c-9.6 0-18.2 5.7-22 14.5z"/>`;
-        moveDownIcon.onclick = () => moveLine(dataIndex, 1);
-        svg.appendChild(moveDownIcon);
-
-        if (!pattern) {
-            // Botão para excluir a linha
-            let deleteIcon = document.createElementNS(svgNS, "svg");
-            deleteIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-            deleteIcon.setAttribute("viewBox", "0 0 448 512");
-            deleteIcon.setAttribute("x", "15");
-            deleteIcon.setAttribute("y", "55");
-            deleteIcon.setAttribute("width", "20");
-            deleteIcon.setAttribute("height", "20");
-            deleteIcon.setAttribute("cursor", "pointer");
-            deleteIcon.setAttribute("data-bs-toggle", "tooltip");
-            deleteIcon.setAttribute("data-bs-placement", "top");
-            deleteIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
-            deleteIcon.setAttribute("data-bs-html", "true");
-            deleteIcon.setAttribute("title", "Delete line");
-            deleteIcon.innerHTML = `<path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>`;
-            deleteIcon.onclick = () => deleteLine(dataIndex);
-            svg.appendChild(deleteIcon);
-        }
-
-        svg.appendChild(textEspecie);
-
         let currentX = 0;
+        const geneCenters = [];
+        const geneLeftEdges = [];
+        const geneRightEdges = [];
 
         genes.forEach((produto, index) => {
-            const isTRNA = produto.startsWith('tRNA');
+            const isTRNA = produto.startsWith('tRNA') || /^trn[A-Za-z]/i.test(produto);
             const pieceW = isTRNA ? tRNAWidth : pieceWidth;
-            const pieceH = pieceHeight;
+            const pieceH = isTRNA ? Math.round(pieceHeight * 0.5) : pieceHeight;
+            const pieceY = isTRNA ? 80 + (pieceHeight - pieceH) / 2 : 80; // center tRNA vertically
+            const s = pieceH / pieceHeight; // scale notch/tab bezier curves proportionally (vertical)
+            const h = pieceW / 100; // scale notch/tab protrusion depth proportionally (horizontal)
 
             let path = document.createElementNS(svgNS, "path");
             path.setAttribute("data-index", index);
-            let d = `M ${currentX},80 
-                     L ${currentX + pieceW},80 
-                     L ${currentX + pieceW},${80 + pieceH} 
-                     L ${currentX},${80 + pieceH} Z`;
+            let d = `M ${currentX},${pieceY}
+                     L ${currentX + pieceW},${pieceY}
+                     L ${currentX + pieceW},${pieceY + pieceH}
+                     L ${currentX},${pieceY + pieceH} Z`;
 
             if (index > 0) {
-                d += `M ${currentX},80 
-                      S ${currentX + 1.14},${80 + pieceH / 2 - 10.36} 
-                      ${currentX - 5.86},${80 + pieceH / 2 - 10.36} 
-                      S ${currentX - 20.44},${80 + pieceH / 2 - 21.95} 
-                      ${currentX - 20.44},${80 + pieceH / 2} 
-                      S ${currentX - 12.86},${80 + pieceH / 2 + 6.6} 
-                      ${currentX - 5.86},${80 + pieceH / 2 + 6.6} 
-                      S ${currentX + 3.19},${80 + pieceH - 5.04} 
-                      ${currentX},${80 + pieceH} `;
+                d += `M ${currentX},${pieceY}
+                      S ${currentX + 1.14 * h},${pieceY + pieceH / 2 - 10.36 * s}
+                      ${currentX - 5.86 * h},${pieceY + pieceH / 2 - 10.36 * s}
+                      S ${currentX - 20.44 * h},${pieceY + pieceH / 2 - 21.95 * s}
+                      ${currentX - 20.44 * h},${pieceY + pieceH / 2}
+                      S ${currentX - 12.86 * h},${pieceY + pieceH / 2 + 6.6 * s}
+                      ${currentX - 5.86 * h},${pieceY + pieceH / 2 + 6.6 * s}
+                      S ${currentX + 3.19 * h},${pieceY + pieceH - 5.04 * s}
+                      ${currentX},${pieceY + pieceH} `;
             }
 
             if (index < genes.length - 1) {
-                d += `M ${currentX + pieceW},80 
-                      S ${currentX + pieceW - 0.96},${80 + pieceH / 2 - 10.29} 
-                      ${currentX + pieceW + 6.04},${80 + pieceH / 2 - 10.29} 
-                      S ${currentX + pieceW + 15.07},${80 + pieceH / 2 - 20.26} 
-                      ${currentX + pieceW + 15.07},${80 + pieceH / 2} 
-                      S ${currentX + pieceW + 13.04},${80 + pieceH / 2 + 6.59} 
-                      ${currentX + pieceW + 6.04},${80 + pieceH / 2 + 6.59} 
-                      S ${currentX + pieceW + 3.63},${80 + pieceH - 3.55} 
-                      ${currentX + pieceW},${80 + pieceH} `;
+                d += `M ${currentX + pieceW},${pieceY}
+                      S ${currentX + pieceW - 0.96 * h},${pieceY + pieceH / 2 - 10.29 * s}
+                      ${currentX + pieceW + 6.04 * h},${pieceY + pieceH / 2 - 10.29 * s}
+                      S ${currentX + pieceW + 15.07 * h},${pieceY + pieceH / 2 - 20.26 * s}
+                      ${currentX + pieceW + 15.07 * h},${pieceY + pieceH / 2}
+                      S ${currentX + pieceW + 13.04 * h},${pieceY + pieceH / 2 + 6.59 * s}
+                      ${currentX + pieceW + 6.04 * h},${pieceY + pieceH / 2 + 6.59 * s}
+                      S ${currentX + pieceW + 3.63 * h},${pieceY + pieceH - 3.55 * s}
+                      ${currentX + pieceW},${pieceY + pieceH} `;
             }
 
             path.setAttribute("d", d);
-            path.setAttribute("fill", colorMitochondrial[produto] || "#FFFFFF");
-            path.setAttribute("stroke", "#202020");
-            path.setAttribute("stroke-width", "0.15");
+            path.setAttribute("fill", getGeneColor(produto));
+            path.setAttribute("stroke", "#333333");
+            path.setAttribute("stroke-width", "0.8");
             path.setAttribute("stroke-linejoin", "round");
             path.setAttribute("class", "gene-path");
 
-            if (!pattern && produto && produto !== 'gap' && produto !== '-') {
-                path.setAttribute("data-bs-toggle", "tooltip");
-                path.setAttribute("data-bs-placement", "bottom");
-                path.setAttribute("data-bs-custom-class", "custom-tooltip");
-                path.setAttribute("data-bs-html", "true");
+            if (produto && produto !== 'gap' && produto !== '-') {
                 let len = lengths[index] ? lengths[index].toString().replace('-', '') : 'N/A';
-                path.setAttribute("title", `Gene: <b>${produto}</b><br>Length: <b>${len} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light</b>' : '<b>heavy</b>'}`);
+                tippy(path, {
+                    content: `Gene: <b>${produto}</b><br>Length: <b>${len} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light (+)</b>' : '<b>heavy (−)</b>'}`,
+                    allowHTML: true, theme: 'light-border', placement: 'bottom', arrow: true
+                });
             }
 
             let text = document.createElementNS(svgNS, "text");
             text.setAttribute("x", (currentX + pieceW / 2).toString());
-            text.setAttribute("y", (80 + pieceH / 2).toString());
-            text.setAttribute("fill", "#000000");
+            text.setAttribute("y", (pieceY + pieceH / 2 + 4).toString());
+            text.setAttribute("fill", "#1a1a1a");
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("font-weight", "bold");
-            text.setAttribute("font-size", "15px");
+            text.setAttribute("font-weight", "600");
+            text.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
+            text.setAttribute("font-size", isTRNA ? "7px" : "11px");
+            text.setAttribute("class", "gene-text");
             text.textContent = isTRNA ? produto.replace('tRNA-', '') : produto;
+
+            if (produto && produto !== 'gap' && produto !== '-') {
+                path.setAttribute("cursor", "pointer");
+                if (!pattern) {
+                    const openModal = () => openEditModal({
+                        geneName: produto,
+                        index,
+                        genes,
+                        strands,
+                        lengths,
+                        originalGeneNames,
+                        data,
+                        geneOrder,
+                        pattern,
+                        speciesName: nomeEspecie,
+                        sourceFile: data.sourceFile || vouchers,
+                        genomeSize: data.genomeSize || (data.sequence ? data.sequence.length : 'N/A')
+                    });
+                    path.onclick = openModal;
+                }
+            }
 
             svg.appendChild(path);
             svg.appendChild(text);
@@ -867,10 +1439,10 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             if (isPseudoGene) {
                 let asterisk = document.createElementNS(svgNS, "text");
                 asterisk.setAttribute("x", (currentX + pieceW / 2).toString());
-                asterisk.setAttribute("y", '170');
-                asterisk.setAttribute("fill", "#202020");
+                asterisk.setAttribute("y", '132');
+                asterisk.setAttribute("fill", "#dc2626");
                 asterisk.setAttribute("text-anchor", "middle");
-                asterisk.setAttribute("font-size", "25px");
+                asterisk.setAttribute("font-size", "14px");
                 asterisk.textContent = "*";
                 svg.appendChild(asterisk);
             }
@@ -878,25 +1450,18 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             if (isNewGene && produto !== '-') {
                 let hash = document.createElementNS(svgNS, "text");
                 hash.setAttribute("x", (currentX + pieceW / 2).toString());
-                hash.setAttribute("y", '185');
+                hash.setAttribute("y", '132');
                 hash.setAttribute("fill", "#202020");
                 hash.setAttribute("text-anchor", "middle");
-                hash.setAttribute("font-size", "25px");
+                hash.setAttribute("font-size", "14px");
                 hash.textContent = "#";
                 hash.setAttribute("cursor", "pointer");
                 if (!pattern) {
-                    hash.setAttribute("data-bs-toggle", "tooltip");
-                    hash.setAttribute("data-bs-placement", "bottom");
-                    hash.setAttribute("data-bs-custom-class", "custom-tooltip");
-                    hash.setAttribute("data-bs-html", "true");
-                    hash.setAttribute("title", "Click to remove");
+                    tippy(hash, { content: 'New gene — click to remove', theme: 'light-border', placement: 'bottom', arrow: true });
                 }
                 hash.onclick = () => {
                     if (confirm("Are you sure you want to remove this gene?")) {
-                        const tooltipInstance = bootstrap.Tooltip.getInstance(hash);
-                        if (tooltipInstance) {
-                            tooltipInstance.dispose();
-                        }
+                        if (hash._tippy) hash._tippy.destroy();
                         removerElemento(index);
                     }
                 };
@@ -909,119 +1474,318 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             line.setAttribute("stroke", "black");
 
             if (strands[index] === '+' && produto && produto !== 'gap' && produto !== '-') {
-                line.setAttribute("y1", "80");
-                line.setAttribute("y2", "80");
-                line.setAttribute("stroke-width", "5");
+                line.setAttribute("y1", pieceY.toString());
+                line.setAttribute("y2", pieceY.toString());
+                line.setAttribute("stroke-width", "3");
             } else if (produto && produto !== 'gap' && produto !== '-') {
-                line.setAttribute("y1", (80 + pieceH).toString());
-                line.setAttribute("y2", (80 + pieceH).toString());
-                line.setAttribute("stroke-width", "5");
+                line.setAttribute("y1", (pieceY + pieceH).toString());
+                line.setAttribute("y2", (pieceY + pieceH).toString());
+                line.setAttribute("stroke-width", "3");
             }
 
             svg.appendChild(line);
 
-            if (!pattern && index > 0) {
+            if (index > 0) {
                 let quantidade = document.getElementById('quantidade').value || 1;
                 let btnEsquerda = document.createElementNS(svgNS, "text");
                 btnEsquerda.textContent = '+';
                 btnEsquerda.setAttribute("x", (currentX - 10).toString());
-                btnEsquerda.setAttribute("y", "115");
+                btnEsquerda.setAttribute("y", "108");
                 btnEsquerda.setAttribute("fill", "#000000");
                 btnEsquerda.setAttribute("font-weight", "bold");
                 btnEsquerda.setAttribute("text-anchor", "middle");
                 btnEsquerda.setAttribute("cursor", "pointer");
-                btnEsquerda.setAttribute("font-size", "20px");
+                btnEsquerda.setAttribute("font-size", "14px");
                 btnEsquerda.onclick = () => adicionarElemento(index, 'esquerda', quantidade);
                 svg.appendChild(btnEsquerda);
             }
 
-            if (!pattern) {
-                // Adiciona o ícone de edição abaixo do nome do gene
-                let editIcon = document.createElementNS(svgNS, "svg");
-                editIcon.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-                editIcon.setAttribute("viewBox", "0 0 512 512");
-                editIcon.setAttribute("x", (currentX + pieceW / 2 - 12).toString());
-                editIcon.setAttribute("y", "120");
-                editIcon.setAttribute("width", "20");
-                editIcon.setAttribute("height", "20");
-                editIcon.setAttribute("cursor", "pointer");
-                editIcon.setAttribute("data-bs-toggle", "tooltip");
-                editIcon.setAttribute("data-bs-placement", "top");
-                editIcon.setAttribute("data-bs-custom-class", "custom-tooltip");
-                editIcon.setAttribute("data-bs-html", "true");
-                editIcon.setAttribute("title", `Click to edit ${produto}`);
-                editIcon.innerHTML = `<path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/>`;
-                editIcon.onclick = () => openEditModal(produto, index, genes, strands, lengths, data, geneOrder, pattern);
-                svg.appendChild(editIcon);
-            }
+            geneLeftEdges.push(currentX);
+            geneCenters.push(currentX + pieceW / 2);
+            geneRightEdges.push(currentX + pieceW);
 
             currentX += pieceW;
         });
 
-        if (!pattern) {
+        {
             let btnFinal = document.createElementNS(svgNS, "text");
             btnFinal.textContent = '+';
             btnFinal.setAttribute("x", (currentX + 10).toString());
-            btnFinal.setAttribute("y", "115");
+            btnFinal.setAttribute("y", "108");
             btnFinal.setAttribute("fill", "#000000");
             btnFinal.setAttribute("font-weight", "bold");
             btnFinal.setAttribute("text-anchor", "middle");
             btnFinal.setAttribute("cursor", "pointer");
-            btnFinal.setAttribute("font-size", "20px");
+            btnFinal.setAttribute("font-size", "14px");
             btnFinal.onclick = () => adicionarElemento(genes.length - 1, 'direita');
             svg.appendChild(btnFinal);
         }
 
-        let container = document.createElement("div");
-        container.setAttribute("id", `container-${safeVoucher}`);
-        container.classList.add('svg-container');
-        container.style.width = "100%";
-        container.style.overflowX = "auto";
-        container.style.marginTop = "2.5px";
-        container.style.marginBottom = "2.5px";
-        container.appendChild(svg);
-        document.getElementById('svgContainer').appendChild(container);
+        // --- Build genome-row: sticky label + scrollable gene area ---
+        let rowWrapper = document.createElement("div");
+        rowWrapper.setAttribute("id", `container-${safeVoucher}`);
+        rowWrapper.classList.add('genome-row');
+        rowWrapper.dataset.rowIndex = dataIndex;
+
+        // Sticky label with species name and controls
+        let stickyLabel = document.createElement("div");
+        stickyLabel.classList.add('genome-row-label');
+        stickyLabel.style.setProperty('--label-width', genomeLabelWidth + 'px');
+        stickyLabel.style.width = genomeLabelWidth + 'px';
+        stickyLabel.style.minWidth = genomeLabelWidth + 'px';
+        stickyLabel.style.maxWidth = genomeLabelWidth + 'px';
+
+        let nameEl = document.createElement("div");
+        nameEl.classList.add('genome-species-name');
+        if (pattern) {
+            nameEl.innerHTML = `<b>${id}</b>`;
+            nameEl.style.cursor = 'pointer';
+            nameEl.onclick = () => openEditPatternModal(data, patternMap, patternCounter);
+            // Show species list below pattern name
+            const speciesListArr = nomeEspecie.split('; ').filter(s => s);
+            if (speciesListArr.length > 0) {
+                let speciesDiv = document.createElement("div");
+                speciesDiv.style.cssText = 'font-size:0.65rem;color:#6b7280;line-height:1.3;margin-top:2px;white-space:normal;overflow:hidden;max-height:3.9em;';
+                speciesDiv.innerHTML = speciesListArr.map(s => `<i>${s}</i>`).join(', ');
+                tippy(nameEl, { content: `<b>${id}</b><br>${speciesListArr.map(s => `<i>${s}</i>`).join('<br>')}`, allowHTML: true, theme: 'light-border', placement: 'right', arrow: true, delay: [400, 0], maxWidth: 350 });
+                stickyLabel.appendChild(speciesDiv);
+            }
+        } else {
+            const voucherStr = Array.isArray(vouchers) ? vouchers.join(', ') : vouchers;
+            nameEl.innerHTML = `<i>${nomeEspecie}</i> <a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucherStr}" target="_blank" data-tippy-content="View <b>${voucherStr}</b> in GenBank"><b>(${voucherStr})</b></a>`;
+        }
+        if (!pattern) {
+            tippy(nameEl, { content: `<i>${nomeEspecie}</i>`, allowHTML: true, theme: 'light-border', placement: 'right', arrow: true, delay: [400, 0] });
+        }
+        stickyLabel.appendChild(nameEl);
+
+        if (!pattern && pseudoGenes.length > 0) {
+            let dupInfo = document.createElement("div");
+            dupInfo.classList.add('genome-dup-info');
+            dupInfo.textContent = `Dup: ${pseudoGenes.map(pg => pg.gene.replace('tRNA-', '')).join(', ')}`;
+            stickyLabel.appendChild(dupInfo);
+        }
+
+        let controls = document.createElement("div");
+        controls.classList.add('genome-row-controls');
+
+        // Edit species name button
+        if (!pattern) {
+            let btnEdit = document.createElement("button");
+            btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            btnEdit.classList.add('genome-ctrl-btn', 'genome-ctrl-btn-edit');
+            btnEdit.onclick = (e) => {
+                e.stopPropagation();
+                const currentName = Array.isArray(data.speciesNames) ? data.speciesNames.join(', ') : (data.speciesNames || '');
+                const voucherStr = Array.isArray(data.vouchers) ? data.vouchers.join(', ') : (data.vouchers || '');
+                openEditSpeciesModal(data, currentName, voucherStr, genomicData, geneStart, geneList, pattern);
+            };
+            tippy(btnEdit, { content: 'Edit species name', theme: 'light-border', placement: 'top', arrow: true });
+            controls.appendChild(btnEdit);
+        }
+
+        let btnUp = document.createElement("button");
+        btnUp.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        btnUp.classList.add('genome-ctrl-btn');
+        btnUp.onclick = () => moveLine(dataIndex, -1);
+        tippy(btnUp, { content: 'Move genome up', theme: 'light-border', placement: 'top', arrow: true });
+        controls.appendChild(btnUp);
+
+        let btnDown = document.createElement("button");
+        btnDown.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
+        btnDown.classList.add('genome-ctrl-btn');
+        btnDown.onclick = () => moveLine(dataIndex, 1);
+        tippy(btnDown, { content: 'Move genome down', theme: 'light-border', placement: 'top', arrow: true });
+        controls.appendChild(btnDown);
+
+        if (!pattern) {
+            let btnDel = document.createElement("button");
+            btnDel.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            btnDel.classList.add('genome-ctrl-btn', 'genome-ctrl-btn-danger');
+            btnDel.onclick = () => deleteLine(dataIndex);
+            tippy(btnDel, { content: 'Delete this genome', theme: 'light-border', placement: 'top', arrow: true });
+            controls.appendChild(btnDel);
+        }
+        stickyLabel.appendChild(controls);
+
+        // Resize handle on the right edge of the label
+        let resizeHandle = document.createElement("div");
+        resizeHandle.classList.add('genome-label-resize');
+        resizeHandle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const startX = e.clientX;
+            const startW = genomeLabelWidth;
+            function onMove(ev) {
+                const newW = Math.max(140, Math.min(500, startW + (ev.clientX - startX)));
+                genomeLabelWidth = newW;
+                document.querySelectorAll('.genome-row-label').forEach(lbl => {
+                    lbl.style.width = newW + 'px';
+                    lbl.style.minWidth = newW + 'px';
+                    lbl.style.maxWidth = newW + 'px';
+                });
+            }
+            function onUp() {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+        stickyLabel.appendChild(resizeHandle);
+
+        // Scrollable gene area
+        let geneContainer = document.createElement("div");
+        geneContainer.classList.add('genome-gene-scroll');
+        geneContainer.appendChild(svg);
+
+        rowWrapper.appendChild(stickyLabel);
+        rowWrapper.appendChild(geneContainer);
+
+        // Drag-to-reorder from the label area
+        stickyLabel.draggable = true;
+        stickyLabel.addEventListener('dragstart', (e) => {
+            dragSrcIndex = dataIndex;
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => rowWrapper.classList.add('dragging'), 0);
+        });
+        stickyLabel.addEventListener('dragend', () => {
+            rowWrapper.classList.remove('dragging');
+            document.querySelectorAll('.genome-row').forEach(r => {
+                r.classList.remove('drag-over-above', 'drag-over-below');
+            });
+        });
+        rowWrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (dragSrcIndex !== null && dragSrcIndex !== dataIndex) {
+                const rect = rowWrapper.getBoundingClientRect();
+                const midY = rect.top + rect.height / 2;
+                if (e.clientY < midY) {
+                    rowWrapper.classList.add('drag-over-above');
+                    rowWrapper.classList.remove('drag-over-below');
+                } else {
+                    rowWrapper.classList.add('drag-over-below');
+                    rowWrapper.classList.remove('drag-over-above');
+                }
+            }
+        });
+        rowWrapper.addEventListener('dragleave', (e) => {
+            if (!rowWrapper.contains(e.relatedTarget)) {
+                rowWrapper.classList.remove('drag-over-above', 'drag-over-below');
+            }
+        });
+        rowWrapper.addEventListener('drop', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.genome-row').forEach(r => {
+                r.classList.remove('drag-over-above', 'drag-over-below');
+            });
+            const dropIndex = dataIndex;
+            if (dragSrcIndex === null || dragSrcIndex === dropIndex) {
+                dragSrcIndex = null;
+                return;
+            }
+            // Save scroll position before re-render
+            const scrollY = window.scrollY;
+            const moved = genomicData.splice(dragSrcIndex, 1)[0];
+            genomicData.splice(dropIndex, 0, moved);
+            dragSrcIndex = null;
+            createSVG(genomicData, geneStart, geneList, pattern);
+            // Restore scroll position
+            requestAnimationFrame(() => window.scrollTo(0, scrollY));
+        });
+
+        document.getElementById('svgContainer').appendChild(rowWrapper);
+        renderedRows.push({
+            container: geneContainer,
+            wrapper: rowWrapper,
+            genes: [...genes],
+            centers: [...geneCenters],
+            leftEdges: [...geneLeftEdges],
+            rightEdges: [...geneRightEdges]
+        });
 
         syncScroll();
 
-        if (!pattern) {
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        if (typeof tippy !== 'undefined') {
+            tippy('[data-tippy-content]', { allowHTML: true, theme: 'light-border', placement: 'top', arrow: true });
         }
     });
 
-    function openEditModal(geneName, index, genes, strands, lengths, data, geneOrder, pattern) {
-        let listGenes = null;
-        if (MitochondrialGenes[geneName]) {
-            listGenes = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
-        } else if (ChloroplastGenes[geneName]) {
-            listGenes = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
-        }
+    // Create / update a single shared scrollbar below all genome rows
+    let masterTrack = document.getElementById('masterScrollTrack');
+    if (!masterTrack) {
+        masterTrack = document.createElement('div');
+        masterTrack.id = 'masterScrollTrack';
+        const masterContent = document.createElement('div');
+        masterContent.id = 'masterScrollContent';
+        masterTrack.appendChild(masterContent);
+        document.getElementById('svgContainer').after(masterTrack);
+
+        // When master scrollbar moves, scroll all row containers together
+        masterTrack.addEventListener('scroll', () => {
+            const sl = masterTrack.scrollLeft;
+            document.querySelectorAll('.genome-gene-scroll').forEach(c => {
+                if (Math.abs(c.scrollLeft - sl) > 1) c.scrollLeft = sl;
+            });
+        });
+    }
+    // Keep the master content div exactly as wide as the genome display
+    const masterContent = document.getElementById('masterScrollContent');
+    if (masterContent) {
+        masterContent.style.width = totalWidth + 'px';
+        masterContent.style.height = '1px';
+    }
+
+    // Initialize click-and-drag horizontal panning
+    initDragPanning();
+
+    function openEditModal({ geneName, index, genes, strands, lengths, originalGeneNames, data, geneOrder, pattern, speciesName, sourceFile, genomeSize }) {
+        const rawGeneName = (Array.isArray(originalGeneNames) && originalGeneNames[index]) ? originalGeneNames[index] : geneName;
+        const geneLength = (Array.isArray(lengths) && lengths[index] !== undefined) ? lengths[index] : 'N/A';
+        const geneColor = getGeneColor(geneName);
+
         const modalContent = `
-            <div class="modal fade" id="editGeneModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header h3 bg-dark text-white">
-                            <h5 class="modal-title" id="editGeneModalLabel">Rename <b>${geneName}</b></h5>
+            <div class="modal fade" id="editGeneModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border:none;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);">
+                        <div class="modal-header" style="background:#202020;color:#fff;padding:16px 20px;border:none;">
+                            <h5 class="modal-title" style="font-weight:700;font-size:1.1rem;">
+                                <i class="fa-solid fa-puzzle-piece me-2" style="color:${geneColor};"></i> Edit Gene — <span style="color:${geneColor};">${geneName}</span>
+                            </h5>
+                            <button type="button" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:0.7;" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <div class="modal-body">
-                            <label for="newGeneName">Rename <b>${geneName}</b> to:</label>
-                            <select id="newGeneName" class="form-control form-control-lg">
-                                <option value="NaN" selected>Select a gene</option>
-                                ${geneList.map(gene => `<option value="${gene}">${gene}</option>`).join('')}
+                        <div class="modal-body" style="padding:20px;">
+                            <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.85rem;line-height:1.6;border-left:4px solid ${geneColor};">
+                                <div><span style="color:#6b7280;">Species:</span> <i>${speciesName || '-'}</i></div>
+                                <div><span style="color:#6b7280;">Source:</span> ${sourceFile || '-'}</div>
+                                <div><span style="color:#6b7280;">Original name:</span> ${rawGeneName || '-'}</div>
+                                <div><span style="color:#6b7280;">Gene size:</span> <b>${geneLength}</b> bp &nbsp;&middot;&nbsp; <span style="color:#6b7280;">Genome:</span> <b>${genomeSize || '-'}</b> bp</div>
+                            </div>
+
+                            <label for="newGeneName" style="font-weight:600;font-size:0.85rem;margin-bottom:4px;display:block;">Canonical gene name</label>
+                            <select id="newGeneName" class="form-select" style="font-size:0.95rem;">
+                                <option value="NaN">— Select a gene —</option>
+                                ${geneList.map(gene => `<option value="${gene}"${gene === geneName ? ' selected' : ''}>${gene}</option>`).join('')}
                             </select>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="strand" id="strandPlus" value="+" ${strands[index] === '+' ? 'checked' : ''} disabled>
-                                <label class="form-check-label" for="strandPlus"><b>+</b> (Line above)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="strand" id="strandMinus" value="-" ${strands[index] === '-' ? 'checked' : ''} disabled>
-                                <label class="form-check-label" for="strandMinus"><b>-</b> (Line below)</label>
+
+                            <label style="font-weight:600;font-size:0.85rem;margin-top:14px;margin-bottom:6px;display:block;">Strand</label>
+                            <div style="display:flex;gap:8px;">
+                                <label style="flex:1;display:flex;align-items:center;justify-content:center;padding:10px;border-radius:8px;border:2px solid ${strands[index] === '+' ? '#202020' : '#d1d5db'};background:${strands[index] === '+' ? '#f0f0f0' : '#fff'};cursor:pointer;font-weight:600;font-size:0.9rem;transition:all 0.12s;">
+                                    <input type="radio" name="strand" value="+" ${strands[index] === '+' ? 'checked' : ''} style="display:none;" class="edit-strand-input">
+                                    <i class="fa-solid fa-arrow-up me-2"></i> + (Heavy)
+                                </label>
+                                <label style="flex:1;display:flex;align-items:center;justify-content:center;padding:10px;border-radius:8px;border:2px solid ${strands[index] === '-' ? '#202020' : '#d1d5db'};background:${strands[index] === '-' ? '#f0f0f0' : '#fff'};cursor:pointer;font-weight:600;font-size:0.9rem;transition:all 0.12s;">
+                                    <input type="radio" name="strand" value="-" ${strands[index] === '-' ? 'checked' : ''} style="display:none;" class="edit-strand-input">
+                                    <i class="fa-solid fa-arrow-down me-2"></i> − (Light)
+                                </label>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-lg btn-success" id="saveEditGeneButton">Save changes</button>
+                        <div class="modal-footer" style="border-top:1px solid #e5e7eb;padding:12px 20px;gap:8px;">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
+                            <button type="button" class="btn btn-dark" id="saveEditGeneButton" style="border-radius:8px;font-weight:600;">
+                                <i class="fa-solid fa-check me-1"></i> Save changes
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1030,35 +1794,98 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         document.body.insertAdjacentHTML('beforeend', modalContent);
         $('#editGeneModal').modal('show');
 
+        // Strand label highlight
+        function updateStrandLabels() {
+            document.querySelectorAll('#editGeneModal .edit-strand-input').forEach(input => {
+                const lbl = input.closest('label');
+                if (input.checked) {
+                    lbl.style.borderColor = '#202020';
+                    lbl.style.background = '#f0f0f0';
+                } else {
+                    lbl.style.borderColor = '#d1d5db';
+                    lbl.style.background = '#fff';
+                }
+            });
+        }
+        document.querySelectorAll('#editGeneModal .edit-strand-input').forEach(input => {
+            input.addEventListener('change', updateStrandLabels);
+        });
+
+        function updateGeneSelectColor() {
+            const selectedGene = $('#newGeneName').val();
+            const isValid = selectedGene && selectedGene !== 'NaN';
+            $('#newGeneName').css('background-color', isValid ? '#dcfce7' : '#fef3c7');
+            $('#newGeneName').css('border-color', isValid ? '#86efac' : '#fcd34d');
+        }
+
+        updateGeneSelectColor();
+
         $('#newGeneName').on('change', function () {
-            const selectedGene = $(this).val();
-            const disableStrands = !selectedGene || selectedGene === 'gap' || selectedGene === '-';
-            $('#strandPlus, #strandMinus').prop('disabled', disableStrands);
+            updateGeneSelectColor();
         });
 
         $('#saveEditGeneButton').off('click').on('click', function () {
             const newGeneName = $('#newGeneName').val();
+            if (!newGeneName || newGeneName === 'NaN') {
+                alert('Please select a canonical gene name.');
+                return;
+            }
+
+            const oldGeneName = genes[index];
+            const oldStrand = strands[index] || '+';
             const newStrand = $('input[name="strand"]:checked').val();
             console.log('Saving new gene name:', newGeneName, 'with strand:', newStrand);
 
             genes[index] = newGeneName;
             strands[index] = newStrand;
 
-            const newGeneOrder = geneOrder.split(',').slice();
-            newGeneOrder[index] = newStrand === '-' ? `-${newGeneName}` : newGeneName;
+            const newGeneOrder = genes.map((gene, geneIndex) => toSignedToken(gene, strands[geneIndex]));
             data.geneOrder = newGeneOrder.join(',');
 
             data.genes = genes;
+            data.strands = strands;
+            data.lengths = lengths;
+            data.originalGeneNames = originalGeneNames;
+
+            if (data.geneSequences && data.geneSequences[oldGeneName]) {
+                const oldSeq = data.geneSequences[oldGeneName];
+                if (!data.geneSequences[newGeneName] || oldSeq.length > data.geneSequences[newGeneName].length) {
+                    data.geneSequences[newGeneName] = oldSeq;
+                }
+                const oldStillUsed = genes.some((gene, geneIndex) => geneIndex !== index && gene === oldGeneName);
+                if (!oldStillUsed && oldGeneName !== newGeneName) {
+                    delete data.geneSequences[oldGeneName];
+                }
+            }
+
+            if (data.geneData && data.geneData[oldGeneName]) {
+                const entries = data.geneData[oldGeneName];
+                if (Array.isArray(entries) && entries.length > 0) {
+                    const moved = entries.find(entry => Number(entry.length) === Number(lengths[index]) && entry.strand === oldStrand) || entries[0];
+                    if (moved) {
+                        moved.geneName = newGeneName;
+                        moved.strand = newStrand;
+                        if (!data.geneData[newGeneName]) data.geneData[newGeneName] = [];
+                        if (!data.geneData[newGeneName].includes(moved)) {
+                            data.geneData[newGeneName].push(moved);
+                        }
+                        if (oldGeneName !== newGeneName) {
+                            const removeIndex = entries.indexOf(moved);
+                            if (removeIndex > -1) entries.splice(removeIndex, 1);
+                            if (entries.length === 0) delete data.geneData[oldGeneName];
+                        }
+                    }
+                }
+            }
 
             if (pattern) {
-                patternMap.get(geneOrder).species.forEach(speciesData => {
-                    genomicData.forEach(genome => {
-                        if (genome.geneOrder === geneOrder) {
-                            genome.genes[index] = newGeneName;
-                            genome.strands[index] = newStrand;
-                            genome.geneOrder = newGeneOrder.join(',');
-                        }
-                    });
+                originalGenomicData.forEach(genome => {
+                    if (genome.geneOrder === geneOrder) {
+                        genome.genes[index] = newGeneName;
+                        genome.strands[index] = newStrand;
+                        genome.originalGeneNames = Array.isArray(genome.originalGeneNames) ? genome.originalGeneNames : genome.genes.slice();
+                        genome.geneOrder = genome.genes.map((gene, geneIndex) => toSignedToken(gene, genome.strands[geneIndex])).join(',');
+                    }
                 });
             }
 
@@ -1066,28 +1893,128 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             console.log('Updated genes:', genes);
             console.log('Updated geneOrder:', data.geneOrder);
 
-            createSVG(genomicData, geneStart, geneList, pattern);
+            createSVG(originalGenomicData, geneStart, geneList, pattern);
+
+            const genomeType = document.getElementById('mt') && document.getElementById('mt').checked
+                ? 'Mitochondrial'
+                : 'Chloroplast';
+            ListGenes(genomicData, genomeType);
+
             $('#editGeneModal').modal('hide');
             $('#editGeneModal').remove();
         });
     }
 
+    document.querySelectorAll('.synteny-bridge, .synteny-bridge-row').forEach(bridge => bridge.remove());
+    if (showSyntenyLinks && renderedRows.length > 1) {
+        const bridgeHeight = 72;
+
+        for (let rowIndex = 0; rowIndex < renderedRows.length - 1; rowIndex++) {
+            const topRow = renderedRows[rowIndex];
+            const bottomRow = renderedRows[rowIndex + 1];
+            const pairs = buildSyntenyPairs(
+                topRow.genes, bottomRow.genes,
+                topRow.centers, bottomRow.centers,
+                topRow.leftEdges, bottomRow.leftEdges,
+                topRow.rightEdges, bottomRow.rightEdges
+            );
+            if (pairs.length === 0) continue;
+
+            // Build genome-row wrapper for the bridge
+            const bridgeRow = document.createElement('div');
+            bridgeRow.classList.add('genome-row', 'synteny-bridge-row');
+
+            // Empty label spacer to align with gene scroll area
+            const spacer = document.createElement('div');
+            spacer.classList.add('genome-row-label', 'synteny-label-spacer');
+            spacer.style.width = genomeLabelWidth + 'px';
+            spacer.style.minWidth = genomeLabelWidth + 'px';
+            spacer.style.maxWidth = genomeLabelWidth + 'px';
+            bridgeRow.appendChild(spacer);
+
+            const bridgeWrap = document.createElement('div');
+            bridgeWrap.classList.add('genome-gene-scroll', 'synteny-bridge');
+
+            const bridgeSvg = document.createElementNS(svgNS, 'svg');
+            bridgeSvg.setAttribute('width', totalWidth.toString());
+            bridgeSvg.setAttribute('height', bridgeHeight.toString());
+            bridgeSvg.setAttribute('viewBox', `0 0 ${totalWidth} ${bridgeHeight}`);
+
+            pairs.forEach(pair => {
+                const color = getGeneColor(pair.gene);
+
+                if (syntenyMode === 'mauve') {
+                    // Mauve style: filled curved bands connecting center-to-center
+                    const bandHalfWidth = 15;
+                    const path = document.createElementNS(svgNS, 'path');
+                    const x1 = pair.x1_center;
+                    const x2 = pair.x2_center;
+                    path.setAttribute('d',
+                        `M ${x1 - bandHalfWidth},0 ` +
+                        `C ${x1 - bandHalfWidth},${bridgeHeight * 0.4} ${x2 - bandHalfWidth},${bridgeHeight * 0.6} ${x2 - bandHalfWidth},${bridgeHeight} ` +
+                        `L ${x2 + bandHalfWidth},${bridgeHeight} ` +
+                        `C ${x2 + bandHalfWidth},${bridgeHeight * 0.6} ${x1 + bandHalfWidth},${bridgeHeight * 0.4} ${x1 + bandHalfWidth},0 ` +
+                        `Z`
+                    );
+                    path.setAttribute('fill', color);
+                    path.setAttribute('fill-opacity', '0.35');
+                    path.setAttribute('stroke', color);
+                    path.setAttribute('stroke-width', '0.5');
+                    path.setAttribute('stroke-opacity', '0.5');
+                    bridgeSvg.appendChild(path);
+                } else {
+                    // Trapezoid style: left-to-left and right-to-right edges
+                    const path = document.createElementNS(svgNS, 'path');
+                    path.setAttribute('d',
+                        `M ${pair.x1_left},0 L ${pair.x2_left},${bridgeHeight} L ${pair.x2_right},${bridgeHeight} L ${pair.x1_right},0 Z`
+                    );
+                    path.setAttribute('fill', color);
+                    path.setAttribute('fill-opacity', '0.25');
+                    path.setAttribute('stroke', color);
+                    path.setAttribute('stroke-width', '0.8');
+                    path.setAttribute('stroke-opacity', '0.6');
+                    bridgeSvg.appendChild(path);
+                }
+            });
+
+            bridgeWrap.appendChild(bridgeSvg);
+            bridgeRow.appendChild(bridgeWrap);
+            topRow.wrapper.parentNode.insertBefore(bridgeRow, topRow.wrapper.nextSibling);
+        }
+        syncScroll();
+    }
+
     function openEditPatternModal(data, patternMap, patternCounter) {
-        console.log('Opening edit modal for pattern:', data.id);
+        const patternEntry = patternMap.get(data.geneOrder);
+        const speciesList = patternEntry ? patternEntry.species.map(s => {
+            const name = Array.isArray(s.speciesNames) ? s.speciesNames.join(', ') : s.speciesNames;
+            const voucher = Array.isArray(s.vouchers) ? s.vouchers.join(', ') : s.vouchers;
+            return `<i>${name}</i> (${voucher})`;
+        }).join('<br>') : '';
+
         const modalContent = `
-            <div class="modal fade" id="editPatternModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header h3 bg-dark text-white">
-                            <h5 class="modal-title" id="editPatternModalLabel">Rename <b>${data.id}</b></h5>
+            <div class="modal fade" id="editPatternModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border:none;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);">
+                        <div class="modal-header" style="background:#202020;color:#fff;padding:16px 20px;border:none;">
+                            <h5 class="modal-title" style="font-weight:700;font-size:1.1rem;">
+                                <i class="fa-solid fa-layer-group me-2" style="color:#4ECDC4;"></i> Edit ${data.id}
+                            </h5>
+                            <button type="button" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:0.7;" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <div class="modal-body">
-                            <label for="newPatternName">Rename <b>${data.id}</b> to:</label>
-                            <input id="newPatternName" class="form-control form-control-lg" type="text" value="${data.id}">
+                        <div class="modal-body" style="padding:20px;">
+                            <div style="background:#f8f9fa;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.8rem;line-height:1.8;border-left:4px solid #4ECDC4;">
+                                <div style="font-weight:600;margin-bottom:4px;">Species in this pattern (${patternEntry ? patternEntry.species.length : 0}):</div>
+                                ${speciesList}
+                            </div>
+                            <label for="newPatternName" style="font-weight:600;font-size:0.85rem;margin-bottom:4px;display:block;">Pattern name</label>
+                            <input id="newPatternName" class="form-control" type="text" value="${data.id}" style="font-size:0.95rem;">
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-success" id="saveEditPatternButton">Save changes</button>
+                        <div class="modal-footer" style="border-top:1px solid #e5e7eb;padding:12px 20px;gap:8px;">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
+                            <button type="button" class="btn btn-dark" id="saveEditPatternButton" style="border-radius:8px;font-weight:600;">
+                                <i class="fa-solid fa-check me-1"></i> Save
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1112,20 +2039,79 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         });
     }
 
+    function openEditSpeciesModal(data, currentName, voucherStr, genomicData, geneStart, geneList, pattern) {
+        const modalContent = `
+            <div class="modal fade" id="editSpeciesModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border:none;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);">
+                        <div class="modal-header" style="background:#202020;color:#fff;padding:16px 20px;border:none;">
+                            <h5 class="modal-title" style="font-weight:700;font-size:1.1rem;">
+                                <i class="fa-solid fa-pen-to-square me-2" style="color:#4ECDC4;"></i> Edit Species Name
+                            </h5>
+                            <button type="button" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;opacity:0.7;" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <div class="modal-body" style="padding:20px;">
+                            <div style="background:#f8f9fa;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.8rem;border-left:4px solid #4ECDC4;">
+                                <span style="color:#6b7280;">Accession:</span> <b>${voucherStr}</b>
+                            </div>
+                            <label for="editSpeciesNameInput" style="font-weight:600;font-size:0.85rem;margin-bottom:4px;display:block;">Species name</label>
+                            <input id="editSpeciesNameInput" class="form-control" type="text" value="${currentName}" style="font-size:0.95rem;" placeholder="Enter species name">
+                            <div style="font-size:0.75rem;color:#6b7280;margin-top:6px;">
+                                <i class="fa-solid fa-circle-info me-1"></i> This change is also reflected in FASTA headers.
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="border-top:1px solid #e5e7eb;padding:12px 20px;gap:8px;">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
+                            <button type="button" class="btn btn-dark" id="saveEditSpeciesButton" style="border-radius:8px;font-weight:600;">
+                                <i class="fa-solid fa-check me-1"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+        $('#editSpeciesModal').modal('show');
+        document.getElementById('editSpeciesNameInput').select();
+
+        $('#saveEditSpeciesButton').off('click').on('click', function () {
+            const newName = $('#editSpeciesNameInput').val();
+            if (newName && newName.trim() !== '') {
+                data.speciesNames = [newName.trim()];
+                createSVG(genomicData, geneStart, geneList, pattern);
+                $('#editSpeciesModal').modal('hide');
+                $('#editSpeciesModal').remove();
+            }
+        });
+    }
+
     function moveLine(index, direction) {
         if (index + direction < 0 || index + direction >= genomicData.length) return;
+        const scrollY = window.scrollY;
 
         const temp = genomicData[index];
         genomicData[index] = genomicData[index + direction];
         genomicData[index + direction] = temp;
 
         createSVG(genomicData, geneStart, geneList, pattern);
+        requestAnimationFrame(() => window.scrollTo(0, scrollY));
     }
 
     function deleteLine(index) {
         if (confirm("Are you sure you want to delete this line?")) {
+            const scrollY = window.scrollY;
+            if (pattern) {
+                // Remove all individual genomes matching this pattern from original data
+                const patternGeneOrder = genomicData[index].geneOrder;
+                for (let i = originalGenomicData.length - 1; i >= 0; i--) {
+                    if (originalGenomicData[i].geneOrder === patternGeneOrder) {
+                        originalGenomicData.splice(i, 1);
+                    }
+                }
+            }
             genomicData.splice(index, 1);
-            createSVG(genomicData, geneStart, geneList, pattern);
+            createSVG(pattern ? originalGenomicData : genomicData, geneStart, geneList, pattern);
+            requestAnimationFrame(() => window.scrollTo(0, scrollY));
         }
     }
 }
@@ -1263,7 +2249,7 @@ function createAndDownloadSVG(geneList, geneStart) {
 
 // Sincroniza o scroll de todos os elementos SVG
 function syncScroll() {
-    const containers = document.querySelectorAll('.svg-container');
+    const containers = document.querySelectorAll('.genome-gene-scroll');
     containers.forEach(container => {
         container.onscroll = function () {
             const scrollLeft = container.scrollLeft;
@@ -1272,8 +2258,98 @@ function syncScroll() {
                     otherContainer.scrollLeft = scrollLeft;
                 }
             });
+            // Keep master scrollbar in sync
+            const master = document.getElementById('masterScrollTrack');
+            if (master && Math.abs(master.scrollLeft - scrollLeft) > 1) {
+                master.scrollLeft = scrollLeft;
+            }
         };
     });
+}
+
+// Click-and-drag horizontal panning for the puzzle view
+function initDragPanning() {
+    const puzzleArea = document.getElementById('svgContainer');
+    if (!puzzleArea) return;
+
+    // Remove old listeners by replacing event target pattern
+    if (puzzleArea._dragPanCleanup) puzzleArea._dragPanCleanup();
+
+    let isDragging = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+    let hasMoved = false;
+
+    function onMouseDown(e) {
+        // Right-click (button 2) to pan
+        if (e.button !== 2) return;
+        const scrollArea = e.target.closest('.genome-gene-scroll');
+        if (!scrollArea) return;
+
+        isDragging = true;
+        hasMoved = false;
+        startX = e.pageX;
+        startScrollLeft = scrollArea.scrollLeft;
+        e.preventDefault();
+    }
+
+    function onMouseMove(e) {
+        if (!isDragging) return;
+        const dx = e.pageX - startX;
+        if (Math.abs(dx) > 3) hasMoved = true;
+        if (!hasMoved) return;
+
+        e.preventDefault();
+        puzzleArea.style.userSelect = 'none';
+        puzzleArea.style.cursor = 'grabbing';
+
+        const newScrollLeft = startScrollLeft - dx;
+        const allScrollAreas = document.querySelectorAll('.genome-gene-scroll');
+        allScrollAreas.forEach(c => { c.scrollLeft = newScrollLeft; });
+
+        const master = document.getElementById('masterScrollTrack');
+        if (master) master.scrollLeft = newScrollLeft;
+    }
+
+    function onMouseUp(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        hasMoved = false;
+        puzzleArea.style.userSelect = '';
+        puzzleArea.style.cursor = '';
+    }
+
+    // Suppress context menu on the gene scroll area (since right-click is used for panning)
+    function onContextMenu(e) {
+        const scrollArea = e.target.closest('.genome-gene-scroll');
+        if (scrollArea) {
+            e.preventDefault();
+        }
+    }
+
+    puzzleArea.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    puzzleArea.addEventListener('contextmenu', onContextMenu);
+
+    // Mouse wheel: scroll page vertically, prevent horizontal scroll on gene areas
+    function onWheel(e) {
+        const scrollArea = e.target.closest('.genome-gene-scroll');
+        if (scrollArea) {
+            e.preventDefault();
+            window.scrollBy(0, e.deltaY);
+        }
+    }
+    puzzleArea.addEventListener('wheel', onWheel, { passive: false });
+
+    // Store cleanup function to prevent duplicate listeners on re-render
+    puzzleArea._dragPanCleanup = () => {
+        puzzleArea.removeEventListener('mousedown', onMouseDown);
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        puzzleArea.removeEventListener('contextmenu', onContextMenu);
+        puzzleArea.removeEventListener('wheel', onWheel);
+    };
 }
 
 
@@ -1311,60 +2387,60 @@ function toRoman(num) {
 
 function ListGenes(object, typeGenome) {
     const data = object;
-    const _genesToFasta = $('#genesToFasta'); // Usando jQuery para selecionar o elemento
+    const container = document.getElementById('fastaGeneTogglesContainer');
+    if (!container) return;
+
+    const cdsList = new Set(['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6']);
+    const rrnaList = new Set(['12S', '16S']);
+
     const cdsGenes = new Set();
     const rrnaGenes = new Set();
     const trnaGenes = new Set();
-    const ChloroplastGenes = new Set();
+    const cpGenes = new Set();
 
-    // Definindo as listas de genes para cada categoria
-    const cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'].sort();
-    const rrnaList = ['12S', '16S'].sort();
-    const trnaList = ['tRNA-Ala', 'tRNA-Arg', 'tRNA-Asn', 'tRNA-Asp', 'tRNA-Cys', 'tRNA-Gln', 'tRNA-Glu', 'tRNA-Gly', 'tRNA-His', 'tRNA-Ile', 'tRNA-Leu', 'tRNA-Lys', 'tRNA-Met', 'tRNA-Phe', 'tRNA-Pro', 'tRNA-Ser', 'tRNA-Thr', 'tRNA-Trp', 'tRNA-Tyr', 'tRNA-Val'].sort();
-    const cpList = ['accD', 'atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'pafI', 'pafII', 'pbf1', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbG', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbT', 'psbZ', 'rbcL', 'rpl14', 'rpl16', 'rpl2', 'rpl20', 'rpl21', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'ycf2', 'ycf1', 'ycl2'].sort();
-
-    _genesToFasta.empty();
-    _genesToFasta.append($('<option>').text('Choose a gene').attr('value', 'NaN'));
-    _genesToFasta.append($('<option>').text('All CDS').attr('value', 'allCDS'));
+    const ids = Object.keys(data);
 
     if (typeGenome === 'Mitochondrial') {
-        const mt = Object.keys(data);
-        mt.forEach((id) => {
-            data[id].genes.forEach((gene) => {
-                if (cdsList.includes(gene)) {
-                    cdsGenes.add(gene);
-                } else if (rrnaList.includes(gene)) {
-                    rrnaGenes.add(gene);
-                } else if (trnaList.includes(gene)) {
-                    trnaGenes.add(gene);
-                }
+        ids.forEach(id => {
+            (data[id].genes || []).forEach(gene => {
+                if (cdsList.has(gene)) cdsGenes.add(gene);
+                else if (rrnaList.has(gene)) rrnaGenes.add(gene);
+                else trnaGenes.add(gene);
             });
         });
-        addOptions('CDS', cdsGenes);
-        addOptions('rRNAs', rrnaGenes);
-        addOptions('tRNAs', trnaGenes);
-
     } else if (typeGenome === 'Chloroplast') {
-        const cp = Object.keys(data);
-        cp.forEach((id) => {
-            data[id].genes.forEach((gene) => {
-                if (cpList.includes(gene)) {
-                    ChloroplastGenes.add(gene);
-                }
-            });
+        ids.forEach(id => {
+            (data[id].genes || []).forEach(gene => cpGenes.add(gene));
         });
-        addOptions('Chloroplast Genes', ChloroplastGenes);
     }
 
-    function addOptions(groupName, geneSet) {
-        if (geneSet.size > 0) {
-            _genesToFasta.append($('<option>').text(`-- ${groupName} --`).attr('disabled', 'disabled'));
-            Array.from(geneSet).sort().forEach((gene) => {
-                _genesToFasta.append($('<option>').text(gene).attr('value', gene));
-            });
-        }
+    function buildGroupHTML(groupName, geneSet) {
+        if (geneSet.size === 0) return '';
+        const sortedGenes = Array.from(geneSet).sort();
+        const switches = sortedGenes.map(gene => {
+            const safeId = `fastaGene_${gene.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            return `<div class="form-check form-switch mb-1" style="min-width:90px;">
+                <input class="form-check-input fasta-gene-toggle" type="checkbox" id="${safeId}" value="${gene}" checked>
+                <label class="form-check-label small" for="${safeId}">${gene}</label>
+            </div>`;
+        }).join('');
+        return `<div class="mb-1 fw-semibold small text-uppercase text-muted">${groupName}</div>
+<div class="d-flex flex-wrap gap-1 mb-3">${switches}</div>`;
     }
 
+    let html = '';
+    if (typeGenome === 'Mitochondrial') {
+        html += buildGroupHTML('CDS', cdsGenes);
+        html += buildGroupHTML('rRNA', rrnaGenes);
+        html += buildGroupHTML('tRNA', trnaGenes);
+    } else {
+        html += buildGroupHTML('Genes', cpGenes);
+    }
+
+    container.innerHTML = html || '<span class="text-muted small">No genes found in the analysis data.</span>';
+
+    const downloadFastaBtn = document.getElementById('downloadFasta');
+    if (downloadFastaBtn) downloadFastaBtn.disabled = false;
 }
 
 
@@ -1374,8 +2450,9 @@ var svgPlot = document.getElementById('svgPlot');
 let mainContainer = document.createElement("div");
 mainContainer.setAttribute("id", "svgContainer");
 mainContainer.style.width = "100%";
-mainContainer.style.overflowX = "auto";
 svgPlot.appendChild(mainContainer);
+
+let dragSrcIndex = null; // module-level drag state for row reordering
 
 
 
@@ -1968,8 +3045,11 @@ function PUMASDownload(dataObject) {
             // Update the timeSave element text
             timeSave.innerText = `Saved ${diffMins} min ago`;
             const tooltipText = diffMins > 5 ? `It has been more than 5 minutes since the last save` : `Saved ${diffMins} min ago`;
-            const tooltip = bootstrap.Tooltip.getInstance(timeSave) || new bootstrap.Tooltip(timeSave);
-            tooltip.setContent({ '.tooltip-inner': tooltipText });
+            if (timeSave._tippy) {
+                timeSave._tippy.setContent(tooltipText);
+            } else if (typeof tippy !== 'undefined') {
+                tippy(timeSave, { content: tooltipText, theme: 'light-border', placement: 'top', arrow: true });
+            }
             // Change background color if more than 5 minutes have passed
             if (diffMins > 5) {
                 timeSave.style.backgroundColor = '#FF7F3E';

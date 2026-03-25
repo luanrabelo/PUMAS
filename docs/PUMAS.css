@@ -51,8 +51,8 @@ a:hover {
     padding: 0 10px 10px 10px;
 }
 
-/* Toggle switch - CHECKED (valid / active) */
-.form-check-input:checked {
+/* Toggle switch - CHECKED (valid / active) — only for role="switch" */
+.form-check-input[role="switch"]:checked {
     background-color: #85C79A;       /* success */
     border-color: #85C79A;
     width: 2.5em;
@@ -60,8 +60,8 @@ a:hover {
     vertical-align: middle;
 }
 
-/* Toggle switch - UNCHECKED (inactive) */
-.form-check-input:not(:checked) {
+/* Toggle switch - UNCHECKED (inactive) — only for role="switch" */
+.form-check-input[role="switch"]:not(:checked) {
     background-color: #FF6B6B;       /* danger */
     border-color: #FF6B6B;
     width: 2.5em;
@@ -73,12 +73,88 @@ a:hover {
 .progress-bar {
     background-color: #4ECDC4;       /* progress */
     color: #000000;
-    font-size: 1.5em;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
-/* --- SVG Gene paths (hover cursor) --- */
+.loading-modal-content {
+    border: 1px solid rgba(32, 32, 32, 0.15);
+}
+
+.loading-modal-header,
+.loading-modal-footer {
+    background-color: #202020;
+    color: #FFFFFF;
+}
+
+.loading-modal-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.loading-modal-body {
+    padding: 1.4rem;
+}
+
+.loading-modal-subtitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.loading-step-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(32, 32, 32, 0.75);
+    margin-bottom: 0.65rem;
+}
+
+.loading-modal-wait {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* --- SVG Gene paths --- */
+.gene-path {
+    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.15));
+    transition: filter 0.12s ease;
+}
+
 .gene-path:hover {
     cursor: pointer;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3)) brightness(1.08);
+}
+
+.gene-text {
+    pointer-events: none;
+    text-shadow: 0 0 3px rgba(255,255,255,0.7);
+}
+
+#editGeneModal .btn {
+    border-radius: 0.45rem;
+}
+
+#editGeneModal .edit-strand-group .btn {
+    border-radius: 0.45rem;
+    padding: 0.6rem 0.4rem;
+    font-weight: 600;
+}
+
+#editGeneModal .edit-strand-group .btn + .btn {
+    margin-left: 0.35rem;
+}
+
+#editGeneModal .edit-strand-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#editGeneModal .edit-strand-input:checked + .btn {
+    background-color: #202020;
+    color: #FFFFFF;
+    border-color: #202020;
 }
 
 /* --- Landing / Splash Screen --- */
@@ -90,10 +166,24 @@ a:hover {
 }
 
 /* --- Linear Genome Visualization Container --- */
+#ViewGenomeDraw .modal-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#ViewGenomeDraw .modal-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0;
+}
 #LinearGenome {
-    width: 75%;
-    height: 75%;
-    margin: 0 auto;
+    width: 95%;
+    flex: 1;
+    min-height: 0;
 }
 
 /* --- Horizontal Rule --- */
@@ -444,13 +534,19 @@ hr {
 
 .step-form-check {
     background-color: #FFFFFF;
-    border: 1px solid rgba(32, 32, 32, 0.1);
+    border: 1.5px solid rgba(32, 32, 32, 0.12);
     border-radius: 0.75rem;
-    padding: 0.9rem 1rem;
+    padding: 0.85rem 1rem;
     width: 100%;
     min-width: 0;
     overflow-wrap: anywhere;
     box-sizing: border-box;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    cursor: pointer;
+}
+.step-form-check:hover {
+    border-color: rgba(32, 32, 32, 0.28);
+    background-color: #fafafa;
 }
 
 .step-form-check .form-check-label {
@@ -461,22 +557,50 @@ hr {
     margin: 0;
     flex: 1;
     min-width: 0;
+    cursor: pointer;
 }
 
 .step-form-check.form-switch {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.35rem;
     padding-left: 1rem;
 }
 
 .step-form-check .form-check-input {
     flex-shrink: 0;
-    margin-top: 0.05rem;
+    margin-top: 0;
     margin-left: 1rem !important;
     margin-right: 0;
     float: none;
     position: static;
+    cursor: pointer;
+}
+
+#fastaHeaderModal .form-check-input[type="radio"] {
+    width: 1.15rem;
+    height: 1.15rem;
+    min-width: 1.15rem;
+    border-radius: 50%;
+    margin-top: 0.2rem;
+    background-color: #FFFFFF;
+    border: 2px solid rgba(32, 32, 32, 0.35);
+    box-shadow: none;
+}
+
+#fastaHeaderModal .form-check-input[type="radio"]:checked {
+    width: 1.15rem;
+    height: 1.15rem;
+    background-color: #202020;
+    border-color: #202020;
+    box-shadow: inset 0 0 0 3px #FFFFFF;
+}
+
+#fastaHeaderModal .form-check-input[type="radio"]:not(:checked) {
+    width: 1.15rem;
+    height: 1.15rem;
+    background-color: #FFFFFF;
+    border-color: rgba(32, 32, 32, 0.35);
 }
 
 .analysis-panel .form-check {
@@ -523,4 +647,985 @@ hr {
     .step-form-check .form-check-label {
         font-size: 0.88rem;
     }
+}
+
+/* ==========================================================================
+   Bootstrap JS Compatibility Layer
+   Required for Bootstrap JS (modal, accordion, collapse) to function
+   without Bootstrap CSS loaded.
+   ========================================================================== */
+
+/* --- Fade transitions --- */
+.fade { transition: opacity 0.15s linear; }
+.fade:not(.show) { opacity: 0; }
+
+/* --- Modal --- */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1055;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+}
+.modal.show { display: block; }
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+    transform: translate(0, -50px);
+}
+.modal.show .modal-dialog { transform: none; }
+
+/* Modal dialog centering */
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 0.5rem;
+    pointer-events: none;
+}
+.modal-dialog-centered {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 1rem);
+}
+@media (min-width: 576px) {
+    .modal-dialog { margin: 1.75rem auto; }
+    .modal-dialog-centered { min-height: calc(100% - 3.5rem); }
+    .modal-lg { max-width: 800px; }
+    .modal-xl { max-width: 1140px; }
+}
+.modal-fullscreen {
+    width: 100vw;
+    max-width: none;
+    height: 100%;
+    margin: 0;
+}
+.modal-fullscreen .modal-dialog { width: 100%; height: 100%; margin: 0; }
+.modal-fullscreen .modal-content { height: 100%; border: 0; border-radius: 0; }
+.modal-dialog-scrollable .modal-content { max-height: 100%; overflow: hidden; }
+.modal-dialog-scrollable .modal-body { overflow-y: auto; }
+.modal-dialog.modal-dialog-scrollable { max-height: calc(100% - 3.5rem); }
+
+/* Modal content */
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,0.175);
+    border-radius: 0.5rem;
+    outline: 0;
+}
+.modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: 0.475rem;
+    border-top-right-radius: 0.475rem;
+}
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+.modal-footer {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-left-radius: 0.475rem;
+    border-bottom-right-radius: 0.475rem;
+    gap: 0.5rem;
+}
+.modal-title { margin-bottom: 0; line-height: 1.5; }
+
+/* Modal backdrop */
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 1050;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+}
+.modal-backdrop.fade { opacity: 0; }
+.modal-backdrop.show { opacity: 0.5; }
+
+/* --- Accordion / Collapse --- */
+/* Belt-and-suspenders: ensure Bootstrap collapse/accordion elements are
+   always rendered (not hidden by Tailwind's .collapse visibility utility) */
+.collapse,
+.collapsing,
+.accordion-collapse {
+    visibility: visible !important;
+}
+.collapse { display: none; }
+.collapse.show { display: block; }
+.collapsing {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.35s ease;
+}
+
+/* Accordion */
+.accordion { --bs-accordion-bg: #fff; }
+.accordion-item {
+    background-color: var(--bs-accordion-bg);
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    margin-bottom: 0.25rem;
+}
+.accordion-header { margin-bottom: 0; }
+.accordion-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    text-align: left;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow-anchor: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    cursor: pointer;
+}
+.accordion-button::after {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: auto;
+    content: '';
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    transition: transform 0.2s ease-in-out;
+}
+.accordion-button:not(.collapsed)::after {
+    transform: rotate(-180deg);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23202020'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+.accordion-body { padding: 1rem 1.25rem; }
+
+/* --- btn-close --- */
+.btn-close {
+    box-sizing: content-box;
+    width: 1em; height: 1em;
+    padding: 0.25em;
+    color: #000;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") no-repeat center/1em;
+    border: 0;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+.btn-close:hover { opacity: 0.75; }
+.btn-close.text-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* --- Tooltip --- */
+.tooltip { position: absolute; z-index: 1080; display: block; word-wrap: break-word; opacity: 0; }
+.tooltip.show { opacity: 0.9; }
+.tooltip-inner { max-width: 200px; padding: 0.25rem 0.5rem; color: #fff; background-color: #000; border-radius: 0.375rem; font-size: 0.875rem; }
+.tooltip-arrow { position: absolute; display: block; width: 0.8rem; height: 0.4rem; }
+
+/* ==========================================================================
+   Standardized Modal Header
+   All modal headers use the same dark PUMAS brand color
+   ========================================================================== */
+.modal-header {
+    background-color: #202020;
+    color: #ffffff;
+}
+.modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    opacity: 0.7;
+}
+.modal-header .btn-close:hover { opacity: 1; }
+.modal-header .modal-title { color: #ffffff; }
+
+/* ==========================================================================
+   Gene Search UI (replaces <select> in Step 2.1.3)
+   ========================================================================== */
+.gene-search-input {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.55rem 0.75rem 0.55rem 2.2rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    background-color: #fff;
+}
+.gene-search-input:focus {
+    border-color: #202020;
+    box-shadow: 0 0 0 3px rgba(32,32,32,0.1);
+}
+.gene-search-input:disabled {
+    background-color: #f3f4f6;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.gene-search-results {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    max-height: 180px;
+    overflow-y: auto;
+    min-height: 44px;
+    background: #fff;
+    transition: opacity 0.15s ease;
+}
+.gene-search-results.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+.gene-category-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #9ca3af;
+    margin: 0.35rem 0 0.25rem 0.1rem;
+}
+.gene-category-label:first-child { margin-top: 0.1rem; }
+.gene-pills-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+.gene-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1.5px solid #e5e7eb;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    user-select: none;
+}
+.gene-pill:hover {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+}
+.gene-pill.selected {
+    background-color: #202020;
+    color: #ffffff;
+    border-color: #202020;
+}
+.gene-selected-text {
+    font-size: 0.82rem;
+    color: #6b7280;
+    margin-top: 0.4rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.35rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+}
+.gene-selected-text.has-value {
+    color: #202020;
+    background: #d1fae5;
+    border-color: #6ee7b7;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   Loading Modal - Detailed Steps
+   ========================================================================== */
+.loading-step-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0 0;
+    text-align: left;
+}
+.loading-step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    color: #374151;
+    margin-bottom: 0.2rem;
+    transition: all 0.2s ease;
+}
+.loading-step-item.active {
+    background: rgba(78,205,196,0.12);
+    color: #202020;
+    font-weight: 600;
+}
+.loading-step-item.done {
+    color: #47a37a;
+}
+.loading-step-item.pending {
+    color: #9ca3af;
+}
+.loading-step-icon {
+    flex-shrink: 0;
+    width: 1.1rem;
+    text-align: center;
+    margin-top: 0.05rem;
+}
+
+/* ==========================================================================
+   FASTA Header Builder Modal
+   ========================================================================== */
+.fasta-field-available, .fasta-field-selected {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    user-select: none;
+    border: 1.5px solid;
+}
+.fasta-field-available {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
+}
+.fasta-field-available:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+.fasta-field-selected {
+    background: #202020;
+    color: #fff;
+    border-color: #202020;
+    cursor: grab;
+}
+.fasta-field-selected:active { cursor: grabbing; }
+.fasta-field-dropzone {
+    min-height: 44px;
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    transition: border-color 0.15s ease;
+}
+.fasta-field-dropzone.dragover {
+    border-color: #202020;
+    background: #f9fafb;
+}
+
+/* ==========================================================================
+   Utility overrides - table
+   ========================================================================== */
+table { width: 100%; border-collapse: collapse; }
+thead { background: #f9fafb; }
+th { padding: 0.6rem 0.75rem; text-align: left; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #6b7280; border-bottom: 2px solid #e5e7eb; }
+td { padding: 0.55rem 0.75rem; font-size: 0.85rem; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f9fafb; }
+
+/* ==========================================================================
+   Bootstrap form controls compatibility
+   ========================================================================== */
+.form-check { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; }
+.form-check-input {
+    flex-shrink: 0;
+    width: 1.15em; height: 1.15em;
+    border: 1.5px solid #adb5bd;
+    border-radius: 0.2em;
+    background-color: #fff;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.form-check-input[type="checkbox"]:checked {
+    background-color: #85C79A;
+    border-color: #85C79A;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.8em;
+}
+.form-check-input[type="checkbox"][role="switch"] {
+    width: 2.5em; height: 1.5em;
+    border-radius: 2em;
+}
+.form-check-input[type="checkbox"][role="switch"]:not(:checked) {
+    background-color: #FF6B6B;
+    border-color: #FF6B6B;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 1.5em;
+}
+.form-check-input[type="checkbox"][role="switch"]:checked {
+    background-color: #85C79A;
+    border-color: #85C79A;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: 1.5em;
+}
+.form-check-input:disabled { opacity: 0.5; cursor: not-allowed; }
+.form-check-label { font-size: 0.95rem; cursor: pointer; }
+
+/* Select */
+.form-select {
+    display: block;
+    width: 100%;
+    padding: 0.475rem 2.25rem 0.475rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    appearance: none;
+    cursor: pointer;
+}
+.form-select:focus {
+    border-color: #202020;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(32,32,32,0.15);
+}
+.form-select:disabled { background-color: #e9ecef; opacity: 1; cursor: not-allowed; }
+
+/* Alert */
+.alert { position: relative; padding: 0.75rem 1rem; border: 1px solid transparent; border-radius: 0.375rem; font-size: 0.9rem; }
+.alert-danger { color: #842029; background-color: #f8d7da; border-color: #f5c2c7; }
+.alert-warning { color: #664d03; background-color: #fff3cd; border-color: #ffecb5; }
+.alert-info { color: #055160; background-color: #cff4fc; border-color: #b6effb; }
+
+/* ==========================================================================
+   Bootstrap Utility Class Compatibility
+   Replaces the Bootstrap CSS utility classes used throughout the project.
+   ========================================================================== */
+
+/* --- Spacing (margin) --- */
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 0.75rem !important; }
+.mt-4 { margin-top: 1rem !important; }
+.mt-5 { margin-top: 1.5rem !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 0.75rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.mb-5 { margin-bottom: 1.5rem !important; }
+.ms-0 { margin-left: 0 !important; }
+.ms-1 { margin-left: 0.25rem !important; }
+.ms-2 { margin-left: 0.5rem !important; }
+.ms-auto { margin-left: auto !important; }
+.me-0 { margin-right: 0 !important; }
+.me-1 { margin-right: 0.25rem !important; }
+.me-2 { margin-right: 0.5rem !important; }
+.me-3 { margin-right: 0.75rem !important; }
+.me-4 { margin-right: 1rem !important; }
+.me-auto { margin-right: auto !important; }
+.mx-auto { margin-left: auto !important; margin-right: auto !important; }
+.my-0 { margin-top: 0 !important; margin-bottom: 0 !important; }
+
+/* --- Spacing (padding) --- */
+.p-0 { padding: 0 !important; }
+.p-1 { padding: 0.25rem !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 0.75rem !important; }
+.p-4 { padding: 1rem !important; }
+.p-5 { padding: 1.5rem !important; }
+.px-0 { padding-left: 0 !important; padding-right: 0 !important; }
+.px-3 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+.py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+.ps-0 { padding-left: 0 !important; }
+.pe-0 { padding-right: 0 !important; }
+
+/* --- Typography --- */
+.fw-bold    { font-weight: 700 !important; }
+.fw-semibold { font-weight: 600 !important; }
+.fw-normal  { font-weight: 400 !important; }
+.fst-italic { font-style: italic !important; }
+.fs-5 { font-size: 1.1rem !important; }
+.fs-6 { font-size: 0.95rem !important; }
+.text-muted    { color: #6c757d !important; }
+.text-danger   { color: #dc3545 !important; }
+.text-success  { color: #198754 !important; }
+.text-warning  { color: #ffc107 !important; }
+.text-info     { color: #0dcaf0 !important; }
+.text-white    { color: #fff !important; }
+.text-dark     { color: #212529 !important; }
+.text-center   { text-align: center !important; }
+.text-start    { text-align: left !important; }
+.text-end      { text-align: right !important; }
+.text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.small, small  { font-size: 0.875em; }
+.lh-sm         { line-height: 1.25 !important; }
+
+/* --- Display --- */
+.d-none    { display: none !important; }
+.d-block   { display: block !important; }
+.d-inline  { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex    { display: flex !important; }
+.d-grid    { display: grid !important; }
+
+/* --- Flex utilities --- */
+.flex-wrap         { flex-wrap: wrap !important; }
+.flex-nowrap       { flex-wrap: nowrap !important; }
+.flex-grow-1       { flex-grow: 1 !important; }
+.flex-shrink-0     { flex-shrink: 0 !important; }
+.flex-column       { flex-direction: column !important; }
+.justify-content-between { justify-content: space-between !important; }
+.justify-content-center  { justify-content: center !important; }
+.justify-content-end     { justify-content: flex-end !important; }
+.align-items-center { align-items: center !important; }
+.align-items-start  { align-items: flex-start !important; }
+.align-items-end    { align-items: flex-end !important; }
+.gap-1 { gap: 0.25rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-3 { gap: 0.75rem !important; }
+.gap-4 { gap: 1rem !important; }
+
+/* --- Border --- */
+.border        { border: 1px solid #dee2e6 !important; }
+.border-0      { border: 0 !important; }
+.border-top    { border-top: 1px solid #dee2e6 !important; }
+.border-bottom { border-bottom: 1px solid #dee2e6 !important; }
+.border-danger  { border-color: #dc3545 !important; }
+.border-warning { border-color: #ffc107 !important; }
+.border-info    { border-color: #0dcaf0 !important; }
+.border-dark    { border-color: #212529 !important; }
+.rounded        { border-radius: 0.375rem !important; }
+.rounded-0      { border-radius: 0 !important; }
+
+/* --- Background --- */
+.bg-light   { background-color: #f8f9fa !important; }
+.bg-white   { background-color: #fff !important; }
+.bg-dark    { background-color: #212529 !important; }
+.bg-danger  { background-color: #dc3545 !important; }
+.bg-warning { background-color: #ffc107 !important; }
+.bg-info    { background-color: #0dcaf0 !important; }
+.bg-success { background-color: #198754 !important; }
+.bg-opacity-10 { --bg-opacity: 0.1; }
+
+.bg-danger.bg-opacity-10  { background-color: rgba(220,53,69,0.1) !important; }
+.bg-warning.bg-opacity-10 { background-color: rgba(255,193,7,0.1) !important; }
+.bg-info.bg-opacity-10    { background-color: rgba(13,202,240,0.1) !important; }
+
+/* --- Width / Height --- */
+.w-100 { width: 100% !important; }
+.h-100 { height: 100% !important; }
+.w-auto { width: auto !important; }
+.mw-100 { max-width: 100% !important; }
+
+/* --- Overflow --- */
+.overflow-hidden { overflow: hidden !important; }
+.overflow-auto   { overflow: auto !important; }
+.overflow-y-auto { overflow-y: auto !important; }
+
+/* --- Position --- */
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+
+/* --- Pointer cursor --- */
+.pointer { cursor: pointer; }
+
+/* --- Buttons --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: inherit;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    transition: color 0.15s, background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+.btn-lg { padding: 0.6rem 1.25rem; font-size: 1rem; border-radius: 0.5rem; }
+.btn-sm { padding: 0.2rem 0.55rem; font-size: 0.8rem; border-radius: 0.3rem; }
+.btn-dark { background-color: #202020; color: #fff; border-color: #202020; }
+.btn-dark:hover { background-color: #333; border-color: #333; }
+.btn-secondary { background-color: #6c757d; color: #fff; border-color: #6c757d; }
+.btn-secondary:hover { background-color: #5c636a; border-color: #565e64; }
+.btn-danger { background-color: #dc3545; color: #fff; border-color: #dc3545; }
+.btn-danger:hover { background-color: #bb2d3b; border-color: #b02a37; }
+.btn-outline-danger { color: #dc3545; border-color: #dc3545; background: transparent; }
+.btn-outline-danger:hover { background-color: #dc3545; color: #fff; }
+.btn-light { background-color: #f8f9fa; color: #212529; border-color: #f8f9fa; }
+.btn-light:hover { background-color: #e2e6ea; color: #212529; border-color: #dae0e5; }
+.btn-outline-light { color: #f8f9fa; border-color: #f8f9fa; background: transparent; }
+.btn-outline-light:hover { background-color: #f8f9fa; color: #212529; }
+.btn-outline-secondary { color: #6c757d; border-color: #6c757d; background: transparent; }
+.btn-outline-secondary:hover { background-color: #6c757d; color: #fff; }
+.btn-outline-dark { color: #212529; border-color: #212529; background: transparent; }
+.btn-outline-dark:hover { background-color: #212529; color: #fff; }
+
+/* --- Image --- */
+.img-fluid { max-width: 100%; height: auto; }
+.figure { display: inline-block; }
+.figure-img { margin-bottom: 0.5rem; }
+
+/* --- Progress bar --- */
+.progress { display: flex; width: 100%; height: 1rem; background-color: #e9ecef; border-radius: 0.375rem; overflow: hidden; }
+.progress-bar { display: flex; flex-direction: column; justify-content: center; overflow: hidden; text-align: center; white-space: nowrap; background-color: #4ECDC4; transition: width 0.6s ease; }
+
+/* --- Misc --- */
+.text-bg-dark { background-color: #212529 !important; color: #fff !important; }
+.figure-caption { font-size: 0.875em; color: #6c757d; }
+.code, code { font-family: monospace; font-size: 0.9em; background: #f8f9fa; padding: 0.1em 0.3em; border-radius: 0.2em; }
+.table { width: 100%; margin-bottom: 1rem; }
+.table-responsive { overflow-x: auto; }
+.table-sm td, .table-sm th { padding: 0.3rem 0.5rem; }
+.align-middle td, .align-middle th { vertical-align: middle; }
+.hr { border-top: 1px solid rgba(0,0,0,0.1); }
+
+/* --- Bootstrap heading classes --- */
+.display-1 { font-size: 5rem; font-weight: 300; line-height: 1.2; }
+.display-2 { font-size: 4rem; font-weight: 300; line-height: 1.2; }
+.display-3 { font-size: 3rem; font-weight: 300; line-height: 1.2; }
+.display-4 { font-size: 2.5rem; font-weight: 300; line-height: 1.2; }
+.h1 { font-size: 2rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.5rem; }
+.h2 { font-size: 1.75rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.5rem; }
+.h3 { font-size: 1.5rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.5rem; }
+.h4 { font-size: 1.25rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.5rem; }
+.h5 { font-size: 1.1rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.5rem; }
+.h6 { font-size: 0.95rem; font-weight: 600; line-height: 1.25; margin: 0 0 0.5rem; }
+
+/* --- Container classes (fallback) --- */
+.container { width: 100%; max-width: 1140px; margin-left: auto; margin-right: auto; padding-left: 1rem; padding-right: 1rem; }
+.container-fluid { width: 100%; padding-left: 1rem; padding-right: 1rem; }
+
+/* Bootstrap 4 margin aliases (ml-* / mr-* used in the project) */
+.ml-1, .ms-1 { margin-left: 0.25rem !important; }
+.ml-2, .ms-2 { margin-left: 0.5rem !important; }
+.ml-3, .ms-3 { margin-left: 0.75rem !important; }
+.ml-4, .ms-4 { margin-left: 1rem !important; }
+.ml-5, .ms-5 { margin-left: 1.5rem !important; }
+.mr-1 { margin-right: 0.25rem !important; }
+.mr-2 { margin-right: 0.5rem !important; }
+.mr-3 { margin-right: 0.75rem !important; }
+.mr-4 { margin-right: 1rem !important; }
+.mr-5 { margin-right: 1.5rem !important; }
+
+/* --- Form control (textarea, text input) --- */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    resize: vertical;
+}
+.form-control:focus {
+    border-color: #202020;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(32,32,32,0.15);
+}
+.form-control:disabled, .form-control[readonly] { background-color: #e9ecef; opacity: 1; }
+
+/* --- Input group --- */
+.input-group { position: relative; display: flex; flex-wrap: wrap; align-items: stretch; width: 100%; }
+.input-group > .form-control, .input-group > .form-select { position: relative; flex: 1 1 auto; width: 1%; min-width: 0; }
+.input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+.input-group > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.input-group > :not(:last-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* form-select size variants */
+.form-select-lg { padding: 0.5rem 2.25rem 0.5rem 1rem; font-size: 1rem; border-radius: 0.5rem; }
+.form-select-sm { padding: 0.25rem 2rem 0.25rem 0.5rem; font-size: 0.8rem; border-radius: 0.3rem; }
+
+/* --- Badge --- */
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.375rem;
+    background-color: #6c757d;
+}
+
+/* --- Genome Row Layout --- */
+.genome-row {
+    display: flex;
+    align-items: stretch;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-radius: 0;
+    position: relative;
+    transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.genome-row.dragging {
+    opacity: 0.35;
+    box-shadow: 0 0 0 2px #4ECDC4;
+    border-radius: 6px;
+    z-index: 50;
+}
+
+.genome-row.drag-over {
+    /* nothing here — indicator line is handled by ::before */
+}
+
+.genome-row.drag-over-above::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #4ECDC4;
+    border-radius: 2px;
+    z-index: 20;
+    box-shadow: 0 0 6px rgba(78, 205, 196, 0.5);
+}
+
+.genome-row.drag-over-below::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #4ECDC4;
+    border-radius: 2px;
+    z-index: 20;
+    box-shadow: 0 0 6px rgba(78, 205, 196, 0.5);
+}
+
+.genome-row-label {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    width: var(--label-width, 220px);
+    min-width: var(--label-width, 220px);
+    max-width: var(--label-width, 220px);
+    background: #fafafa;
+    border-right: 2px solid #e5e7eb;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.78rem;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.08);
+    cursor: grab;
+    user-select: none;
+    position: relative;
+}
+
+.genome-row-label:active {
+    cursor: grabbing;
+}
+
+/* Resize handle on the right edge of the label */
+.genome-label-resize {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 6px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 15;
+    background: transparent;
+}
+
+.genome-label-resize:hover,
+.genome-label-resize:active {
+    background: rgba(78, 205, 196, 0.4);
+}
+
+.genome-species-name {
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.genome-species-name a {
+    color: #202020;
+    text-decoration: underline;
+}
+
+.genome-species-name a:hover {
+    color: #ff8f00;
+}
+
+.genome-dup-info {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    margin-top: 1px;
+}
+
+.genome-row-controls {
+    display: flex;
+    gap: 3px;
+    margin-top: 3px;
+}
+
+.genome-ctrl-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.65rem;
+    color: #374151;
+    transition: all 0.12s ease;
+    padding: 0;
+}
+
+.genome-ctrl-btn:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.genome-ctrl-btn-danger:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+
+.genome-ctrl-btn-edit:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: #2563eb;
+}
+
+.genome-gene-scroll {
+    flex: 1;
+    overflow-x: auto;
+    cursor: grab;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.genome-gene-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.genome-gene-scroll:active {
+    cursor: grabbing;
+}
+
+/* Synteny bridge rows */
+.synteny-bridge-row {
+    margin: 0;
+    pointer-events: none;
+}
+
+.synteny-label-spacer {
+    background: transparent !important;
+    border-right: none !important;
+    box-shadow: none !important;
+}
+
+.synteny-bridge {
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(247,247,247,0.95) 100%);
+    border-top: 1px dashed rgba(32,32,32,0.15);
+    border-bottom: 1px dashed rgba(32,32,32,0.15);
+}
+
+/* Legacy .svg-container compat */
+.svg-container {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.svg-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Master scrollbar — one shared bar at the bottom of all genome rows */
+#masterScrollTrack {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 2px;
+}
+
+#masterScrollTrack > div {
+    height: 1px;          /* invisible dummy content — just sets the scroll width */
+}
+
+#masterScrollTrack::-webkit-scrollbar {
+    height: 8px;
+}
+
+#masterScrollTrack::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#masterScrollTrack::-webkit-scrollbar-thumb {
+    background: #bbb;
+    border-radius: 4px;
+}
+
+#masterScrollTrack::-webkit-scrollbar-thumb:hover {
+    background: #888;
 }
