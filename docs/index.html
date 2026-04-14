@@ -14,7 +14,7 @@
                             accent:  '#ff8f00',
                             success: '#85C79A',
                             danger:  '#FF6B6B',
-                            progress:'#4ECDC4',
+                            progress:'#ff8f00',
                         }
                     },
                     fontFamily: {
@@ -35,9 +35,9 @@
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css">
+    <link rel="stylesheet" href="assets/colorpicker.min.css">
+    <script src="assets/colorpicker.iife.min.js"></script>
     <script>
-    /* ── Bootstrap-less shim ──────────────────────────────────────────────── */
-    /* Modal */
     $.fn.modal = function(action) {
         return this.each(function() {
             const el = this;
@@ -67,7 +67,6 @@
             }
         });
     };
-    /* bootstrap namespace compat */
     window.bootstrap = {
         Modal: function(el) {
             return { show: () => $(el).modal('show'), hide: () => $(el).modal('hide') };
@@ -107,6 +106,17 @@
         }
     });
     </script>
+    <script>
+    // Set tippy.js defaults to use PUMAS theme
+    tippy.setDefaultProps({
+        theme: 'pumas',
+        allowHTML: true,
+        arrow: true,
+        delay: [200, 0],
+        appendTo: () => document.body,
+    });
+    // Initial tippy init is handled by the bottom-of-page script to avoid duplicates
+    </script>
     <script src="https://kit.fontawesome.com/7d94912b47.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,6 +125,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chroma-js@2.6.0/chroma.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cgview/dist/cgview.css">
     <title>PUMAS - Puzzle Mitochondrial and Chloroplast Analysis Script by Luan Rabelo</title>
@@ -132,7 +143,7 @@
     <meta property="twitter:image" content="https://raw.githubusercontent.com/luanrabelo/PUMAS/master/docs/assets/PUMASsm.png" />
     <link rel="stylesheet" href="PUMAS.css">
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-50 font-sans" style="font-family: 'Montserrat', sans-serif;">
     
     <div class="modal fade" id="LoadingPumas" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -141,9 +152,9 @@
                     <h2 class="loading-modal-title mb-0"><i class="fa-solid fa-dna fa-spin me-2"></i> PUMAS</h2>
                 </div>
                 <div class="modal-body loading-modal-body text-center">
-                    <figure class="figure">
-                        <img src="assets/PUMAS.png" class="figure-img img-fluid rounded" alt="PUMAS Logo" style="width:50%;max-width:240px;">
-                        <div class="loading-modal-subtitle"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
+                    <figure class="figure" style="display:flex;flex-direction:column;align-items:center;margin:0 auto;">
+                        <img src="assets/PUMAS.png" class="figure-img img-fluid rounded" alt="PUMAS Logo" style="width:50%;max-width:200px;display:block;margin:0 auto;">
+                        <div class="loading-modal-subtitle" style="margin-top:0.75rem;"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
                     </figure>
                     <div id="loadingStepText" class="loading-step-text">Initializing...</div>
                     <div class="progress" style="height:1.4rem;border-radius:0.5rem;background:#e9ecef;overflow:hidden;">
@@ -194,10 +205,10 @@
                 </div>
             <div class="w-full md:w-1/2 flex items-center">
                 <div>
-                    <div class="display-2">PUMAS<sup>by Luan Rabelo</sup></div>
-                    <div class="h3"><b>Pu</b>zzle <b>M</b>itochondrial (and Chloroplast) <b>A</b>nalysis <b>S</b>cript</div>
-                    <div class="h6">v1.0</div>
-                    <div class="h5 mt-5">How to Cite PUMAS: Coming Soon…</div>
+                    <div class="display-1 font-semibold">PUMAS<sub class="text-xl font-medium">by Luan Rabelo</sub></div>
+                    <div class="text-2xl"><b style="color: #202020;" class="font-extrabold">Pu</b>zzle <b style="color: #202020;" class="font-extrabold">M</b>itochondrial (and Chloroplast) <b style="color: #202020;" class="font-extrabold">A</b>nalysis <b style="color: #202020;" class="font-extrabold">S</b>cript</div>
+                    <div class="text-xl">v1.0</div>
+                    <div class="text-lg mt-5">How to Cite PUMAS: Coming Soon…</div>
                     <div class="mt-5">
                         <i style="cursor: pointer;" id="btnStartPUMAS" data-tippy-content="Click here to scroll to the PUMAS analysis form" class="fa-solid fa-circle-arrow-down fa-fade fa-4x"></i>
                     </div>
@@ -806,46 +817,46 @@
                         <div id="collapseConfigureAnalysis" class="accordion-collapse collapse" aria-labelledby="headingConfigureAnalysis">
                             <div class="accordion-body">
                                 <div class="flex flex-wrap gap-4 analysis-grid">
-                                    <div class="w-full lg:w-[calc(33.333%-1rem)]">
+                                    <div class="w-full lg:w-[calc(33.333%_-_1rem)]">
                                         <div class="analysis-panel h-100">
                                             <div class="analysis-panel-header">
                                                 <span class="badge text-bg-step">2.1.1</span>
                                                 <span>Genome type</span>
                                             </div>
                                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Select whether the current run should analyze <b>mitochondrial</b> or <b>chloroplast</b> genomes. This choice controls the available gene catalog in the next column.</p>
-                                            <div class="step-option-group">
-                                                <div class="form-check form-switch step-form-check">
+                                            <div class="step-option-group" style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+                                                <div class="form-check form-switch step-form-check" style="flex:1;min-width:180px;">
                                                     <input class="form-check-input" type="checkbox" role="switch" id="mt" value="Mitochondrial" disabled
                                                         data-tippy-content="Analyze <b>mitochondrial</b> genomes — select this if your data includes animal or fungal mitogenomes">
-                                                    <label class="form-check-label ml-5 mr-5" for="mt">Mitochondrial genome</label>
+                                                    <label class="form-check-label" for="mt">Mitochondrial genome</label>
                                                 </div>
-                                                <div class="form-check form-switch step-form-check">
+                                                <div class="form-check form-switch step-form-check" style="flex:1;min-width:180px;">
                                                     <input class="form-check-input" type="checkbox" role="switch" id="cp" value="Chloroplast" disabled
                                                         data-tippy-content="Analyze <b>chloroplast</b> genomes — select this if your data includes plant plastid genomes">
-                                                    <label class="form-check-label ml-2 mr-2" for="cp">Chloroplast genomes</label>
+                                                    <label class="form-check-label" for="cp">Chloroplast genomes</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="w-full lg:w-[calc(33.333%-1rem)]">
+                                    <div class="w-full lg:w-[calc(33.333%_-_1rem)]">
                                         <div class="analysis-panel h-100">
                                             <div class="analysis-panel-header">
                                                 <span class="badge text-bg-step">2.1.2</span>
                                                 <span>Gene categories</span>
                                             </div>
                                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Choose which gene groups should be extracted for the analysis. You can combine <b>CDS</b>, <b>rRNAs</b>, and <b>tRNAs</b> according to the biological question you want to test.</p>
-                                            <div class="step-option-group">
-                                                <div class="form-check step-form-check">
+                                            <div class="step-option-group" style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+                                                <div class="form-check step-form-check" style="flex:1;min-width:100px;">
                                                     <input class="form-check-input" type="checkbox" value="CDS" id="CDS" disabled
                                                         data-tippy-content="Include <b>protein-coding genes</b> (CDS) in the analysis — these appear at full height in the puzzle view">
                                                     <label class="form-check-label" for="CDS">CDS</label>
                                                 </div>
-                                                <div class="form-check step-form-check">
+                                                <div class="form-check step-form-check" style="flex:1;min-width:100px;">
                                                     <input class="form-check-input" type="checkbox" value="rRNA" id="rRNA" disabled
                                                         data-tippy-content="Include <b>ribosomal RNA genes</b> (rRNA) — these appear at full height in the puzzle view">
                                                     <label class="form-check-label" for="rRNAs">rRNAs</label>
                                                 </div>
-                                                <div class="form-check step-form-check">
+                                                <div class="form-check step-form-check" style="flex:1;min-width:100px;">
                                                     <input class="form-check-input" type="checkbox" value="tRNA" id="tRNA" disabled
                                                         data-tippy-content="Include <b>transfer RNA genes</b> (tRNA) — these appear at <b>half the height</b> of other genes in the puzzle view">
                                                     <label class="form-check-label" for="rRNAs">tRNAs</label>
@@ -853,11 +864,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="w-full lg:w-[calc(33.333%-1rem)]">
+                                    <div class="w-full lg:w-[calc(33.333%_-_1rem)]">
                                         <div class="analysis-panel h-100">
                                             <div class="analysis-panel-header">
                                                 <span class="badge text-bg-step">2.1.3</span>
-                                                <span>Starting gene</span>
+                                                <span style="font-size:1.1rem;font-weight:700;">Starting gene</span>
                                             </div>
                                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Pick the gene that should be treated as the starting point for the genome order.</p>
                                             <!-- Hidden select maintained for value tracking (API compatibility) -->
@@ -1078,9 +1089,9 @@
             <div class="mt-2 text-center">
                 <div class="grid gap-2 w-full sm:w-8/12 md:w-6/12 mx-auto">
                     <div class="flex gap-2">
-                        <button id="startSearch" class="flex-1 bg-[#202020] text-white font-semibold py-3 px-6 rounded-lg text-lg hover:bg-[#333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed" type="button" disabled
+                        <button id="startSearch" class="flex-1 bg-[#202020] text-white font-semibold py-2 px-4 rounded-lg text-base hover:bg-[#333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed" type="button" disabled
                             data-tippy-content="Fetch GenBank records and build the gene-order puzzle — requires at least one accession, genome type, and gene category selected"><i class="fa-solid fa-magnifying-glass"></i> Run PUMAS</button>
-                        <button id="resetData" class="border-2 border-red-500 text-red-500 font-semibold py-3 px-4 rounded-lg text-lg hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" type="button" data-bs-toggle="modal" data-bs-target="#resetConfirmModal" disabled
+                        <button id="resetData" class="border-2 border-red-500 text-red-500 font-semibold py-2 px-3 rounded-lg text-base hover:bg-red-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed" type="button" data-bs-toggle="modal" data-bs-target="#resetConfirmModal" disabled
                             data-tippy-content="Clear all loaded genomes and reset the entire analysis — you will be asked to confirm before any data is deleted"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Data</button>
                     </div>
                 </div>
@@ -1089,10 +1100,10 @@
                 var data = null;
                 var originalData = null;
                 var geneStartGlobal = null; // Variável para armazenar o gene de início
+                var _geneListEdit = null;
             
                 $(document).ready(function () {
                     let cdsList = null;
-                    let _geneListEdit = null;
                     let pendingFastaHeaderFormat = 'simple';
                     const btnImport = document.getElementById('btnImport');
                     const fileContent = document.getElementById('fileContent');
@@ -1351,7 +1362,7 @@
             
                     function setGeneLists(type) {
                         if (type === 'Mitochondrial') {
-                            _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val'];
+                            _geneListEdit = ['COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6', 'ATP6', 'ATP8', '12S', '16S', 'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile', 'Leu-1', 'Leu-2', 'Lys', 'Met', 'Phe', 'Pro', 'Ser-1', 'Ser-2', 'Thr', 'Trp', 'Tyr', 'Val'];
                             cdsList = ['ATP6', 'ATP8', 'COI', 'COII', 'COIII', 'CYTB', 'ND1', 'ND2', 'ND3', 'ND4', 'ND4L', 'ND5', 'ND6'];
                         } else if (type === 'Chloroplast') {
                             _geneListEdit = ['atpA', 'atpB', 'atpE', 'atpF', 'atpH', 'atpI', 'petA', 'petB', 'petD', 'petE', 'petG', 'petL', 'petN', 'ndhA', 'ndhB', 'ndhC', 'ndhD', 'ndhE', 'ndhF', 'ndhG', 'ndhH', 'ndhI', 'ndhJ', 'ndhK', 'psaA', 'psaB', 'psaC', 'psaI', 'psaJ', 'psaM', 'psb30', 'psbA', 'psbB', 'psbC', 'psbD', 'psbE', 'psbF', 'psbH', 'psbI', 'psbJ', 'psbK', 'psbL', 'psbM', 'psbN', 'psbZ', 'accD', 'ccsA', 'cemA', 'chlB', 'chlL', 'chlN', 'clpP', 'clpP1', 'cysA', 'cysT', 'ftsH', 'infA', 'lhbA', 'matK', 'pafI', 'pafII', 'pbf1', 'psb30', 'ycf1', 'ycf2', 'ycf3', 'ycf4', 'ycf12', 'ycf15', 'rrn16S', 'rrn23S', 'rrn4.5S', 'rrn5S', 'rpoA', 'rpoB', 'rpoC1', 'rpoC2', 'rpl2', 'rpl14', 'rpl16', 'rpl20', 'rpl22', 'rpl23', 'rpl32', 'rpl33', 'rpl36', 'rps2', 'rps3', 'rps4', 'rps7', 'rps8', 'rps11', 'rps12', 'rps14', 'rps15', 'rps16', 'rps18', 'rps19'];
@@ -1410,6 +1421,9 @@
                         createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
                         showResults(data, typeData);
                         updateAutoAlignButtonState();
+                        if (typeof populateGeneColorSelect === 'function') populateGeneColorSelect();
+                        if (typeof populateGenomeReorderSelect === 'function') populateGenomeReorderSelect();
+                        if (typeof populateSpeciesTable === 'function') populateSpeciesTable();
                     });
 
                     autoAlignOrders.addEventListener('click', function () {
@@ -1456,6 +1470,47 @@
                         updateAutoAlignButtonState();
                     });
 
+                    // --- Align Visible Genomes ---
+                    document.getElementById('alignVisibleGenomes').addEventListener('click', function () {
+                        if (!Array.isArray(data) || data.length < 2) {
+                            alert('At least two genomes are required for alignment.');
+                            return;
+                        }
+                        // Undo previous alignment first
+                        if (preAlignData) {
+                            var snapMap = new Map();
+                            preAlignData.forEach(function(snap) { snapMap.set(snap.ref, snap); });
+                            data.forEach(function(genome) {
+                                var snap = snapMap.get(genome);
+                                if (snap) {
+                                    genome.genes = snap.genes;
+                                    genome.strands = snap.strands;
+                                    genome.lengths = snap.lengths;
+                                    genome.originalGeneNames = snap.originalGeneNames;
+                                    genome.geneOrder = snap.geneOrder;
+                                    genome.pseudoGenes = snap.pseudoGenes;
+                                }
+                            });
+                            preAlignData = null;
+                        }
+                        // Save snapshot for undo
+                        preAlignData = data.map(function(genome) {
+                            return {
+                                ref: genome,
+                                genes: JSON.parse(JSON.stringify(genome.genes)),
+                                strands: JSON.parse(JSON.stringify(genome.strands)),
+                                lengths: JSON.parse(JSON.stringify(genome.lengths)),
+                                originalGeneNames: JSON.parse(JSON.stringify(genome.originalGeneNames || genome.genes)),
+                                geneOrder: genome.geneOrder,
+                                pseudoGenes: JSON.parse(JSON.stringify(genome.pseudoGenes || []))
+                            };
+                        });
+                        // Align only the currently visible genomes
+                        autoAlignGenomeOrders(data);
+                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        updateAutoAlignButtonState();
+                    });
+
                     toggleSynteny.addEventListener('click', function () {
                         if (!Array.isArray(data) || data.length < 2) {
                             alert('At least two genome orders are required for synteny links.');
@@ -1463,6 +1518,8 @@
                         }
                         showSyntenyLinks = !showSyntenyLinks;
                         document.getElementById('syntenyModeSelect').disabled = !showSyntenyLinks;
+                        const rowSpacingEl = document.getElementById('genomeRowSpacing');
+                        if (rowSpacingEl) rowSpacingEl.disabled = !showSyntenyLinks;
                         createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
                         updateAutoAlignButtonState();
                     });
@@ -1509,7 +1566,7 @@
                             el.className = 'loading-step-item ' + state;
                             const icon = el.querySelector('.loading-step-icon');
                             if (!icon) return;
-                            if (state === 'active')  icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#4ECDC4;"></i>';
+                            if (state === 'active')  icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#ff8f00;"></i>';
                             if (state === 'done')    icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#47a37a;"></i>';
                             if (state === 'pending') icon.innerHTML = '<i class="fa-regular fa-circle"></i>';
                         }
@@ -1618,8 +1675,11 @@
                         createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
                         showResults(data, typeGenome);
                         updateAutoAlignButtonState();
+                        if (typeof populateGeneColorSelect === 'function') populateGeneColorSelect();
+                        if (typeof populateGenomeReorderSelect === 'function') populateGenomeReorderSelect();
+                        if (typeof populateSpeciesTable === 'function') populateSpeciesTable();
                     });
-            
+
                     // Reset Data functionality
                     const confirmResetBtn = document.getElementById('confirmResetBtn');
                     confirmResetBtn.addEventListener('click', function () {
@@ -1700,20 +1760,14 @@
                         updateDataSummary();
                     });
             
-                    // Add event listener for createInputFile to show tool info
-                    createInputFile.addEventListener('change', function () {
-                        const txt = document.getElementById('textInfo');
-                        if (createInputFile.value === 'CREx') {
-                            txt.style.display = 'block';
-                            txt.innerHTML = '<i class="fa-solid fa-circle-info"></i> Note that, the downloaded file should be edited, as any duplicated genes must be renamed (i.e. Leu1 and Leu2) or only one copy is permitted (one copy should be deleted for each duplicated genes) for CREx/CREx2/TreeREx to work properly.';
-                        } else if (createInputFile.value === 'qMGR') {
-                            txt.style.display = 'block';
-                            txt.innerHTML = '<i class="fa-solid fa-circle-info"></i> Note that, the downloaded file should be edited. The user must edit the file to inform important issues, such as: there are two Leucines, so the user should inform which copy is L1, as well as L2.';
-                        } else {
-                            txt.style.display = 'none';
-                        }
+                    // Open External Tools modal
+                    document.getElementById('openExternalToolsModal').addEventListener('click', function () {
+                        var modal = new bootstrap.Modal(document.getElementById('externalToolsModal'), {});
+                        renderExtToolFields();
+                        _updateExternalToolsPreview();
+                        modal.show();
                     });
-            
+
                     downloadFasta.addEventListener('click', function () {
                         // Show modal for selecting FASTA header format
                         const fastaModal = new bootstrap.Modal(document.getElementById('fastaHeaderModal'), {});
@@ -1722,10 +1776,17 @@
             
                     // ---- FASTA Header Builder ----
                     const fastaFields = [
-                        { id: 'accession', label: 'Accession' },
-                        { id: 'species',   label: 'Species'   },
-                        { id: 'gene',      label: 'Gene'      },
-                        { id: 'genome',    label: 'Genome'    },
+                        { id: 'accession',  label: 'Accession' },
+                        { id: 'species',    label: 'Species'   },
+                        { id: 'gene',       label: 'Gene'      },
+                        { id: 'genome',     label: 'Genome'    },
+                        { id: 'kingdom',    label: 'Kingdom'   },
+                        { id: 'phylum',     label: 'Phylum'    },
+                        { id: 'class',      label: 'Class'     },
+                        { id: 'order',      label: 'Order'     },
+                        { id: 'family',     label: 'Family'    },
+                        { id: 'genus',      label: 'Genus'     },
+                        { id: 'authorship', label: 'Authorship'},
                     ];
                     let fastaSelectedFieldIds = ['accession', 'species'];
                     let fastaDragSrcIdx = null;
@@ -1790,13 +1851,70 @@
                         updateFastaPreview();
                     };
 
+                    function checkFastaHeaderDuplicates() {
+                        var sep = document.querySelector('input[name="fastaFieldSeparator"]:checked')?.value || '|';
+                        if (!data || !Array.isArray(data) || fastaSelectedFieldIds.length === 0) return [];
+                        var headers = new Map();
+                        var nonGeneFields = fastaSelectedFieldIds.filter(function (f) { return f !== 'gene'; });
+                        if (nonGeneFields.length === 0) return [];
+                        for (var id = 0; id < data.length; id++) {
+                            var row = data[id];
+                            var speciesName = Array.isArray(row.speciesNames) ? row.speciesNames[0] : (row.speciesNames || '');
+                            var accession = Array.isArray(row.vouchers) ? row.vouchers[0] : (row.vouchers || '');
+                            var tax = row.taxonomy || {};
+                            var parts = speciesName.split(/\s+/);
+                            var fv = {
+                                accession: accession, species: speciesName.replace(/\s+/g, '_'), genome: '',
+                                kingdom: tax.kingdom || '', phylum: tax.phylum || '', class: tax.class || '',
+                                order: tax.order || '', family: tax.family || '', genus: parts[0] || '',
+                                authorship: tax.authorship || ''
+                            };
+                            var sepStr = sep === '|' ? ' ' + sep + ' ' : sep;
+                            var headerStr = nonGeneFields.map(function (fid) { return fv[fid] || ''; }).join(sepStr);
+                            var existing = headers.get(headerStr) || [];
+                            existing.push(accession || speciesName);
+                            headers.set(headerStr, existing);
+                        }
+                        var duplicates = [];
+                        for (var entry of headers) {
+                            if (entry[1].length > 1) duplicates.push({ header: entry[0], ids: entry[1] });
+                        }
+                        return duplicates;
+                    }
+
                     function updateFastaPreview() {
                         const sep = document.querySelector('input[name="fastaFieldSeparator"]:checked')?.value || '|';
                         const preview = document.getElementById('fastaHeaderPreview');
                         if (!preview) return;
-                        const sampleValues = { accession: 'AB123456.1', species: 'Geothelphusa dehaani', gene: 'COI', genome: 'mitochondrial' };
+                        const sampleValues = {
+                            accession: 'AB123456.1', species: 'Geothelphusa_dehaani', gene: 'COI', genome: 'mitochondrial',
+                            kingdom: 'Animalia', phylum: 'Arthropoda', class: 'Malacostraca',
+                            order: 'Decapoda', family: 'Potamidae', genus: 'Geothelphusa', authorship: 'White, 1847'
+                        };
                         const parts = fastaSelectedFieldIds.map(id => sampleValues[id] || id);
-                        preview.textContent = parts.length > 0 ? '>' + parts.join(' ' + sep + ' ') : '> (empty — select at least one field)';
+                        var sepStr = sep === '|' ? ' ' + sep + ' ' : sep;
+                        preview.textContent = parts.length > 0 ? '>' + parts.join(sepStr) : '> (empty — select at least one field)';
+
+                        // Duplicate header check
+                        var warnEl = document.getElementById('fastaHeaderDuplicateWarning');
+                        var warnText = document.getElementById('fastaHeaderDuplicateText');
+                        var confirmBtn = document.getElementById('confirmFastaDownload');
+                        if (warnEl && data && Array.isArray(data) && data.length > 0) {
+                            var duplicates = checkFastaHeaderDuplicates();
+                            if (duplicates.length > 0 && fastaSelectedFieldIds.length > 0) {
+                                var total = duplicates.reduce(function (s, d) { return s + d.ids.length; }, 0);
+                                warnText.textContent = total + ' records produce ' + duplicates.length +
+                                    ' duplicated header(s). Add more fields (e.g., Accession) to make headers unique.';
+                                warnEl.style.display = '';
+                                if (confirmBtn) confirmBtn.disabled = true;
+                            } else if (fastaSelectedFieldIds.length === 0) {
+                                warnEl.style.display = 'none';
+                                if (confirmBtn) confirmBtn.disabled = true;
+                            } else {
+                                warnEl.style.display = 'none';
+                                if (confirmBtn) confirmBtn.disabled = false;
+                            }
+                        }
                     }
 
                     document.querySelectorAll('input[name="fastaFieldSeparator"]').forEach(function(radio) {
@@ -1842,9 +1960,18 @@
 
                             selectedGenes.forEach(gene => {
                                 if (Object.prototype.hasOwnProperty.call(seq, gene)) {
-                                    const fieldValues = { accession, species: speciesName, gene, genome: genomeLabel };
+                                    const tax = row.taxonomy || {};
+                                    const specParts = speciesName.split(/\s+/);
+                                    const fieldValues = {
+                                        accession, species: speciesName.replace(/\s+/g, '_'), gene, genome: genomeLabel,
+                                        kingdom: tax.kingdom || '', phylum: tax.phylum || '',
+                                        class: tax.class || '', order: tax.order || '',
+                                        family: tax.family || '', genus: specParts[0] || '',
+                                        authorship: tax.authorship || ''
+                                    };
                                     const parts = fastaSelectedFieldIds.map(fid => fieldValues[fid] || '');
-                                    const header = '>' + parts.join(' ' + sep + ' ');
+                                    const sepStr = sep === '|' ? ' ' + sep + ' ' : sep;
+                                    const header = '>' + parts.join(sepStr);
                                     geneData[gene] += `${header}\n${seq[gene]}\n`;
                                 } else {
                                     missingMessages.push(`${gene}: ${sourceName} | ${speciesName} (not added to FASTA)`);
@@ -1885,97 +2012,241 @@
                         document.querySelectorAll('.fasta-gene-toggle').forEach(cb => { cb.checked = false; });
                     });
             
-                    createInputFile.addEventListener('change', function () {
-                        downloadInputFile.disabled = createInputFile.value === 'NaN';
-                    });
-            
-                    downloadInputFile.addEventListener('click', function () {
-                        let geneOrderCounts = {};
-            
-                        const geneMapQmgr = {
-                            'CR': 'D-loop', '-CR': '-D-loop',
-                            '12S': '12S', '-12S': '-12S',
-                            '16S': '16S', '-16S': '-16S',
-                            'ATP6': 'ATP6', '-ATP6': '-ATP6',
-                            'ATP8': 'ATP8', '-ATP8': '-ATP8',
-                            'COI': 'COX1', '-COI': '-COX1',
-                            'COII': 'COX2', '-COII': '-COX2',
-                            'COIII': 'COX3', '-COIII': '-COX3',
-                            'ND1': 'ND1', '-ND1': '-ND1',
-                            'ND2': 'ND2', '-ND2': '-ND2',
-                            'ND3': 'ND3', '-ND3': '-ND3',
-                            'ND4L': 'ND4L', 'ND4': 'ND4', '-ND4L': '-ND4L', '-ND4': '-ND4',
-                            'ND5': 'ND5', 'ND6': 'ND6', '-ND5': '-ND5', '-ND6': '-ND6',
-                            'CYTB': 'CYTB', '-CYTB': '-CYTB',
-                            'Ala': 'A', '-Ala': '-A', 
-                            'Arg': 'R', '-Arg': '-R',
-                            'Asn': 'N', '-Asn': '-N',
-                            'Asp': 'D', '-Asp': '-D',
-                            'Cys': 'C', '-Cys': '-C',
-                            'Gln': 'Q', '-Gln': '-Q',
-                            'Glu': 'E', '-Glu': '-E',
-                            'Gly': 'G', '-Gly': '-G',
-                            'His': 'H', '-His': '-H',
-                            'Ile': 'I', '-Ile': '-I',
-                            'Leu': 'L?', '-Leu': '-L?',
-                            'Lys': 'K', '-Lys': '-K',
-                            'Met': 'M', '-Met': '-M',
-                            'Phe': 'F', '-Phe': '-F',
-                            'Pro': 'P', '-Pro': '-P',
-                            'Ser': 'S?', '-Ser': '-S?',
-                            'Thr': 'T', '-Thr': '-T',
-                            'Trp': 'W', '-Trp': '-W',
-                            'Tyr': 'Y', '-Tyr': '-Y',
-                            'Val': 'V', '-Val': '-V',
+                    // --- External Tools shared gene map and builder ---
+                    const _extToolsGeneMap = {
+                        'CR': 'D-loop', '-CR': '-D-loop',
+                        '12S': '12S', '-12S': '-12S',
+                        '16S': '16S', '-16S': '-16S',
+                        'ATP6': 'ATP6', '-ATP6': '-ATP6',
+                        'ATP8': 'ATP8', '-ATP8': '-ATP8',
+                        'COI': 'COX1', '-COI': '-COX1',
+                        'COII': 'COX2', '-COII': '-COX2',
+                        'COIII': 'COX3', '-COIII': '-COX3',
+                        'ND1': 'ND1', '-ND1': '-ND1',
+                        'ND2': 'ND2', '-ND2': '-ND2',
+                        'ND3': 'ND3', '-ND3': '-ND3',
+                        'ND4L': 'ND4L', 'ND4': 'ND4', '-ND4L': '-ND4L', '-ND4': '-ND4',
+                        'ND5': 'ND5', 'ND6': 'ND6', '-ND5': '-ND5', '-ND6': '-ND6',
+                        'CYTB': 'CYTB', '-CYTB': '-CYTB',
+                        'Ala': 'A', '-Ala': '-A',
+                        'Arg': 'R', '-Arg': '-R',
+                        'Asn': 'N', '-Asn': '-N',
+                        'Asp': 'D', '-Asp': '-D',
+                        'Cys': 'C', '-Cys': '-C',
+                        'Gln': 'Q', '-Gln': '-Q',
+                        'Glu': 'E', '-Glu': '-E',
+                        'Gly': 'G', '-Gly': '-G',
+                        'His': 'H', '-His': '-H',
+                        'Ile': 'I', '-Ile': '-I',
+                        'Leu': 'L?', '-Leu': '-L?',
+                        'Leu1': 'L1', '-Leu1': '-L1', 'Leu-1': 'L1', '-Leu-1': '-L1',
+                        'Leu2': 'L2', '-Leu2': '-L2', 'Leu-2': 'L2', '-Leu-2': '-L2',
+                        'Lys': 'K', '-Lys': '-K',
+                        'Met': 'M', '-Met': '-M',
+                        'Phe': 'F', '-Phe': '-F',
+                        'Pro': 'P', '-Pro': '-P',
+                        'Ser': 'S?', '-Ser': '-S?',
+                        'Ser1': 'S1', '-Ser1': '-S1', 'Ser-1': 'S1', '-Ser-1': '-S1',
+                        'Ser2': 'S2', '-Ser2': '-S2', 'Ser-2': 'S2', '-Ser-2': '-S2',
+                        'Thr': 'T', '-Thr': '-T',
+                        'Trp': 'W', '-Trp': '-W',
+                        'Tyr': 'Y', '-Tyr': '-Y',
+                        'Val': 'V', '-Val': '-V',
+                    };
+
+                    // --- External Tools Header Builder ---
+                    var extToolFields = [
+                        { id: 'accession',  label: 'Accession' },
+                        { id: 'species',    label: 'Species'   },
+                        { id: 'kingdom',    label: 'Kingdom'   },
+                        { id: 'phylum',     label: 'Phylum'    },
+                        { id: 'class',      label: 'Class'     },
+                        { id: 'order',      label: 'Order'     },
+                        { id: 'family',     label: 'Family'    },
+                        { id: 'genus',      label: 'Genus'     },
+                        { id: 'authorship', label: 'Authorship'},
+                    ];
+                    var extToolSelectedFieldIds = ['accession', 'species'];
+                    var extToolDragSrcIdx = null;
+
+                    function renderExtToolFields() {
+                        var availableContainer = document.getElementById('extToolAvailableFields');
+                        var selectedContainer  = document.getElementById('extToolSelectedFields');
+                        if (!availableContainer) return;
+                        availableContainer.innerHTML = '';
+                        selectedContainer.innerHTML  = '';
+                        extToolFields.forEach(function(f) {
+                            if (extToolSelectedFieldIds.includes(f.id)) return;
+                            var tag = document.createElement('span');
+                            tag.className = 'fasta-field-available';
+                            tag.textContent = f.label;
+                            tag.addEventListener('click', function() {
+                                extToolSelectedFieldIds.push(f.id);
+                                renderExtToolFields();
+                                _updateExternalToolsPreview();
+                            });
+                            availableContainer.appendChild(tag);
+                        });
+                        extToolSelectedFieldIds.forEach(function(fid, idx) {
+                            var f = extToolFields.find(function(x) { return x.id === fid; });
+                            if (!f) return;
+                            var tag = document.createElement('span');
+                            tag.className = 'fasta-field-selected';
+                            tag.innerHTML = f.label + ' <i class="fa-solid fa-xmark" style="margin-left:0.3rem;font-size:0.7rem;opacity:0.7;"></i>';
+                            tag.draggable = true;
+                            tag.dataset.idx = idx;
+                            tag.addEventListener('click', function() {
+                                extToolSelectedFieldIds.splice(idx, 1);
+                                renderExtToolFields();
+                                _updateExternalToolsPreview();
+                            });
+                            tag.addEventListener('dragstart', function() { extToolDragSrcIdx = idx; tag.style.opacity='0.5'; });
+                            tag.addEventListener('dragend', function() { tag.style.opacity=''; });
+                            selectedContainer.appendChild(tag);
+                        });
+                    }
+
+                    window.onExtToolFieldDrop = function(e) {
+                        e.preventDefault();
+                        var dropZone = document.getElementById('extToolSelectedFields');
+                        dropZone.classList.remove('dragover');
+                        var tags = Array.from(dropZone.querySelectorAll('.fasta-field-selected'));
+                        var dropIdx = tags.length;
+                        tags.forEach(function(tag, i) {
+                            var rect = tag.getBoundingClientRect();
+                            if (e.clientX < rect.left + rect.width / 2) {
+                                if (dropIdx === tags.length) dropIdx = i;
+                            }
+                        });
+                        if (extToolDragSrcIdx === null || extToolDragSrcIdx === dropIdx) return;
+                        var moved = extToolSelectedFieldIds.splice(extToolDragSrcIdx, 1)[0];
+                        extToolSelectedFieldIds.splice(dropIdx > extToolDragSrcIdx ? dropIdx - 1 : dropIdx, 0, moved);
+                        extToolDragSrcIdx = null;
+                        renderExtToolFields();
+                        _updateExternalToolsPreview();
+                    };
+
+                    function _buildExtToolHeader(row) {
+                        var sep = document.querySelector('input[name="extToolFieldSeparator"]:checked')?.value || '_';
+                        var speciesName = Array.isArray(row.speciesNames) ? row.speciesNames[0] : (row.speciesNames || '');
+                        var accession = Array.isArray(row.vouchers) ? row.vouchers[0] : (row.vouchers || '');
+                        var tax = row.taxonomy || {};
+                        var specParts = speciesName.split(/\s+/);
+                        var fv = {
+                            accession: accession, species: speciesName.replace(/\s+/g, '_'),
+                            kingdom: tax.kingdom || '', phylum: tax.phylum || '', class: tax.class || '',
+                            order: tax.order || '', family: tax.family || '', genus: specParts[0] || '',
+                            authorship: tax.authorship || ''
                         };
-                        const _createInputFile = document.getElementById('createInputFile').value;
-                        const _data = Object.keys(data);
-                        let dataSeq = '';
-            
-                        _data.forEach((id) => {
-                            let _geneOrder = data[id].geneOrder;
-                            let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
-            
-                            if (!geneOrderCounts[_geneOrderUnique]) {
-                                geneOrderCounts[_geneOrderUnique] = 0;
-                            }
-                            geneOrderCounts[_geneOrderUnique]++;
+                        if (extToolSelectedFieldIds.length === 0) return accession || speciesName.replace(/\s+/g, '_');
+                        var sepStr = sep === '|' ? ' ' + sep + ' ' : sep;
+                        return extToolSelectedFieldIds.map(function(fid) { return fv[fid] || ''; }).join(sepStr);
+                    }
+
+                    function _buildExternalToolFile(tool) {
+                        if (!data || typeof data !== 'object') return '';
+                        var _data = Object.keys(data);
+                        var geneOrderCounts = {};
+                        _data.forEach(function (id) {
+                            var go = data[id].geneOrder;
+                            var uniq = [...new Set(go.split(','))].join(',');
+                            geneOrderCounts[uniq] = (geneOrderCounts[uniq] || 0) + 1;
                         });
-            
-                        _data.forEach((id) => {
-                            let _geneOrder = data[id].geneOrder
-                                .split(',')
-                                .filter(gene => gene.trim() !== '-')
-                                .join(',');
-                            
-                            let _geneOrderUnique = [...new Set(_geneOrder.split(','))].join(',');
-            
-                            switch (_createInputFile) {
-                                case 'CREx':
-                                    _geneOrderUnique = _geneOrderUnique.split(',').map(gene => geneMapQmgr[gene] || gene).join(' ');
-                                    dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${_geneOrderUnique}\n`;
-                                    break;
-                                case 'qMGR':
-                                    let count = geneOrderCounts[_geneOrderUnique];
-                                    _geneOrderUnique = _geneOrderUnique.split(',').map(gene => geneMapQmgr[gene] || gene).join(',');
-                                    dataSeq += `>${data[id].vouchers}_${data[id].speciesNames}\n${count},${_geneOrderUnique}\n`;
-                                    break;
-                                default:
-                                    console.error('Unknown tool selected');
-                                    break;
+                        var lines = '';
+                        _data.forEach(function (id) {
+                            var go = data[id].geneOrder.split(',').filter(function (g) { return g.trim() !== '-'; }).join(',');
+                            var uniq = [...new Set(go.split(','))].join(',');
+                            var header = _buildExtToolHeader(data[id]);
+                            if (tool === 'CREx') {
+                                var mapped = uniq.split(',').map(function (g) { return _extToolsGeneMap[g] || g; }).join(' ');
+                                lines += '>' + header + '\n' + mapped + '\n';
+                            } else if (tool === 'qMGR') {
+                                var count = geneOrderCounts[uniq];
+                                var mapped = uniq.split(',').map(function (g) { return _extToolsGeneMap[g] || g; }).join(',');
+                                lines += '>' + header + '\n' + count + ',' + mapped + '\n';
                             }
                         });
-            
-                        const blob = new Blob([dataSeq], { type: 'text/plain' });
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
+                        return lines;
+                    }
+
+                    function _checkExtToolHeaderDuplicates() {
+                        if (!data || typeof data !== 'object' || extToolSelectedFieldIds.length === 0) return [];
+                        var _data = Object.keys(data);
+                        var headers = new Map();
+                        _data.forEach(function(id) {
+                            var header = _buildExtToolHeader(data[id]);
+                            var existing = headers.get(header) || [];
+                            existing.push(id);
+                            headers.set(header, existing);
+                        });
+                        var duplicates = [];
+                        headers.forEach(function(ids, header) {
+                            if (ids.length > 1) duplicates.push({ header: header, ids: ids });
+                        });
+                        return duplicates;
+                    }
+
+                    function _updateExternalToolsPreview() {
+                        var tool = document.getElementById('createInputFile').value;
+                        var preview = document.getElementById('externalToolsPreview');
+                        var info = document.getElementById('externalToolInfo');
+                        if (!preview) return;
+                        var content = _buildExternalToolFile(tool);
+                        // Show max 10 lines in preview
+                        var previewLines = content.split('\n').slice(0, 10);
+                        if (content.split('\n').length > 10) previewLines.push('...');
+                        preview.textContent = previewLines.join('\n') || 'No data available.';
+                        if (info) {
+                            if (tool === 'CREx') {
+                                info.innerHTML = '<i class="fa-solid fa-circle-info me-1"></i> <b>CREx:</b> Gene names separated by spaces, one genome per line. Compatible with CREx, CREx2, and TreeREx.';
+                            } else {
+                                info.innerHTML = '<i class="fa-solid fa-circle-info me-1"></i> <b>qMGR:</b> Gene names separated by commas, preceded by the count of taxa sharing that gene order.';
+                            }
+                        }
+                        // Duplicate header check
+                        var warnEl = document.getElementById('extToolDuplicateWarning');
+                        var warnText = document.getElementById('extToolDuplicateText');
+                        var dlBtn = document.getElementById('downloadInputFile');
+                        if (warnEl) {
+                            var duplicates = _checkExtToolHeaderDuplicates();
+                            if (duplicates.length > 0 && extToolSelectedFieldIds.length > 0) {
+                                var total = duplicates.reduce(function(s, d) { return s + d.ids.length; }, 0);
+                                warnText.textContent = total + ' records produce ' + duplicates.length +
+                                    ' duplicated header(s). Add more fields (e.g., Accession) to make headers unique.';
+                                warnEl.style.display = '';
+                                if (dlBtn) dlBtn.disabled = true;
+                            } else if (extToolSelectedFieldIds.length === 0) {
+                                warnEl.style.display = 'none';
+                                if (dlBtn) dlBtn.disabled = true;
+                            } else {
+                                warnEl.style.display = 'none';
+                                if (dlBtn) dlBtn.disabled = false;
+                            }
+                        }
+                    }
+
+                    // Update preview when tool or separator changes
+                    document.getElementById('createInputFile').addEventListener('change', _updateExternalToolsPreview);
+                    document.querySelectorAll('input[name="extToolFieldSeparator"]').forEach(function(radio) {
+                        radio.addEventListener('change', _updateExternalToolsPreview);
+                    });
+
+                    downloadInputFile.addEventListener('click', function () {
+                        var tool = document.getElementById('createInputFile').value;
+                        var content = _buildExternalToolFile(tool);
+                        var blob = new Blob([content], { type: 'text/plain' });
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
                         a.href = url;
-                        a.download = 'PUMAS_' + _createInputFile + '.txt';
+                        a.download = 'PUMAS_' + tool + '.txt';
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                        var modal = bootstrap.Modal.getInstance(document.getElementById('externalToolsModal'));
+                        if (modal) modal.hide();
                     });
-            
+
                     downloadPlot.addEventListener('click', function () {
                         let startGene = geneStartGlobal || importGeneSelect.value;
                         if (PatternsSelect.value === 'SVG') {
@@ -1999,7 +2270,7 @@
             <!-- Modal de Confirmação Reset Data -->
             <div class="modal fade" id="resetConfirmModal" tabindex="-1" aria-labelledby="resetConfirmLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content bg-light">
+                    <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="resetConfirmLabel"><i class="fa-solid fa-arrow-rotate-left me-2"></i>Reset All Data</h5>
                             <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -2019,9 +2290,9 @@
                                 <i class="fa-solid fa-shield-exclamation"></i> <strong>Warning:</strong> You will need to upload your data again to perform a new analysis.
                             </div>
                         </div>
-                        <div class="modal-footer border-top">
-                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" style="padding:0.5rem 1rem;border:none;border-radius:0.5rem;background:#dc2626;color:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;font-weight:600;" id="confirmResetBtn"><i class="fa-solid fa-arrow-rotate-left"></i> Yes, Reset Everything</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmResetBtn"><i class="fa-solid fa-arrow-rotate-left"></i> Yes, Reset Everything</button>
                         </div>
                     </div>
                 </div>
@@ -2045,8 +2316,8 @@
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
                                     <label style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;"><i class="fa-solid fa-dna me-1"></i> Select Genes to Export</label>
                                     <div style="display:flex;gap:0.4rem;">
-                                        <button type="button" id="fastaSelectAllGenes" style="font-size:0.75rem;padding:0.2rem 0.6rem;border:1px solid #d1d5db;border-radius:0.375rem;background:#fff;cursor:pointer;font-family:inherit;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">Select all</button>
-                                        <button type="button" id="fastaDeselectAllGenes" style="font-size:0.75rem;padding:0.2rem 0.6rem;border:1px solid #d1d5db;border-radius:0.375rem;background:#fff;cursor:pointer;font-family:inherit;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">Deselect all</button>
+                                        <button type="button" id="fastaSelectAllGenes" class="btn btn-sm btn-outline-dark">Select all</button>
+                                        <button type="button" id="fastaDeselectAllGenes" class="btn btn-sm btn-outline-dark">Deselect all</button>
                                     </div>
                                 </div>
                                 <div id="fastaGeneTogglesContainer" style="border:1px solid #e5e7eb;border-radius:0.5rem;padding:0.75rem;max-height:200px;overflow-y:auto;min-height:44px;background:#fafafa;">
@@ -2088,6 +2359,12 @@
                                 <div id="fastaHeaderPreview" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:0.5rem;padding:0.5rem 0.75rem;font-family:monospace;font-size:0.8rem;color:#374151;word-break:break-all;min-height:32px;">&gt;Accession | Species</div>
                             </div>
 
+                            <!-- Duplicate header warning -->
+                            <div id="fastaHeaderDuplicateWarning" style="display:none;padding:0.5rem 0.75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:0.5rem;margin-bottom:0.75rem;">
+                                <div style="font-size:0.8rem;font-weight:600;color:#991b1b;"><i class="fa-solid fa-triangle-exclamation me-1"></i> Duplicate Headers Detected</div>
+                                <div id="fastaHeaderDuplicateText" style="font-size:0.75rem;color:#7f1d1d;margin-top:0.25rem;"></div>
+                            </div>
+
                             <!-- Instructions -->
                             <details style="margin-bottom:1rem;">
                                 <summary style="font-size:0.8rem;font-weight:600;color:#202020;cursor:pointer;"><i class="fa-solid fa-circle-info me-1"></i> Instructions</summary>
@@ -2101,9 +2378,98 @@
                             </details>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#fff'">Cancel</button>
-                            <button type="button" id="confirmFastaDownload" style="padding:0.5rem 1rem;border:none;border-radius:0.5rem;background:#202020;color:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;font-weight:600;" onmouseover="this.style.background='#333'" onmouseout="this.style.background='#202020'">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-dark" id="confirmFastaDownload">
                                 <i class="fa-solid fa-download me-1"></i> Download FASTA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- External Tools Modal -->
+            <div class="modal fade" id="externalToolsModal" tabindex="-1" aria-labelledby="externalToolsLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="externalToolsLabel">
+                                <i class="fa-solid fa-tools me-2"></i>Input File for External Tools
+                            </h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" style="padding:1.25rem;">
+                            <!-- Warning -->
+                            <div style="padding:0.6rem 0.75rem;background:#fffbeb;border:1px solid #fde68a;border-radius:0.5rem;margin-bottom:1rem;">
+                                <div style="font-size:0.8rem;font-weight:600;color:#92400e;">
+                                    <i class="fa-solid fa-triangle-exclamation me-1"></i> Before downloading
+                                </div>
+                                <div style="font-size:0.78rem;color:#78350f;margin-top:0.25rem;">
+                                    Ensure gene names are correct in the <b>Genome Order</b> visualization (Analysis Controls). Ambiguous tRNAs (Leu, Ser) must be renamed to their numbered forms
+                                    (e.g. <b>Leu1</b>/<b>Leu2</b>, <b>Ser1</b>/<b>Ser2</b>) so the export maps them correctly to L1/L2, S1/S2.
+                                </div>
+                            </div>
+
+                            <!-- Tool selection -->
+                            <div class="mb-3">
+                                <label class="form-label" style="font-size:0.85rem;font-weight:600;">Select tool</label>
+                                <select id="createInputFile" class="form-select">
+                                    <option value="CREx" selected>CREx / CREx2 / TreeREx</option>
+                                    <option value="qMGR">qMGR</option>
+                                </select>
+                            </div>
+
+                            <!-- Header Builder: Available Fields -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Available Fields</label>
+                                <div id="extToolAvailableFields" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:36px;"></div>
+                            </div>
+
+                            <!-- Header Builder: Header Composition -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Header Composition <span style="font-weight:400;text-transform:none;letter-spacing:0;">(drag to reorder, click to remove)</span></label>
+                                <div id="extToolSelectedFields" class="fasta-field-dropzone" style="display:flex;flex-wrap:wrap;gap:0.4rem;min-height:44px;padding:0.5rem;" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="onExtToolFieldDrop(event)"></div>
+                            </div>
+
+                            <!-- Separator -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Separator</label>
+                                <div style="display:flex;gap:1rem;">
+                                    <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.85rem;">
+                                        <input type="radio" name="extToolFieldSeparator" value="_" checked style="accent-color:#202020;"> Underscore (<code>_</code>)
+                                    </label>
+                                    <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.85rem;">
+                                        <input type="radio" name="extToolFieldSeparator" value="|" style="accent-color:#202020;"> Pipe (<code>|</code>)
+                                    </label>
+                                    <label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.85rem;">
+                                        <input type="radio" name="extToolFieldSeparator" value="-" style="accent-color:#202020;"> Dash (<code>-</code>)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Preview -->
+                            <div class="mb-3">
+                                <label style="display:block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:0.4rem;">Preview</label>
+                                <div id="externalToolsPreview" style="background:#f3f4f6;border:1px solid #e5e7eb;border-radius:0.5rem;padding:0.75rem;font-family:monospace;font-size:0.75rem;max-height:200px;overflow-y:auto;white-space:pre-wrap;color:#374151;">
+                                    Select a tool to see preview.
+                                </div>
+                            </div>
+
+                            <!-- Tool info -->
+                            <!-- Duplicate header warning -->
+                            <div id="extToolDuplicateWarning" style="display:none;padding:0.5rem 0.75rem;background:#fef2f2;border:1px solid #fecaca;border-radius:0.5rem;margin-bottom:0.75rem;">
+                                <div style="font-size:0.8rem;font-weight:600;color:#991b1b;"><i class="fa-solid fa-triangle-exclamation me-1"></i> Duplicate Headers Detected</div>
+                                <div id="extToolDuplicateText" style="font-size:0.75rem;color:#7f1d1d;margin-top:0.25rem;"></div>
+                            </div>
+
+                            <div id="externalToolInfo" style="font-size:0.78rem;color:#6b7280;padding:0.5rem 0.75rem;background:#f9fafb;border-radius:0.5rem;">
+                                <i class="fa-solid fa-circle-info me-1"></i>
+                                <b>CREx:</b> Gene names separated by spaces, one genome per line.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-dark" id="downloadInputFile">
+                                <i class="fa-solid fa-download me-1"></i> Download
                             </button>
                         </div>
                     </div>
@@ -2115,6 +2481,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="unknownGenesModalLabel"><i class="fa-solid fa-triangle-exclamation me-2"></i>Unknown Gene Names Detected</h5>
+                            <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <p class="mb-3">Select the correct canonical name for each unknown gene before continuing.</p>
@@ -2134,7 +2501,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" style="padding:0.5rem 1rem;border:none;border-radius:0.5rem;background:#202020;color:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;font-weight:600;" id="applyUnknownGeneMappings">Apply mappings and continue</button>
+                            <button type="button" class="btn btn-dark" id="applyUnknownGeneMappings"><i class="fa-solid fa-check me-1"></i> Apply mappings and continue</button>
                         </div>
                     </div>
                 </div>
@@ -2152,7 +2519,7 @@
                             <ul id="fastaMissingGenesList" class="small mb-0"></ul>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
@@ -2170,14 +2537,13 @@
                             <ul id="duplicateGenesList" class="small mb-0"></ul>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" style="padding:0.5rem 1rem;border:1px solid #d1d5db;border-radius:0.5rem;background:#fff;font-size:0.875rem;cursor:pointer;font-family:inherit;" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="PUMASResults" style="display: none;" class="mt-5 w-full mx-auto">
-                <hr>
                 <label class="step-label">
                     <span class="badge text-bg-dark">3</span>
                     <span class="step-label-text">Export Results</span>
@@ -2185,13 +2551,81 @@
                 <p class="step-info">
                     <i class="fa-solid fa-circle-info"></i> After running your analysis, export your results in various formats, generate publication-ready figures, and control genome visualizations.</p>
 
-                <div class="flex flex-wrap gap-4 analysis-grid">
+                <div class="flex flex-wrap analysis-grid" style="gap:0.75rem;">
 
-                    <!-- Card 3.1: Download Files (50%) -->
-                    <div class="w-full lg:w-[calc(50%-0.5rem)]">
+                    <!-- Card 3.1: Species Table (50%) -->
+                    <div class="w-full lg:w-[calc(50%_-_0.375rem)]">
                         <div class="analysis-panel h-100">
                             <div class="analysis-panel-header">
                                 <span class="badge text-bg-step">3.1</span>
+                                <span>Species Table</span>
+                            </div>
+                            <p class="step-info mb-2"><i class="fa-solid fa-circle-info"></i> View and edit species metadata. Fetch taxonomy from GBIF for all loaded species.</p>
+
+                            <div class="mb-2 flex flex-wrap gap-2 items-center">
+                                <button id="fetchAllTaxonomyBtn" class="btn btn-sm btn-dark" type="button" disabled
+                                    data-tippy-content="Fetch taxonomy from GBIF for all species with valid names (genus + epithet). Invalid names will be flagged for editing first.">
+                                    <i class="fa-solid fa-globe me-1"></i> Fetch Taxonomy
+                                </button>
+                                <span id="taxonomyFetchStatus" style="font-size:0.78rem;"></span>
+                                <div id="taxonomyProgressWrap" style="display:none;width:200px;margin-left:0.5rem;">
+                                    <div class="progress" style="height:6px;background:#e5e7eb;border-radius:3px;">
+                                        <div id="taxonomyProgressBar" class="progress-bar" role="progressbar"
+                                             style="width:0%;background:#ff8f00;transition:width 0.2s;border-radius:3px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column visibility toggles -->
+                            <div id="speciesColTogglesRow" class="flex flex-wrap gap-x-3 gap-y-1 mb-2" style="font-size:0.82rem;color:#1f2937;">
+                                <span style="color:#374151;font-weight:600;margin-right:2px;"><i class="fa-solid fa-table-columns me-1"></i>Columns:</span>
+                                <button type="button" class="species-col-toggle" data-col-toggle="accession"><i class="fa-solid fa-eye-slash"></i> Accession</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="kingdom"><i class="fa-solid fa-eye-slash"></i> Kingdom</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="phylum"><i class="fa-solid fa-eye-slash"></i> Phylum</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="class"><i class="fa-solid fa-eye"></i> Class</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="order"><i class="fa-solid fa-eye"></i> Order</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="family"><i class="fa-solid fa-eye"></i> Family</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="genus"><i class="fa-solid fa-eye"></i> Genus</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="species"><i class="fa-solid fa-eye"></i> Species</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="authorship"><i class="fa-solid fa-eye"></i> Authorship</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="pcgs"><i class="fa-solid fa-eye"></i> PCGs</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="rrnas"><i class="fa-solid fa-eye"></i> rRNAs</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="trnas"><i class="fa-solid fa-eye"></i> tRNAs</button>
+                                <button type="button" class="species-col-toggle" data-col-toggle="source"><i class="fa-solid fa-eye-slash"></i> Source</button>
+                            </div>
+
+                            <div class="table-responsive" style="max-height:400px;overflow-y:auto;">
+                                <table class="table table-sm table-hover table-striped" id="speciesTable" style="font-size:0.78rem;">
+                                    <thead class="table-light" style="position:sticky;top:0;z-index:1;">
+                                        <tr>
+                                            <th style="width:30px;">#</th>
+                                            <th data-col="accession">Accession</th>
+                                            <th data-col="kingdom">Kingdom</th>
+                                            <th data-col="phylum">Phylum</th>
+                                            <th data-col="class">Class</th>
+                                            <th data-col="order">Order</th>
+                                            <th data-col="family">Family</th>
+                                            <th data-col="genus">Genus</th>
+                                            <th data-col="species">Species</th>
+                                            <th data-col="authorship">Authorship</th>
+                                            <th data-col="pcgs" class="text-center">PCGs</th>
+                                            <th data-col="rrnas" class="text-center">rRNAs</th>
+                                            <th data-col="trnas" class="text-center">tRNAs</th>
+                                            <th data-col="source">Source</th>
+                                            <th style="width:45px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="speciesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3.2: Download Files (50%) -->
+                    <div class="w-full lg:w-[calc(50%_-_0.375rem)]">
+                        <div class="analysis-panel h-100">
+                            <div class="analysis-panel-header">
+                                <span class="badge text-bg-step">3.2</span>
                                 <span>Download Files</span>
                             </div>
                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Export gene sequences as FASTA, generate input files for external tools, download pattern data, or save your entire session.</p>
@@ -2205,16 +2639,9 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="createInputFile" class="form-label fw-semibold"><i class="fa-solid fa-tools me-1"></i> Input File for External Tools</label>
-                                <select id="createInputFile" class="form-select step-select mb-2" aria-label="Select tool for input file"
-                                    data-tippy-content="Choose a tool to generate a compatible input file">
-                                    <option value="NaN" selected>Choose a tool…</option>
-                                    <option value="CREx">CREx / CREx2 / TreeREx</option>
-                                    <option value="qMGR">qMGR</option>
-                                </select>
-                                <div id="textInfo" style="display: none; text-align: justify; margin-bottom: 0.75rem; padding: 0.75rem; background-color: #f8f9fa; border-radius: 0.5rem; border-left: 3px solid #202020;"></div>
-                                <button id="downloadInputFile" class="btn btn-dark w-100" type="button" disabled
-                                    data-tippy-content="Download the input file for the selected external tool">
+                                <label class="form-label fw-semibold"><i class="fa-solid fa-tools me-1"></i> Input File for External Tools</label>
+                                <button id="openExternalToolsModal" class="btn btn-dark w-100" type="button" disabled
+                                    data-tippy-content="Generate input files for CREx, qMGR and other gene order tools">
                                     <i class="fa-solid fa-download"></i> Download Tool File
                                 </button>
                             </div>
@@ -2236,11 +2663,225 @@
                         </div>
                     </div>
 
-                    <!-- Card 3.2: Figures & Plots (50%) -->
-                    <div class="w-full lg:w-[calc(50%-0.5rem)]">
+                    <!-- Card 3.3: Analysis Controls (50%) -->
+                    <div class="w-full lg:w-[calc(50%_-_0.375rem)]">
                         <div class="analysis-panel h-100">
                             <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">3.2</span>
+                                <span class="badge text-bg-step">3.3</span>
+                                <span>Analysis Controls</span>
+                            </div>
+                            <p class="step-info mb-2"><i class="fa-solid fa-circle-info"></i> Filter genomes to show only shared patterns, align all sequences automatically, or visualize synteny links between matching genes.</p>
+
+                            <!-- Row 1: Pattern Filter | Genome Alignment | Synteny -->
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; align-items:start;">
+                                <div>
+                                    <label class="form-label fw-semibold"><i class="fa-solid fa-filter me-1"></i> Pattern Filter</label>
+                                    <div class="form-check form-switch mt-1">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="Patterns"
+                                            data-tippy-content="When enabled, only unique gene order patterns are shown — identical genome arrangements are collapsed into a single representative">
+                                        <label class="form-check-label" for="Patterns">Show only Patterns</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label fw-semibold"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Genome Alignment</label>
+                                    <div class="flex gap-2 mt-1">
+                                        <button id="autoAlignOrders" class="btn btn-dark flex-1" type="button" disabled
+                                            data-tippy-content="Automatically insert GAP pieces so all genome rows align on shared genes">
+                                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Align
+                                        </button>
+                                        <button id="undoAlignOrders" class="btn btn-outline-dark flex-1" type="button" disabled
+                                            data-tippy-content="Remove all GAP pieces and restore the original gene order">
+                                            <i class="fa-solid fa-rotate-left"></i> Undo Align
+                                        </button>
+                                    </div>
+                                    <details id="alignAdvancedSettings" class="mt-2">
+                                        <summary class="form-label" style="font-size:0.75rem; cursor:pointer; user-select:none; color:#6b7280;">
+                                            <i class="fa-solid fa-sliders me-1"></i> Advanced Parameters
+                                        </summary>
+                                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem 0.5rem; margin-top:0.25rem;">
+                                            <div>
+                                                <label for="nwMatchScore" class="form-label" style="font-size:0.7rem; margin-bottom:0;">Match</label>
+                                                <input type="number" id="nwMatchScore" class="form-control form-control-sm" value="4" step="1">
+                                            </div>
+                                            <div>
+                                                <label for="nwMismatchScore" class="form-label" style="font-size:0.7rem; margin-bottom:0;">Mismatch</label>
+                                                <input type="number" id="nwMismatchScore" class="form-control form-control-sm" value="-2" step="1">
+                                            </div>
+                                            <div>
+                                                <label for="nwGapOpen" class="form-label" style="font-size:0.7rem; margin-bottom:0;">Gap Open</label>
+                                                <input type="number" id="nwGapOpen" class="form-control form-control-sm" value="-4" step="1">
+                                            </div>
+                                            <div>
+                                                <label for="nwGapExtend" class="form-label" style="font-size:0.7rem; margin-bottom:0;">Gap Extend</label>
+                                                <input type="number" id="nwGapExtend" class="form-control form-control-sm" value="-1" step="1">
+                                            </div>
+                                        </div>
+                                    </details>
+                                </div>
+                                <div>
+                                    <label class="form-label fw-semibold"><i class="fa-solid fa-bezier-curve me-1"></i> Synteny</label>
+                                    <div class="mt-1">
+                                        <button id="toggleSynteny" class="btn btn-dark w-100" type="button" disabled
+                                            data-tippy-content="Draw colored connections between identical genes across adjacent genome rows">
+                                            <i class="fa-solid fa-bezier-curve"></i> Show Synteny
+                                        </button>
+                                    </div>
+                                    <div class="mt-1">
+                                        <select id="syntenyModeSelect" class="form-select form-select-sm" disabled>
+                                            <option value="mauve">Mauve Style</option>
+                                            <option value="trapezoid">Trapezoid Style</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Gene Visibility | Genome Order -->
+                            <div class="mt-3 border-top" style="padding-top:0.75rem; display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; align-items:start;">
+                                <div>
+                                    <label class="form-label fw-semibold mb-2"><i class="fa-solid fa-eye me-1"></i> Gene Visibility</label>
+                                    <div class="flex flex-wrap gap-3 items-center">
+                                        <div class="step-form-check form-switch" style="width:auto;padding:0.4rem 0.75rem;">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="showPCGs" checked>
+                                            <label class="form-check-label" for="showPCGs">PCGs</label>
+                                        </div>
+                                        <div class="step-form-check form-switch" style="width:auto;padding:0.4rem 0.75rem;">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="showRRNAs" checked>
+                                            <label class="form-check-label" for="showRRNAs">rRNAs</label>
+                                        </div>
+                                        <div class="step-form-check form-switch" style="width:auto;padding:0.4rem 0.75rem;">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="showTRNAs" checked>
+                                            <label class="form-check-label" for="showTRNAs">tRNAs</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label fw-semibold mb-2"><i class="fa-solid fa-arrow-down-1-9 me-1"></i> Genome Order</label>
+                                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:0.75rem;align-items:end;">
+                                        <!-- Start Gene -->
+                                        <div>
+                                            <label class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;">Start gene</label>
+                                            <div class="flex gap-2 items-center">
+                                                <select id="genomeReorderGeneSelect" class="form-select form-select-sm" style="max-width:160px;">
+                                                    <option value="">— Start Gene —</option>
+                                                </select>
+                                                <button id="applyGenomeReorder" class="btn btn-sm btn-dark" type="button" data-tippy-content="Re-render all genomes starting from the selected gene">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Filter by taxonomy -->
+                                        <div>
+                                            <label class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;">Filter by taxonomy</label>
+                                            <div class="flex gap-2 items-center">
+                                                <select id="filterTaxonomyRank" class="form-select form-select-sm" style="max-width:120px;">
+                                                    <option value="">— Rank —</option>
+                                                    <option value="kingdom">Kingdom</option>
+                                                    <option value="phylum">Phylum</option>
+                                                    <option value="class">Class</option>
+                                                    <option value="order">Order</option>
+                                                    <option value="family">Family</option>
+                                                    <option value="genus">Genus</option>
+                                                </select>
+                                                <select id="filterTaxonomyValue" class="form-select form-select-sm" style="max-width:280px;" disabled>
+                                                    <option value="">— Select rank first —</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- Align visible -->
+                                        <div>
+                                            <label class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;">Align visible</label>
+                                            <button id="alignVisibleGenomes" class="btn btn-sm btn-dark w-100" type="button"
+                                                data-tippy-content="Auto-align only the currently visible genomes, undoing any previous alignment">
+                                                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Align Visible
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: Gene Appearance -->
+                            <div class="mt-3 border-top" style="padding-top:0.75rem;">
+                                <label class="form-label fw-semibold mb-2"><i class="fa-solid fa-palette me-1"></i> Gene Appearance</label>
+                                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:0.75rem;align-items:start;">
+                                    <!-- Group 1: Text -->
+                                    <div style="display:flex;flex-wrap:wrap;gap:0.75rem 0.75rem;align-items:flex-end;">
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label for="geneFontSize" class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Font size (px)</label>
+                                            <input type="number" id="geneFontSize" min="4" max="30" value="13" step="1" class="form-control form-control-sm" style="width:70px;height:31px;">
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label for="geneTextStyle" class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Font style</label>
+                                            <select id="geneTextStyle" class="form-select form-select-sm" style="height:31px;">
+                                                <option value="normal" selected>Normal</option>
+                                                <option value="italic">Italic</option>
+                                                <option value="bold">Bold</option>
+                                                <option value="bold-italic">Bold Italic</option>
+                                            </select>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label for="geneTextColor" class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Font color</label>
+                                            <div id="geneTextColor" style="width:50px;height:31px;border-radius:6px;border:1px solid #d1d5db;background:#000000;cursor:pointer;" data-tippy-content="Click to pick font color"></div>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Text stroke</label>
+                                            <div style="display:flex;gap:6px;align-items:center;height:31px;">
+                                                <div id="geneTextStrokeColor" style="width:50px;height:31px;border-radius:6px;border:1px solid #d1d5db;background:#ffffff;cursor:pointer;" data-tippy-content="Click to pick stroke color"></div>
+                                                <input type="number" id="geneTextStrokeWidth" class="form-control form-control-sm" value="1.5" min="0" max="5" step="0.5" style="width:70px;height:31px;"
+                                                    data-tippy-content="Stroke (border) width in px">
+                                            </div>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label for="strandLineWidth" class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Strand width</label>
+                                            <input type="number" id="strandLineWidth" min="0.5" max="8" value="7.5" step="0.5" class="form-control form-control-sm" style="width:70px;height:31px;"
+                                                data-tippy-content="Width of the strand indicator line above/below each gene">
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label for="genomeRowSpacing" class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Row spacing (px)</label>
+                                            <input type="number" id="genomeRowSpacing" min="0" max="100" value="0" step="1" class="form-control form-control-sm" style="width:70px;height:31px;" disabled
+                                                data-tippy-content="Only available when synteny is enabled">
+                                        </div>
+                                    </div>
+                                    <!-- Group 2: Colors -->
+                                    <div style="display:flex;flex-wrap:wrap;gap:0.75rem 0.75rem;align-items:flex-end;">
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label for="colorPaletteSelect" class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Color palette</label>
+                                            <select id="colorPaletteSelect" class="form-select form-select-sm" style="height:31px;">
+                                                <option value="default" selected>Default (CB-Safe)</option>
+                                                <option value="pastel">Pastel</option>
+                                                <option value="vivid">Vivid</option>
+                                                <option value="grayscale">Grayscale</option>
+                                                <option value="sequential">Sequential (Blue-Yellow)</option>
+                                                <option value="diverging">Diverging (Blue-Red)</option>
+                                            </select>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;">
+                                            <label class="form-label" style="font-size:0.78rem;color:#6b7280;margin-bottom:4px;white-space:nowrap;">Individual gene color</label>
+                                            <div style="display:flex;gap:6px;align-items:center;height:31px;">
+                                                <select id="geneColorSelect" class="form-select form-select-sm" style="height:31px;">
+                                                    <option value="">— Gene —</option>
+                                                </select>
+                                                <button id="openColorPickerModal" class="btn btn-sm btn-dark" type="button" style="height:31px;" data-tippy-content="Open color picker for the selected gene">
+                                                    <i class="fa-solid fa-palette"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;justify-content:flex-end;">
+                                            <button id="resetGeneColors" class="btn btn-sm btn-outline-dark" type="button" style="height:31px;"
+                                                data-tippy-content="Restore all gene colors to the default color-blind safe palette">
+                                                <i class="fa-solid fa-rotate-left me-1"></i> Reset Colors
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3.4: Figures & Plots (50%) -->
+                    <div class="w-full lg:w-[calc(50%_-_0.375rem)]">
+                        <div class="analysis-panel h-100">
+                            <div class="analysis-panel-header">
+                                <span class="badge text-bg-step">3.4</span>
                                 <span>Figures &amp; Plots</span>
                             </div>
                             <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Generate publication-ready puzzle-like plots, download pattern figures, or open an interactive circular/linear genome viewer.</p>
@@ -2283,56 +2924,102 @@
                         </div>
                     </div>
 
-                    <!-- Card 3.3: Analysis Controls (100%) -->
-                    <div class="w-full">
-                        <div class="analysis-panel">
-                            <div class="analysis-panel-header">
-                                <span class="badge text-bg-step">3.3</span>
-                                <span>Analysis Controls</span>
+                </div>
+
+                <!-- Delete Genome Confirmation Modal -->
+                <div class="modal fade" id="deleteGenomeModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fa-solid fa-trash me-2"></i> Delete Genome</h5>
+                                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
                             </div>
-                            <p class="step-info mb-3"><i class="fa-solid fa-circle-info"></i> Filter genomes to show only shared patterns, align all sequences automatically, or visualize synteny links between matching genes.</p>
-                            <div class="flex flex-wrap gap-6 items-start">
-                                <div class="flex-1 min-w-[200px]">
-                                    <label class="form-label fw-semibold"><i class="fa-solid fa-filter me-1"></i> Pattern Filter</label>
-                                    <div class="form-check form-switch mt-1">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="Patterns"
-                                            data-tippy-content="When enabled, only unique gene order patterns are shown — identical genome arrangements are collapsed into a single representative">
-                                        <label class="form-check-label" for="Patterns">Show only Patterns</label>
-                                    </div>
-                                </div>
-                                <div class="flex-1 min-w-[260px]">
-                                    <label class="form-label fw-semibold"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Genome Alignment</label>
-                                    <div class="flex gap-2 mt-1">
-                                        <button id="autoAlignOrders" class="btn btn-dark flex-1" type="button" disabled
-                                            data-tippy-content="Automatically insert GAP pieces so all genome rows align on shared genes">
-                                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Align
-                                        </button>
-                                        <button id="undoAlignOrders" class="btn btn-outline-dark flex-1" type="button" disabled
-                                            data-tippy-content="Remove all GAP pieces and restore the original gene order">
-                                            <i class="fa-solid fa-rotate-left"></i> Undo Align
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="flex-1 min-w-[180px]">
-                                    <label class="form-label fw-semibold"><i class="fa-solid fa-bezier-curve me-1"></i> Synteny</label>
-                                    <div class="mt-1">
-                                        <button id="toggleSynteny" class="btn btn-dark w-100" type="button" disabled
-                                            data-tippy-content="Draw colored connections between identical genes across adjacent genome rows">
-                                            <i class="fa-solid fa-bezier-curve"></i> Show Synteny
-                                        </button>
-                                    </div>
-                                    <div class="mt-1">
-                                        <select id="syntenyModeSelect" class="form-select form-select-sm" disabled>
-                                            <option value="mauve">Mauve Style</option>
-                                            <option value="trapezoid">Trapezoid Style</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="modal-body">
+                                <p style="font-size:0.9rem;">This action cannot be undone. Are you sure you want to delete this genome?</p>
+                                <div id="deleteGenomeName" style="font-weight:600;font-size:0.85rem;color:#dc2626;margin-top:0.5rem;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="confirmDeleteGenomeBtn">
+                                    <i class="fa-solid fa-trash me-1"></i> Delete
+                                </button>
                             </div>
                         </div>
                     </div>
-
                 </div>
+
+                <!-- Edit Species Modal -->
+                <div class="modal fade" id="editSpeciesModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fa-solid fa-pen-to-square me-2"></i> Edit Species</h5>
+                                <button type="button" class="btn-close text-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Read-only info -->
+                                <div id="editSpeciesInfo" class="mb-3 p-2 rounded" style="background:#f3f4f6;font-size:0.85rem;color:#4b5563;"></div>
+
+                                <!-- Species name -->
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-size:0.88rem;font-weight:600;">Species Name</label>
+                                    <input type="text" id="editSpeciesNameInput" class="form-control" placeholder="Genus epithet (e.g. Rhinella marina)" style="font-size:0.92rem;">
+                                    <div id="editSpeciesNameError" class="text-danger mt-1" style="font-size:0.8rem;display:none;"></div>
+                                </div>
+
+                                <!-- Genus (auto) -->
+                                <div class="mb-3">
+                                    <label class="form-label" style="font-size:0.88rem;font-weight:600;">Genus <span style="font-weight:400;color:#9ca3af;">(auto)</span></label>
+                                    <input type="text" id="editSpeciesGenusDisplay" class="form-control" readonly style="background:#f9fafb;font-size:0.92rem;">
+                                </div>
+
+                                <!-- Fetch GBIF button -->
+                                <div class="mb-3">
+                                    <button type="button" id="editSpeciesGbifBtn" class="btn btn-sm btn-outline-dark" disabled>
+                                        <i class="fa-solid fa-globe me-1"></i> Fetch Taxonomy from GBIF
+                                    </button>
+                                    <span id="editSpeciesGbifStatus" class="ms-2" style="font-size:0.8rem;color:#6b7280;"></span>
+                                </div>
+
+                                <!-- Taxonomy grid (2 columns) -->
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+                                    <div>
+                                        <label class="form-label" style="font-size:0.85rem;">Kingdom</label>
+                                        <input type="text" id="editSpeciesKingdom" class="form-control form-control-sm">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.85rem;">Phylum</label>
+                                        <input type="text" id="editSpeciesPhylum" class="form-control form-control-sm">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.85rem;">Class</label>
+                                        <input type="text" id="editSpeciesClass" class="form-control form-control-sm">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.85rem;">Order</label>
+                                        <input type="text" id="editSpeciesOrder" class="form-control form-control-sm">
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.85rem;">Family</label>
+                                        <input type="text" id="editSpeciesFamily" class="form-control form-control-sm">
+                                        <div id="editSpeciesFamilyError" class="text-danger mt-1" style="font-size:0.8rem;display:none;"></div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label" style="font-size:0.85rem;">Authorship</label>
+                                        <input type="text" id="editSpeciesAuthorship" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-dark" id="editSpeciesSaveBtn">
+                                    <i class="fa-solid fa-check me-1"></i> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <script>
                     $(document).ready(function () {
                         const PatternsSelect = document.getElementById('PatternsSelect');
@@ -2352,8 +3039,756 @@
                                 PatternsDownload.disabled = true;
                                 PatternsDownloadFile.disabled = true;
                             }
-                            updateAutoAlignButtonState();
                         });
+
+                        // --- Gene Appearance Controls ---
+                        const geneFontSize = document.getElementById('geneFontSize');
+                        const geneColorSelect = document.getElementById('geneColorSelect');
+                        const resetGeneColors = document.getElementById('resetGeneColors');
+
+                        // Store a backup of original colors for reset
+                        window._originalColorMitochondrial = window._originalColorMitochondrial || JSON.parse(JSON.stringify(colorMitochondrial));
+
+                        geneFontSize.addEventListener('input', function () {
+                            geneLabelFontSize = parseInt(this.value) || 13;
+                            document.querySelectorAll('.gene-text').forEach(el => {
+                                el.setAttribute('font-size', geneLabelFontSize + 'px');
+                            });
+                        });
+
+                        // Row spacing control — applies to synteny bridges height
+                        const genomeRowSpacingInput = document.getElementById('genomeRowSpacing');
+                        window._genomeRowSpacing = 0;
+                        genomeRowSpacingInput.addEventListener('input', function () {
+                            const gap = parseInt(this.value) || 0;
+                            window._genomeRowSpacing = gap;
+                            const newH = 40 + gap;
+                            // Resize bridge SVGs, then recalculate every path inside them
+                            document.querySelectorAll('.synteny-bridge-row').forEach(row => {
+                                const svg = row.querySelector('svg');
+                                if (!svg) return;
+                                const w = svg.getAttribute('width');
+                                svg.setAttribute('height', newH.toString());
+                                svg.setAttribute('viewBox', `0 0 ${w} ${newH}`);
+                                svg.querySelectorAll('.synteny-path').forEach(path => {
+                                    const mode = path.dataset.syntenyMode || 'mauve';
+                                    const tl = parseFloat(path.dataset.topLeft);
+                                    const tr = parseFloat(path.dataset.topRight);
+                                    const bl = parseFloat(path.dataset.bottomLeft);
+                                    const br = parseFloat(path.dataset.bottomRight);
+                                    if (isNaN(tl)) return;
+                                    if (mode === 'mauve') {
+                                        path.setAttribute('d',
+                                            `M ${tl},0 ` +
+                                            `C ${tl},${newH * 0.45} ${bl},${newH * 0.55} ${bl},${newH} ` +
+                                            `L ${br},${newH} ` +
+                                            `C ${br},${newH * 0.55} ${tr},${newH * 0.45} ${tr},0 Z`
+                                        );
+                                    } else {
+                                        path.setAttribute('d',
+                                            `M ${tl},0 L ${bl},${newH} L ${br},${newH} L ${tr},0 Z`
+                                        );
+                                    }
+                                });
+                            });
+                        });
+
+                        // Strand line width control
+                        window._strandLineWidth = 7.5;
+                        var strandLineWidthInput = document.getElementById('strandLineWidth');
+                        strandLineWidthInput.addEventListener('input', function () {
+                            var w = parseFloat(this.value) || 7.5;
+                            window._strandLineWidth = w;
+                            document.querySelectorAll('.gene-strand-bar').forEach(function (el) {
+                                el.setAttribute('stroke-width', w.toString());
+                            });
+                        });
+
+                        // --- Gene Text Formatting Controls ---
+                        window._geneTextFormat = { style: 'normal', color: '#000000', colorChanged: true, strokeColor: '#ffffff', strokeWidth: 1.5 };
+                        const geneTextStyle = document.getElementById('geneTextStyle');
+                        const geneTextStrokeWidth = document.getElementById('geneTextStrokeWidth');
+
+                        // Initialize jscolorpicker for font color
+                        var geneTextColorPicker = null;
+                        var geneTextStrokeColorPicker = null;
+                        try {
+                            geneTextColorPicker = new ColorPicker('#geneTextColor', {
+                                color: '#000000', submitMode: 'instant', enableAlpha: false,
+                                enableEyedropper: false, dialogPlacement: 'bottom'
+                            });
+                            geneTextColorPicker.on('pick', function (color) {
+                                if (!color) return;
+                                window._geneTextFormat.colorChanged = true;
+                                applyGeneTextFormatting();
+                            });
+
+                            geneTextStrokeColorPicker = new ColorPicker('#geneTextStrokeColor', {
+                                color: '#ffffff', submitMode: 'instant', enableAlpha: false,
+                                enableEyedropper: false, dialogPlacement: 'bottom'
+                            });
+                            geneTextStrokeColorPicker.on('pick', function () {
+                                applyGeneTextFormatting();
+                            });
+                        } catch (e) {
+                            console.warn('jscolorpicker not available:', e.message);
+                        }
+
+                        function _getTextColor() {
+                            if (geneTextColorPicker && geneTextColorPicker.color) return geneTextColorPicker.color.string('hex');
+                            return '#000000';
+                        }
+                        function _getStrokeColor() {
+                            if (geneTextStrokeColorPicker && geneTextStrokeColorPicker.color) return geneTextStrokeColorPicker.color.string('hex');
+                            return '#ffffff';
+                        }
+
+                        function applyGeneTextFormatting() {
+                            const style = geneTextStyle.value;
+                            const color = _getTextColor();
+                            const strokeColor = _getStrokeColor();
+                            const strokeWidth = parseFloat(geneTextStrokeWidth.value) || 0;
+
+                            window._geneTextFormat = { style, color, colorChanged: window._geneTextFormat.colorChanged, strokeColor, strokeWidth };
+
+                            document.querySelectorAll('.gene-text').forEach(el => {
+                                el.setAttribute('font-style',
+                                    (style === 'italic' || style === 'bold-italic') ? 'italic' : 'normal');
+                                el.setAttribute('font-weight',
+                                    (style === 'bold' || style === 'bold-italic') ? '700' : '400');
+
+                                if (window._geneTextFormat.colorChanged) {
+                                    el.setAttribute('fill', color);
+                                }
+
+                                if (strokeWidth > 0) {
+                                    el.setAttribute('stroke', strokeColor);
+                                    el.setAttribute('stroke-width', strokeWidth.toString());
+                                    el.setAttribute('paint-order', 'stroke');
+                                } else {
+                                    el.removeAttribute('stroke');
+                                    el.removeAttribute('stroke-width');
+                                    el.removeAttribute('paint-order');
+                                }
+                            });
+                        }
+
+                        geneTextStyle.addEventListener('change', applyGeneTextFormatting);
+                        geneTextStrokeWidth.addEventListener('input', applyGeneTextFormatting);
+
+                        // Color palette control — generated dynamically with chroma.js
+                        let colorPalettes = {};
+                        try {
+                            function generateChromaPalette(geneKeys, scaleColors, mode) {
+                                const filtered = geneKeys.filter(k => k && k !== '-' && k !== 'GAP' && k !== '');
+                                const colors = chroma.scale(scaleColors).mode(mode || 'lab').colors(filtered.length);
+                                const palette = {};
+                                filtered.forEach((key, i) => { palette[key] = colors[i]; });
+                                return palette;
+                            }
+                            const allGeneKeys = Object.keys(colorMitochondrial);
+                            colorPalettes = {
+                                pastel:     generateChromaPalette(allGeneKeys, ['#A8D8EA','#FFDAC1','#F0D9FF','#C8E6C9','#FFE0B2','#D1C4E9'], 'lab'),
+                                vivid:      generateChromaPalette(allGeneKeys, ['#E53935','#FB8C00','#FDD835','#43A047','#1E88E5','#8E24AA'], 'lch'),
+                                grayscale:  generateChromaPalette(allGeneKeys, ['#333333','#BBBBBB'], 'rgb'),
+                                sequential: generateChromaPalette(allGeneKeys, ['#0077BB','#33BBEE','#EE7733','#FFDD44'], 'lab'),
+                                diverging:  generateChromaPalette(allGeneKeys, ['#364B9A','#4A7BB7','#98CAE1','#EAECCC','#FDB366','#F67E4B','#A50026'], 'lab'),
+                            };
+                        } catch (e) {
+                            console.warn('chroma.js not available, palettes disabled:', e.message);
+                        }
+                        const colorPaletteSelect = document.getElementById('colorPaletteSelect');
+                        colorPaletteSelect.addEventListener('change', function () {
+                            const chosen = this.value;
+                            if (chosen === 'default') {
+                                if (window._originalColorMitochondrial) {
+                                    Object.keys(window._originalColorMitochondrial).forEach(k => {
+                                        colorMitochondrial[k] = window._originalColorMitochondrial[k];
+                                    });
+                                }
+                            } else if (colorPalettes[chosen]) {
+                                const pal = colorPalettes[chosen];
+                                Object.keys(pal).forEach(k => { colorMitochondrial[k] = pal[k]; });
+                            }
+                            if (typeof data !== 'undefined' && data && geneStartGlobal) {
+                                createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                            }
+                        });
+
+                        // Populate gene color select when data is available
+                        window.populateGeneColorSelect = function () {
+                            geneColorSelect.innerHTML = '<option value="">— Gene —</option>';
+                            const genes = new Set();
+                            if (Array.isArray(data)) {
+                                data.forEach(g => {
+                                    (g.genes || []).forEach(gn => {
+                                        if (gn && gn !== '-' && gn !== 'gap') genes.add(gn);
+                                    });
+                                });
+                            }
+                            Array.from(genes).sort().forEach(gene => {
+                                const opt = document.createElement('option');
+                                opt.value = gene;
+                                opt.textContent = gene;
+                                geneColorSelect.appendChild(opt);
+                            });
+                        };
+
+                        // --- Custom Color Picker Modal ---
+                        const suggestedColors = [
+                            '#0072B2','#56B4E9','#44AA99','#CC79A7','#E69F00','#F0E442','#D55E00',
+                            '#117733','#AA4499','#999933','#6699CC','#DDCC77','#882255','#332288',
+                            '#661100','#EE7733','#0077BB','#33BBEE','#EE3377','#CC3311','#009988',
+                            '#FF6B6B','#85C79A','#4ECDC4','#FFE66D','#1E88E5','#43A047','#E53935',
+                            '#8E24AA','#FB8C00','#FDD835','#D81B60','#00897B','#5E35B1','#FFB300',
+                            '#FFFFFF','#EEEEEE','#CCCCCC','#999999','#666666','#333333','#000000'
+                        ];
+
+                        document.getElementById('openColorPickerModal').addEventListener('click', async function () {
+                            const gene = geneColorSelect.value;
+                            if (!gene) { alert('Select a gene first.'); return; }
+                            const currentColor = getGeneColor(gene) || '#ff8f00';
+
+                            try {
+                                var picker = new ColorPicker(null, {
+                                    headless: true,
+                                    color: currentColor,
+                                    swatches: suggestedColors,
+                                    enableAlpha: false,
+                                    enableEyedropper: false,
+                                    defaultFormat: 'hex'
+                                });
+                                var color = await picker.prompt(true);
+                                if (color) {
+                                    var newColor = color.string('hex');
+                                    var key = normalizedColorGeneKey(gene);
+                                    colorMitochondrial[key] = newColor;
+                                    if (typeof data !== 'undefined' && data && geneStartGlobal) {
+                                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                                    }
+                                }
+                            } catch (e) {
+                                // Fallback: use old modal if jscolorpicker fails
+                                var newColor = prompt('Enter hex color for ' + gene + ':', currentColor);
+                                if (newColor && /^#[0-9a-fA-F]{6}$/.test(newColor)) {
+                                    var key = normalizedColorGeneKey(gene);
+                                    colorMitochondrial[key] = newColor;
+                                    if (typeof data !== 'undefined' && data && geneStartGlobal) {
+                                        createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                                    }
+                                }
+                            }
+                        });
+
+                        geneColorSelect.addEventListener('change', function () {
+                            // just update preview if modal is open
+                        });
+
+                        resetGeneColors.addEventListener('click', function () {
+                            if (window._originalColorMitochondrial) {
+                                Object.keys(window._originalColorMitochondrial).forEach(k => {
+                                    colorMitochondrial[k] = window._originalColorMitochondrial[k];
+                                });
+                            }
+                            colorPaletteSelect.value = 'default';
+                            if (typeof data !== 'undefined' && data && geneStartGlobal) {
+                                createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                            }
+                        });
+
+                        // --- Gene Visibility Switches ---
+                        const showPCGs = document.getElementById('showPCGs');
+                        const showRRNAs = document.getElementById('showRRNAs');
+                        const showTRNAs = document.getElementById('showTRNAs');
+                        window._geneVisibility = { pcgs: true, rrnas: true, trnas: true };
+
+                        function onVisibilityChange() {
+                            window._geneVisibility.pcgs = showPCGs.checked;
+                            window._geneVisibility.rrnas = showRRNAs.checked;
+                            window._geneVisibility.trnas = showTRNAs.checked;
+                            populateGenomeReorderSelect();
+                            if (typeof data !== 'undefined' && data && geneStartGlobal) {
+                                createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                            }
+                        }
+                        showPCGs.addEventListener('change', onVisibilityChange);
+                        showRRNAs.addEventListener('change', onVisibilityChange);
+                        showTRNAs.addEventListener('change', onVisibilityChange);
+
+                        // --- Genome Reorder Gene Select ---
+                        const reorderGeneSelect = document.getElementById('genomeReorderGeneSelect');
+
+                        function populateGenomeReorderSelect() {
+                            const prev = reorderGeneSelect.value;
+                            reorderGeneSelect.innerHTML = '<option value="">— Start Gene —</option>';
+                            if (!Array.isArray(data) || data.length === 0) return;
+                            const vis = window._geneVisibility || { pcgs: true, rrnas: true, trnas: true };
+                            const gType = (document.getElementById('mt') && document.getElementById('mt').checked)
+                                ? 'Mitochondrial' : 'Chloroplast';
+                            const genes = new Set();
+                            data.forEach(g => {
+                                (g.genes || []).forEach(gn => {
+                                    if (!gn || gn === '-' || gn === 'gap') return;
+                                    const cat = canonicalGeneFeatureType(gn, gType);
+                                    if (cat === 'CDS' && !vis.pcgs) return;
+                                    if (cat === 'rRNA' && !vis.rrnas) return;
+                                    if (cat === 'tRNA' && !vis.trnas) return;
+                                    genes.add(gn);
+                                });
+                            });
+                            Array.from(genes).sort().forEach(gene => {
+                                const opt = document.createElement('option');
+                                opt.value = gene;
+                                opt.textContent = gene;
+                                reorderGeneSelect.appendChild(opt);
+                            });
+                            if (prev && genes.has(prev)) reorderGeneSelect.value = prev;
+                            // Default to geneStartGlobal (from step 2.1.3) if no previous selection
+                            if (!reorderGeneSelect.value && geneStartGlobal && genes.has(geneStartGlobal)) {
+                                reorderGeneSelect.value = geneStartGlobal;
+                            }
+                        }
+                        window.populateGenomeReorderSelect = populateGenomeReorderSelect;
+
+                        document.getElementById('applyGenomeReorder').addEventListener('click', function () {
+                            if (!data || !Array.isArray(data)) return;
+                            const gene = reorderGeneSelect.value;
+                            if (!gene) { alert('Select a gene first.'); return; }
+                            geneStartGlobal = gene;
+                            createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        });
+
+                        // --- Filter by Taxonomy ---
+                        var _unfilteredData = null;
+                        var _filterActive = false;
+
+                        function _getTaxonomyValue(g, rank) {
+                            if (rank === 'genus') {
+                                var name = Array.isArray(g.speciesNames) ? g.speciesNames[0] : (g.speciesNames || '');
+                                return name.trim().split(/\s+/)[0] || '';
+                            }
+                            return (g.taxonomy || {})[rank] || '';
+                        }
+
+                        document.getElementById('filterTaxonomyRank').addEventListener('change', function () {
+                            var rank = this.value;
+                            var valueSelect = document.getElementById('filterTaxonomyValue');
+                            valueSelect.innerHTML = '';
+
+                            // Clear any active filter first
+                            if (_unfilteredData) {
+                                data.length = 0;
+                                _unfilteredData.forEach(function (g) { data.push(g); });
+                                _unfilteredData = null;
+                                _filterActive = false;
+                                createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                                if (typeof window.populateSpeciesTable === 'function') window.populateSpeciesTable();
+                            }
+
+                            if (!rank || !data || !Array.isArray(data)) {
+                                valueSelect.innerHTML = '<option value="">— Select rank first —</option>';
+                                valueSelect.disabled = true;
+                                return;
+                            }
+
+                            var sourceData = _unfilteredData || data;
+                            var valueCounts = {};
+                            sourceData.forEach(function (g) {
+                                var v = _getTaxonomyValue(g, rank);
+                                if (v) valueCounts[v] = (valueCounts[v] || 0) + 1;
+                            });
+
+                            var sorted = Object.keys(valueCounts).sort();
+                            valueSelect.innerHTML = '<option value="">— All (' + sourceData.length + ') —</option>' +
+                                sorted.map(function (v) { return '<option value="' + v + '">' + v + ' (' + valueCounts[v] + ')</option>'; }).join('');
+                            valueSelect.disabled = false;
+                        });
+
+                        document.getElementById('filterTaxonomyValue').addEventListener('change', function () {
+                            var rank = document.getElementById('filterTaxonomyRank').value;
+                            var value = this.value;
+                            if (!rank) return;
+
+                            if (!_unfilteredData) {
+                                _unfilteredData = data.slice();
+                            }
+
+                            if (!value) {
+                                data.length = 0;
+                                _unfilteredData.forEach(function (g) { data.push(g); });
+                                _filterActive = false;
+                            } else {
+                                var filtered = _unfilteredData.filter(function (g) { return _getTaxonomyValue(g, rank) === value; });
+                                data.length = 0;
+                                filtered.forEach(function (g) { data.push(g); });
+                                _filterActive = true;
+                            }
+
+                            createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                            if (typeof window.populateSpeciesTable === 'function') window.populateSpeciesTable();
+                        });
+
+                        // --- Species Table ---
+                        var _speciesHiddenCols = new Set(['accession', 'kingdom', 'phylum', 'source']);
+
+                        function _speciesExtractTaxonomy(genome) {
+                            var organism = (Array.isArray(genome.speciesNames) ? genome.speciesNames[0] : genome.speciesNames || '').trim();
+                            var parts = organism.split(/\s+/);
+                            var genus = parts[0] || '';
+                            var species = parts.slice(1).join(' ') || '';
+                            var tax = genome.taxonomy || {};
+                            return {
+                                kingdom: tax.kingdom || '',
+                                phylum: tax.phylum || '',
+                                class: tax.class || '',
+                                order: tax.order || '',
+                                family: tax.family || '',
+                                genus: genus,
+                                species: species,
+                                authorship: tax.authorship || ''
+                            };
+                        }
+
+                        function _speciesCountGenes(genome) {
+                            var pcgs = 0, rrnas = 0, trnas = 0;
+                            var gType = (document.getElementById('mt') && document.getElementById('mt').checked) ? 'Mitochondrial' : 'Chloroplast';
+                            (genome.genes || []).forEach(function (g) {
+                                if (!g || g === '-' || g === 'gap' || g === 'GAP') return;
+                                var cat = canonicalGeneFeatureType(g, gType);
+                                if (cat === 'CDS') pcgs++;
+                                else if (cat === 'rRNA') rrnas++;
+                                else if (cat === 'tRNA') trnas++;
+                            });
+                            return { pcgs: pcgs, rrnas: rrnas, trnas: trnas };
+                        }
+
+                        function _speciesApplyColumnVisibility() {
+                            var table = document.getElementById('speciesTable');
+                            if (!table) return;
+                            table.querySelectorAll('[data-col]').forEach(function (el) {
+                                el.style.display = _speciesHiddenCols.has(el.dataset.col) ? 'none' : '';
+                            });
+                            document.querySelectorAll('.species-col-toggle[data-col-toggle]').forEach(function (btn) {
+                                var col = btn.dataset.colToggle;
+                                var icon = btn.querySelector('i');
+                                if (!icon) return;
+                                if (_speciesHiddenCols.has(col)) {
+                                    icon.className = 'fa-solid fa-eye-slash';
+                                } else {
+                                    icon.className = 'fa-solid fa-eye';
+                                }
+                            });
+                        }
+
+                        // Column toggle buttons
+                        document.querySelectorAll('.species-col-toggle[data-col-toggle]').forEach(function (btn) {
+                            btn.addEventListener('click', function () {
+                                var col = btn.dataset.colToggle;
+                                if (_speciesHiddenCols.has(col)) {
+                                    _speciesHiddenCols.delete(col);
+                                } else {
+                                    _speciesHiddenCols.add(col);
+                                }
+                                _speciesApplyColumnVisibility();
+                            });
+                        });
+
+                        function _escHtml(s) {
+                            var d = document.createElement('div');
+                            d.textContent = s;
+                            return d.innerHTML;
+                        }
+
+                        window.populateSpeciesTable = function () {
+                            var tbody = document.getElementById('speciesTableBody');
+                            if (!tbody || !Array.isArray(data)) return;
+                            tbody.innerHTML = '';
+                            var fetchBtn = document.getElementById('fetchAllTaxonomyBtn');
+                            if (fetchBtn) fetchBtn.disabled = !data.length;
+
+                            data.forEach(function (genome, i) {
+                                var accession = Array.isArray(genome.vouchers)
+                                    ? genome.vouchers.join(', ') : (genome.vouchers || '—');
+                                var tax = _speciesExtractTaxonomy(genome);
+                                var counts = _speciesCountGenes(genome);
+                                var sf = genome.sourceFile || '';
+                                var isNCBI = (sf === accession || /^[A-Z]{1,2}\d{5,8}/.test(sf));
+                                var sourceBadge = isNCBI
+                                    ? '<span style="background:#d1fae5;color:#065f46;font-size:0.65rem;padding:1px 5px;border-radius:3px;font-weight:600;">GenBank</span> '
+                                    : '<span style="background:#dbeafe;color:#1e40af;font-size:0.65rem;padding:1px 5px;border-radius:3px;font-weight:600;">File</span> ';
+                                var fullSpecies = (tax.genus + (tax.species ? ' ' + tax.species : '')).trim();
+
+                                var tr = document.createElement('tr');
+                                tr.innerHTML =
+                                    '<td>' + (i + 1) + '</td>' +
+                                    '<td data-col="accession">' + _escHtml(accession) + '</td>' +
+                                    '<td data-col="kingdom">' + (tax.kingdom || '—') + '</td>' +
+                                    '<td data-col="phylum">' + (tax.phylum || '—') + '</td>' +
+                                    '<td data-col="class">' + (tax.class || '—') + '</td>' +
+                                    '<td data-col="order">' + (tax.order || '—') + '</td>' +
+                                    '<td data-col="family">' + (tax.family || '—') + '</td>' +
+                                    '<td data-col="genus"><em>' + _escHtml(tax.genus) + '</em></td>' +
+                                    '<td data-col="species"><em>' + _escHtml(fullSpecies) + '</em></td>' +
+                                    '<td data-col="authorship">' + _escHtml(tax.authorship || '—') + '</td>' +
+                                    '<td data-col="pcgs" class="text-center">' + counts.pcgs + '</td>' +
+                                    '<td data-col="rrnas" class="text-center">' + counts.rrnas + '</td>' +
+                                    '<td data-col="trnas" class="text-center">' + counts.trnas + '</td>' +
+                                    '<td data-col="source" style="font-size:0.72rem;">' + sourceBadge + _escHtml(sf || accession) + '</td>' +
+                                    '<td><button class="btn btn-link p-0 edit-species-btn" data-index="' + i + '" ' +
+                                        'data-tippy-content="Edit species name and taxonomy" style="font-size:1rem;color:#6b7280;">' +
+                                        '<i class="fa-solid fa-pen-to-square"></i></button></td>';
+                                tbody.appendChild(tr);
+                            });
+
+                            // Apply column visibility
+                            _speciesApplyColumnVisibility();
+
+                            // Wire edit buttons
+                            tbody.querySelectorAll('.edit-species-btn').forEach(function (btn) {
+                                btn.addEventListener('click', function () {
+                                    openEditSpeciesModal(parseInt(btn.dataset.index));
+                                });
+                            });
+
+                            // Re-init tippy for new elements
+                            if (typeof tippy === 'function') {
+                                tippy('[data-tippy-content]', { allowHTML: true });
+                            }
+                        };
+
+                        // --- Edit Species Modal Logic ---
+                        var _editSpeciesIndex = null;
+
+                        function _validateSpeciesName(name) {
+                            if (!name || !name.trim()) return 'Species name is required';
+                            if (!/^[A-Za-z\s\-]+$/.test(name.trim())) return 'Only letters, spaces, and hyphens are allowed';
+                            var parts = name.trim().split(/\s+/);
+                            if (parts.length < 2) return 'Species name must include genus and epithet (e.g., Rhinella marina)';
+                            if (parts[0][0] !== parts[0][0].toUpperCase()) return 'Genus must start with an uppercase letter';
+                            return null;
+                        }
+
+                        function openEditSpeciesModal(idx) {
+                            _editSpeciesIndex = idx;
+                            var genome = data[idx];
+                            var fullName = Array.isArray(genome.speciesNames)
+                                ? genome.speciesNames.join(', ') : (genome.speciesNames || '');
+                            var accession = Array.isArray(genome.vouchers)
+                                ? genome.vouchers.join(', ') : (genome.vouchers || '—');
+                            var tax = _speciesExtractTaxonomy(genome);
+                            var counts = _speciesCountGenes(genome);
+
+                            // Info section
+                            document.getElementById('editSpeciesInfo').innerHTML =
+                                '<b>Accession:</b> ' + _escHtml(accession) +
+                                ' &nbsp;|&nbsp; <b>Genes:</b> ' + counts.pcgs + ' PCGs, ' + counts.rrnas + ' rRNAs, ' + counts.trnas + ' tRNAs';
+
+                            // Species name
+                            var nameInput = document.getElementById('editSpeciesNameInput');
+                            nameInput.value = fullName;
+                            document.getElementById('editSpeciesNameError').style.display = 'none';
+
+                            // Genus auto
+                            var genusDisplay = document.getElementById('editSpeciesGenusDisplay');
+                            genusDisplay.value = tax.genus;
+
+                            // Auto-update genus on species input
+                            nameInput.oninput = function () {
+                                var parts = nameInput.value.trim().split(/\s+/);
+                                genusDisplay.value = parts[0] || '';
+                                var err = _validateSpeciesName(nameInput.value);
+                                var errEl = document.getElementById('editSpeciesNameError');
+                                if (err) {
+                                    errEl.textContent = err;
+                                    errEl.style.display = 'block';
+                                    document.getElementById('editSpeciesGbifBtn').disabled = true;
+                                } else {
+                                    errEl.style.display = 'none';
+                                    document.getElementById('editSpeciesGbifBtn').disabled = false;
+                                }
+                            };
+
+                            // Taxonomy inputs
+                            document.getElementById('editSpeciesKingdom').value = tax.kingdom;
+                            document.getElementById('editSpeciesPhylum').value = tax.phylum;
+                            document.getElementById('editSpeciesClass').value = tax.class;
+                            document.getElementById('editSpeciesOrder').value = tax.order;
+                            document.getElementById('editSpeciesFamily').value = tax.family;
+                            document.getElementById('editSpeciesAuthorship').value = tax.authorship;
+                            document.getElementById('editSpeciesFamilyError').style.display = 'none';
+
+                            // Enable GBIF button if name is valid
+                            document.getElementById('editSpeciesGbifBtn').disabled = !!_validateSpeciesName(fullName);
+                            document.getElementById('editSpeciesGbifStatus').textContent = '';
+
+                            // Clear any stored fetched authorship
+                            document.getElementById('editSpeciesGbifBtn').dataset.fetchedAuthorship = '';
+
+                            $('#editSpeciesModal').modal('show');
+                        }
+
+                        // GBIF fetch for single species (in modal)
+                        document.getElementById('editSpeciesGbifBtn').addEventListener('click', async function () {
+                            var speciesName = document.getElementById('editSpeciesNameInput').value.trim();
+                            if (!speciesName) return;
+                            var btn = this;
+                            var statusEl = document.getElementById('editSpeciesGbifStatus');
+                            btn.disabled = true;
+                            statusEl.textContent = 'Fetching...';
+
+                            try {
+                                var url = 'https://api.gbif.org/v1/species?name=' + encodeURIComponent(speciesName);
+                                var resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                                if (!resp.ok) throw new Error('GBIF returned ' + resp.status);
+                                var result = await resp.json();
+                                if (result && result.results && result.results.length > 0) {
+                                    var accepted = result.results.find(function (r) { return r.taxonomicStatus === 'ACCEPTED'; }) || result.results[0];
+                                    document.getElementById('editSpeciesKingdom').value = accepted.kingdom || '';
+                                    document.getElementById('editSpeciesPhylum').value = accepted.phylum || '';
+                                    document.getElementById('editSpeciesClass').value = accepted.class || '';
+                                    document.getElementById('editSpeciesOrder').value = accepted.order || '';
+                                    document.getElementById('editSpeciesFamily').value = accepted.family || '';
+                                    document.getElementById('editSpeciesAuthorship').value = accepted.authorship || '';
+                                    btn.dataset.fetchedAuthorship = accepted.authorship || '';
+                                    statusEl.textContent = 'Taxonomy fetched!';
+                                    statusEl.style.color = '#16a34a';
+                                } else {
+                                    statusEl.textContent = 'No results found';
+                                    statusEl.style.color = '#dc2626';
+                                }
+                            } catch (e) {
+                                statusEl.textContent = 'Error: ' + e.message;
+                                statusEl.style.color = '#dc2626';
+                            }
+                            btn.disabled = false;
+                        });
+
+                        // Save edit
+                        document.getElementById('editSpeciesSaveBtn').addEventListener('click', function () {
+                            if (_editSpeciesIndex === null) return;
+                            var genome = data[_editSpeciesIndex];
+                            var newName = document.getElementById('editSpeciesNameInput').value.trim();
+
+                            // Validate
+                            var nameErr = _validateSpeciesName(newName);
+                            if (nameErr) {
+                                var errEl = document.getElementById('editSpeciesNameError');
+                                errEl.textContent = nameErr;
+                                errEl.style.display = 'block';
+                                return;
+                            }
+
+                            // Save species name
+                            genome.speciesNames = newName;
+
+                            // Save taxonomy
+                            var authorshipInput = document.getElementById('editSpeciesAuthorship').value.trim();
+                            genome.taxonomy = {
+                                kingdom: document.getElementById('editSpeciesKingdom').value.trim(),
+                                phylum: document.getElementById('editSpeciesPhylum').value.trim(),
+                                class: document.getElementById('editSpeciesClass').value.trim(),
+                                order: document.getElementById('editSpeciesOrder').value.trim(),
+                                family: document.getElementById('editSpeciesFamily').value.trim(),
+                                authorship: authorshipInput || (genome.taxonomy ? genome.taxonomy.authorship : '') || ''
+                            };
+
+                            $('#editSpeciesModal').modal('hide');
+                            window.populateSpeciesTable();
+                            createSVG(data, geneStartGlobal, _geneListEdit, Patterns.checked);
+                        });
+
+                        // --- GBIF Batch Taxonomy Fetch (with validation) ---
+                        document.getElementById('fetchAllTaxonomyBtn').addEventListener('click', async function () {
+                            if (!Array.isArray(data) || data.length === 0) return;
+                            var btn = this;
+                            var statusEl = document.getElementById('taxonomyFetchStatus');
+
+                            // Step 1: Validate all species names
+                            var invalidIndices = [];
+                            var invalidNames = [];
+                            data.forEach(function (genome, i) {
+                                var name = (Array.isArray(genome.speciesNames)
+                                    ? genome.speciesNames[0] : genome.speciesNames || '').trim();
+                                var err = _validateSpeciesName(name);
+                                if (err) {
+                                    invalidIndices.push(i);
+                                    invalidNames.push((i + 1) + '. ' + (name || '(empty)') + ' — ' + err);
+                                }
+                            });
+
+                            if (invalidIndices.length > 0) {
+                                var msg = 'The following species have invalid names and must be edited before fetching taxonomy:\n\n' +
+                                    invalidNames.join('\n') +
+                                    '\n\nPlease click the edit button (pen icon) on each row to fix the species names.';
+                                alert(msg);
+                                statusEl.textContent = invalidIndices.length + ' invalid species — edit them first';
+                                statusEl.style.color = '#dc2626';
+                                return;
+                            }
+
+                            // Step 2: Group by species, batch fetch
+                            btn.disabled = true;
+                            statusEl.style.color = '';
+                            statusEl.textContent = 'Fetching...';
+                            var progressWrap = document.getElementById('taxonomyProgressWrap');
+                            var progressBar = document.getElementById('taxonomyProgressBar');
+                            if (progressWrap) { progressWrap.style.display = ''; progressBar.style.width = '0%'; }
+
+                            var speciesMap = new Map();
+                            data.forEach(function (genome, i) {
+                                var name = (Array.isArray(genome.speciesNames)
+                                    ? genome.speciesNames[0] : genome.speciesNames || '').trim();
+                                if (!name) return;
+                                if (!speciesMap.has(name)) speciesMap.set(name, []);
+                                speciesMap.get(name).push(i);
+                            });
+
+                            var uniqueSpecies = Array.from(speciesMap.keys());
+                            var completed = 0, success = 0, errors = 0;
+                            var BATCH_SIZE = 5;
+
+                            for (var b = 0; b < uniqueSpecies.length; b += BATCH_SIZE) {
+                                var batch = uniqueSpecies.slice(b, b + BATCH_SIZE);
+                                await Promise.all(batch.map(async function (name) {
+                                    try {
+                                        var url = 'https://api.gbif.org/v1/species?name=' + encodeURIComponent(name);
+                                        var resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                                        if (!resp.ok) throw new Error();
+                                        var result = await resp.json();
+                                        if (result && result.results && result.results.length > 0) {
+                                            var accepted = result.results.find(function (r) { return r.taxonomicStatus === 'ACCEPTED'; }) || result.results[0];
+                                            var taxonomy = {
+                                                kingdom: accepted.kingdom || '',
+                                                phylum: accepted.phylum || '',
+                                                class: accepted.class || '',
+                                                order: accepted.order || '',
+                                                family: accepted.family || '',
+                                                authorship: accepted.authorship || ''
+                                            };
+                                            for (var idx of speciesMap.get(name)) {
+                                                data[idx].taxonomy = taxonomy;
+                                            }
+                                            success++;
+                                        } else { errors++; }
+                                    } catch (e) { errors++; }
+                                    completed++;
+                                    statusEl.textContent = completed + '/' + uniqueSpecies.length + ' species...';
+                                    if (progressBar) progressBar.style.width = Math.round((completed / uniqueSpecies.length) * 100) + '%';
+                                }));
+                                if (b + BATCH_SIZE < uniqueSpecies.length) {
+                                    await new Promise(function (r) { return setTimeout(r, 200); });
+                                }
+                            }
+                            statusEl.style.color = '#16a34a';
+                            statusEl.textContent = 'Done: ' + success + '/' + uniqueSpecies.length + ' fetched' +
+                                (errors > 0 ? ' (' + errors + ' failed)' : '');
+                            btn.disabled = false;
+                            if (progressWrap) setTimeout(function () { progressWrap.style.display = 'none'; }, 2000);
+                            window.populateSpeciesTable();
+                        });
+
+                        // Apply initial column visibility
+                        _speciesApplyColumnVisibility();
                     });
                 </script>
             </div>
@@ -2362,20 +3797,21 @@
     </main>
 
     <div class="modal fade" id="ViewGenomeDraw" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 id="ViewPlotTitle" class="modal-title"></h5>
+                <div class="modal-header">
+                    <h5 id="ViewPlotTitle" class="modal-title"><i class="fa-solid fa-circle-nodes me-2"></i></h5>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="ViewPlotFigureCaption" class="figure-caption text-center" style="font-size:0.82rem;color:#6b7280;padding:0.2rem 0;width:95%;"></div>
                     <div id="LinearGenome"></div>
                 </div>
-                <div class="modal-footer bg-dark">
-                    <button type="button" class="btn btn-lg btn-light" id="ViewPlotColor"><i class="fa-solid fa-circle-half-stroke"></i> Invert Colors</button>
-                    <button type="button" class="btn btn-lg btn-light" id="ViewPlotFormat"><i class="fa-solid fa-rotate"></i> Linear/Circular</button>
-                    <button type="button" class="btn btn-lg btn-light" id="ViewPlotDownload"><i class="fa-solid fa-download"></i> Download PNG</button>
-                    <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal"><i class="fa-solid fa-xmark"></i> Close</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" id="ViewPlotColor"><i class="fa-solid fa-circle-half-stroke me-1"></i> Invert Colors</button>
+                    <button type="button" class="btn btn-outline-dark" id="ViewPlotFormat"><i class="fa-solid fa-rotate me-1"></i> Linear/Circular</button>
+                    <button type="button" class="btn btn-dark" id="ViewPlotDownload"><i class="fa-solid fa-download me-1"></i> Download PNG</button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i> Close</button>
                 </div>
             </div>
         </div>
@@ -2385,7 +3821,10 @@
     <div class="modal fade" id="addGeneModal" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header h3 bg-dark text-white">Add a GAP, New Gene or Region</div>
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-circle-plus me-2"></i>Add a GAP, New Gene or Region</h5>
+                    <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
                     <div class="input-group mb-3">
                         <label class="input-group-text" for="geneNameInput">Choose a GAP, Gene or Region</label>
@@ -2480,8 +3919,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-lg btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-lg btn-success" id="saveGeneButton">add the Gene or Region</button>
+                    <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"><i class="fa-solid fa-xmark me-1"></i> Close</button>
+                    <button type="button" class="btn btn-dark" id="saveGeneButton"><i class="fa-solid fa-plus me-1"></i> Add the Gene or Region</button>
                 </div>
             </div>
         </div>
@@ -2541,15 +3980,33 @@
 <script src="PUMAS.js"></script>
 <script>
     $(document).ready(function () {
-        /* Initialize Tippy on all elements that carry tooltip data */
+        // --- Reset all form controls to their HTML defaults on page load ---
+        // Browsers may preserve old values after a refresh; this ensures a clean state.
+        document.querySelectorAll('input[type="number"]').forEach(function (el) {
+            if (el.defaultValue) el.value = el.defaultValue;
+        });
+        document.querySelectorAll('select').forEach(function (el) {
+            // Reset to the first <option> with 'selected' attribute, or index 0
+            var def = el.querySelector('option[selected]');
+            el.value = def ? def.value : (el.options[0] ? el.options[0].value : '');
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(function (el) {
+            el.checked = el.hasAttribute('checked');
+        });
+
+        /* Re-init Tippy — destroy existing instances first to avoid duplicates */
         function initTippy() {
+            document.querySelectorAll('[data-tippy-content]').forEach(el => {
+                if (el._tippy) el._tippy.destroy();
+            });
             tippy('[data-tippy-content]', {
                 allowHTML: true,
-                theme: 'light-border',
+                theme: 'pumas',
                 placement: 'top',
                 arrow: true,
                 delay: [200, 0],
                 maxWidth: 300,
+                appendTo: () => document.body,
             });
         }
         initTippy();

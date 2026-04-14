@@ -18,6 +18,10 @@ const MitochondrialGenes = {
     "ND5": ['NADH dehydrogenase subunit 5', 'NAD dehydrogenase subunit 5', 'NADH dehrogenase subunit 5', 'NADH dehydrogenase subunit-5', 'NADH hehydrogenase subunit 5', 'NADH denydrogenase subunit 5', 'NADH dehydrogenase 5', 'ND5', 'NADH dehydrogenase subunits 5', 'NADH hydrogenase subunit 5', 'subunit 5 of the NADH ubiquinone oxidoreductase complex', 'NADH deydrogenase subunit 5', 'NADH dehydrogenase subnit 5', 'NADH dehydrodenase subunit 5', 'NADH5', 'HADA dehydrogenase subunit 5', 'NADH dehydrogenase subunit V', 'NADH5 protein', 'NADH subunit 5', 'NADH dehydrogenase subunit 5-0', 'NADH-ubiquinone oxidoreductase chain 5', 'NADH-ubiquinone oxidoreductase subunit V', 'NADH dehydrogenase, subunit 5', 'NADH dehydrogenase, subunit 5 complex I', 'NADH 5', 'NADH dehydrogenase subumit 5', 'NADH-ubiquinone oxidoreductase subunit 5', 'NADH ubiquinone oxidoreductase subunit 5', 'nicotinamide adenine dinucleotide dehydrogenase subunit 5', 'truncated NADH dehydrogenase subunit 5', 'NADH dehydrogenase subunit5', 'NADH dehydroghenase subunit 5'],
     "ND6": ['NADH dehydrogenase subunit 6', 'NAD dehydrogenase subunit 6', 'NADH dehydrogenase subunit-6', 'NADH denydrogenase subunit 6', 'NADH dehydrogenase 6', 'ND6', 'NADH dehydrogenase subunits 6', 'subunit 6 of the NADH ubiquinone oxidoreductase complex', 'NADH deydrogenase subunit 6', 'NADH dehydrogenase subnit 6', 'NADH6', 'NADH dehydrogenase subunit VI', 'NADH6 protein', 'NADH subunit 6', 'truncated NADH dehydrogenase subunit 6', 'NADH dehygrogenase subunit 6', 'NADH dehydrogenease subunit 6', 'NADH-ubiquinone oxidoreductase chain 6', 'NADH dehydrogenase, subunit 6', 'NADH dsehydrogenase subunit 6', 'NADH-ubiquinone oxidoreductase subunit VI', 'NADH 6', 'NADH dehydrogenase subumit 6', 'NADH-ubiquinone oxidoreductase subunit 6', 'NADH ubiquinone oxidoreductase subunit 6', 'nicotinamide adenine dinucleotide dehydrogenase subunit 6', 'NADH dehydrogenase subunit6'],
     "CR": ['Control region', 'non-coding region', 'putative control region', 'control region 1', 'control region ii', 'control region i', 'control region 2', 'noncoding region', 'pseudo control region', 'cr', 'control region (d-loop)', 'd-loop control region', 'similar to control region', 'non coding region', 'conrol region', 'region: control region', 'a+t-rich region', 'putative control region 2', 'd-loop region (= control reagion)', 'pseudo contorl region', 'a+t rich region', 'c-rich region', 'largest non-coding region', 'd-loop', 'd loop', 'control region cr', 'the control region', 'control region c-rich sequence', 'control region coretas sequence', 'putative d-loop/control region', 'd-loop containing region', 'a+t rich', 'at-rich region'],
+    "Leu-1": ['tRNA-Leu(UUR)', 'tRNA-Leu1', 'Leu1', 'trnL-uaa', 'trnL1'],
+    "Leu-2": ['tRNA-Leu(CUN)', 'tRNA-Leu2', 'Leu2', 'trnL-uag', 'trnL2'],
+    "Ser-1": ['tRNA-Ser(AGN)', 'tRNA-Ser1', 'Ser1', 'trnS-gct', 'trnS1'],
+    "Ser-2": ['tRNA-Ser(UCN)', 'tRNA-Ser2', 'Ser2', 'trnS-tga', 'trnS2'],
 };
 
 const ChloroplastGenes = {
@@ -124,36 +128,128 @@ const ChloroplastGenes = {
 }
 
 
+// =============================================================================
+// COLOR-BLIND SAFE PALETTE (Wong 2011 + Paul Tol bright/muted)
+//
+// Sources:
+//   Wong, B. (2011). Color blindness. Nature Methods, 8(6), 441.
+//   https://doi.org/10.1038/nmeth.1618
+//   Tol, P. (2021). Colour Schemes (technical note SRON/EPS/TN/09-002).
+//   https://personal.sron.nl/~pault/data/colourschemes.pdf
+//
+// All hues are chosen to remain distinguishable under deuteranopia, protanopia,
+// and tritanopia. Related gene families share a base hue; closely related genes
+// (e.g., COI/COII/COIII) sit on the same hue ramp with luminance variation.
+// =============================================================================
 var colorMitochondrial = {
     "-": "#EEEEEE", "GAP": "#EEEEEE", "": "#EEEEEE",
 
-    "COI": "#FF6347", "COII": "#4682B4", "COIII": "#FF4500",
-    "tRNA-Met": "#32CD32", "tRNA-Gln": "#DA70D6", "tRNA-Lys": "#7FFF00", "tRNA-Ile": "#FFA07A", "tRNA-Trp": "#BA55D3",
-    "tRNA-Cys": "#4169E1", "tRNA-Tyr": "#8B008B", "tRNA-Leu": "#6A5ACD", "tRNA-Asp": "#20B2AA", "tRNA-His": "#8B4513",
-    "tRNA-Thr": "#1E90FF", "tRNA-Pro": "#B22222", "tRNA-Ser": "#CD5C5C", "tRNA-Val": "#5F9EA0", "tRNA-Gly": "#3CB371",
-    "tRNA-Ala": "#FFD700", "tRNA-Arg": "#483D8B", "tRNA-Asn": "#9ACD32", "tRNA-Glu": "#2E8B57", "tRNA-Phe": "#8A2BE2",
+    // ----- Mitochondrial protein-coding genes (CB-safe Wong/Tol mix) -----
+    "COI":   "#0072B2",  // deep blue
+    "COII":  "#56B4E9",  // sky blue
+    "COIII": "#44AA99",  // teal
+    "CYTB":  "#CC79A7",  // reddish purple
+    "ATP6":  "#E69F00",  // orange
+    "ATP8":  "#F0E442",  // yellow
+    "ND1":   "#D55E00",  // vermillion
+    "ND2":   "#117733",  // forest green
+    "ND3":   "#AA4499",  // mauve
+    "ND4":   "#999933",  // olive
+    "ND4L":  "#6699CC",  // slate blue
+    "ND5":   "#DDCC77",  // sand
+    "ND6":   "#882255",  // wine
 
-    "ND1": "#FA8072", "ND2": "#C71585", "ND3": "#FF1493", "ND4": "#9932CC", "ND4L": "#00CED1", "ND5": "#9400D3", "ND6": "#FF00FF",
-    "ATP8": "#8FBC8F", "ATP6": "#6495ED",
-    "16S": "#00FA9A", "12S": "#00BFFF",
-    "CYTB": "#F08080",
-    "CR": "#DB7093",
-    "OL": "#ADFF2F", "OH": "#FFB6C1",
+    // ----- rRNAs -----
+    "12S":   "#332288",  // indigo
+    "16S":   "#661100",  // deep brick
 
-    "accD": "#BC8F8F", "atpA": "#B0E0E6", "atpB": "#00008B", "atpE": "#008B8B", "atpF": "#B8860B", "atpH": "#556B2F", "atpI": "#FF8C00",
-    "ccsA": "#703642", "cemA": "#7B68EE", "chlB": "#DAA520", "chlL": "#A0522D", "chlN": "#6B8E23", "clpP": "#CD853F", "clpP1": "#808000",
-    "cysA": "#87CEFA", "cysT": "#DEB887", "ftsH": "#C0C0C0", "infA": "#87CEEB", "lhbA": "#FF6347", "matK": "#40E0D0", "ndhA": "#EE82EE",
-    "ndhB": "#F5DEB3", "ndhC": "#FFFF00", "ndhD": "#9ACD32", "ndhE": "#696969", "ndhF": "#800000", "ndhG": "#66CDAA", "ndhH": "#0000CD",
-    "ndhI": "#BA55D3", "ndhJ": "#9370DB", "ndhK": "#3CB371", "pafI": "#7FFFD4", "pafII": "#FFDAB9", "pbf1": "#48D1CC", "petA": "#C71585",
-    "petB": "#191970", "petD": "#F5FFFA", "petE": "#FFE4E1", "petG": "#FFE4B5", "petL": "#FFDEAD", "petN": "#000080", "psaA": "#FDF5E6",
-    "psaB": "#808080", "psaC": "#8B0000", "psaI": "#BDB76B", "psaJ": "#8B008B", "psaM": "#556B2F", "psb30": "#FF4500", "psbA": "#DEB890",
-    "psbB": "#663399", "psbC": "#FF0000", "psbD": "#98FB98", "psbE": "#AFEEEE", "psbF": "#DB7093", "psbG": "#FFEFD5", "psbH": "#FFD700",
-    "psbI": "#CD853F", "psbJ": "#FFC0CB", "psbK": "#DDA0DD", "psbL": "#B0C4DE", "psbM": "#00FF7F", "psbN": "#48D1CC", "psbT": "#C71585",
-    "psbZ": "#191970", "rbcL": "#F5F5F5", "rpl14": "#FFE4C4", "rpl16": "#008080", "rpl2": "#FAEBD7", "rpl20": "#D2B48C", "rpl21": "#FFFAF0",
-    "rpl22": "#F0FFF0", "rpl23": "#228B22", "rpl32": "#FF00FF", "rpl33": "#DCDCDC", "rpl36": "#F8F8FF", "rpoA": "#FFFAFA", "rpoB": "#00FA9A",
-    "rpoC1": "#B0E0DD", "rpoC2": "#FFFACD", "rps11": "#ADD8E6", "rps12": "#F08080", "rps14": "#E0FFFF", "rps15": "#FAFAD2", "rps16": "#D3D3D3",
-    "rps18": "#90EE90", "rps19": "#FFB6C1", "rps2": "#FFA07A", "rps3": "#20B2AA", "rps4": "#87CEFA", "rps7": "#778899", "rps8": "#B0C4DE",
-    "rrn16S": "#FFFFE0", "rrn23S": "#00FFFF", "rrn4.5S": "#32CD32", "rrn5S": "#FAF0E6", "ycf2": "#800080", "ycf1": "#66CDAA", "ycl2": "#0000FF"
+    // ----- Regulatory regions / origins of replication -----
+    "CR":    "#777777",
+    "OL":    "#AAAAAA",
+    "OH":    "#444444",
+
+    // ----- Mitochondrial tRNAs (Tol bright + extensions, 22 amino acids) -----
+    "tRNA-Ala": "#EE7733",
+    "tRNA-Arg": "#0077BB",
+    "tRNA-Asn": "#33BBEE",
+    "tRNA-Asp": "#EE3377",
+    "tRNA-Cys": "#CC3311",
+    "tRNA-Gln": "#009988",
+    "tRNA-Glu": "#BBBB44",
+    "tRNA-Gly": "#88CCEE",
+    "tRNA-His": "#44BB99",
+    "tRNA-Ile": "#99CC66",
+    "tRNA-Leu": "#777733",
+    "tRNA-Lys": "#EECC66",
+    "tRNA-Met": "#EE8866",
+    "tRNA-Phe": "#FFAABB",
+    "tRNA-Pro": "#77AADD",
+    "tRNA-Ser": "#5599CC",
+    "tRNA-Thr": "#88BB55",
+    "tRNA-Trp": "#225522",
+    "tRNA-Tyr": "#BB9944",
+    "tRNA-Val": "#552288",
+    "tRNA-Sec": "#771155",
+    "tRNA-Pyl": "#114477",
+
+    // ============= Chloroplast genes (CB-safe by family) =============
+    // Each gene family shares a hue ramp; distinct families are CB-safe pairs.
+    // ATP synthase complex — orange ramp
+    "atpA": "#E69F00", "atpB": "#D08800", "atpE": "#B87100", "atpF": "#A05A00", "atpH": "#88450C", "atpI": "#FFB347",
+
+    // NADH dehydrogenase (ndh) — forest-green ramp
+    "ndhA": "#117733", "ndhB": "#1A8742", "ndhC": "#229952", "ndhD": "#2BAB62", "ndhE": "#3DBC72", "ndhF": "#4FCD82",
+    "ndhG": "#5BD58E", "ndhH": "#6CDD9A", "ndhI": "#7DE5A6", "ndhJ": "#8EEDB2", "ndhK": "#9FF5BE",
+
+    // Photosystem I (psa*) — sky-blue ramp
+    "psaA": "#0072B2", "psaB": "#1B83BC", "psaC": "#3694C5", "psaI": "#51A5CF", "psaJ": "#6CB6D8", "psaM": "#87C7E2",
+
+    // Photosystem II (psb*) — reddish-purple ramp
+    "psbA": "#CC79A7", "psbB": "#BD6C9A", "psbC": "#AE5F8E", "psbD": "#9E5281", "psbE": "#8F4475", "psbF": "#803768",
+    "psbG": "#D689B5", "psbH": "#E199C2", "psbI": "#ECA9D0", "psbJ": "#F7B9DD", "psbK": "#FFCCE5", "psbL": "#FFB1D2",
+    "psbM": "#E07AAE", "psbN": "#D26B9F", "psbT": "#C45D90", "psbZ": "#B64E81", "psb30": "#A8407E",
+
+    // Cytochrome b6/f (pet*) — teal ramp
+    "petA": "#44AA99", "petB": "#3A998A", "petD": "#30887B", "petE": "#26776C", "petG": "#1C665D", "petL": "#13554E",
+    "petN": "#0A443F",
+
+    // RNA polymerase (rpo*) — vermillion ramp
+    "rpoA": "#D55E00", "rpoB": "#C25400", "rpoC1": "#AF4A00", "rpoC2": "#9C4000",
+
+    // Large ribosomal subunit (rpl*) — wine ramp
+    "rpl2":  "#882255", "rpl14": "#943160", "rpl16": "#A0406B", "rpl20": "#AC4F76", "rpl21": "#B85E81", "rpl22": "#C46D8C",
+    "rpl23": "#D07C97", "rpl32": "#DC8BA2", "rpl33": "#E89AAD", "rpl36": "#F4A9B8",
+
+    // Small ribosomal subunit (rps*) — slate-blue ramp
+    "rps2":  "#6699CC", "rps3":  "#739FCF", "rps4":  "#80A5D2", "rps7":  "#8DABD5", "rps8":  "#9AB1D8",
+    "rps11": "#A7B7DB", "rps12": "#B4BDDE", "rps14": "#C1C3E1", "rps15": "#5588BB", "rps16": "#4A7AAA",
+    "rps18": "#3F6C99", "rps19": "#345E88",
+
+    // Plastid rRNAs — indigo / brick
+    "rrn4.5S": "#332288", "rrn5S":  "#3D2C99", "rrn16S": "#661100", "rrn23S": "#7A1E12",
+
+    // Hypothetical / conserved (ycf*) — sand
+    "ycf1": "#DDCC77", "ycf2": "#D1BF66", "ycl2": "#C5B255",
+
+    // Other / accessory chloroplast genes
+    "accD": "#999933",
+    "ccsA": "#AAAA44",
+    "cemA": "#BBBB55",
+    "chlB": "#7B6F2A",
+    "chlL": "#8C8035",
+    "chlN": "#9D9140",
+    "clpP": "#AA4499",
+    "clpP1": "#B854A7",
+    "cysA": "#5599CC",
+    "cysT": "#6BAAD8",
+    "ftsH": "#888888",
+    "infA": "#AAAAAA",
+    "lhbA": "#EE7733",
+    "matK": "#225522",
+    "pafI": "#88CCBB",
+    "pafII": "#99DDCC",
+    "pbf1": "#5599AA",
+    "rbcL": "#0072B2"
 };
 
 
@@ -170,13 +266,13 @@ function canonicalGeneFeatureType(geneName, genomeType) {
     if (genomeType === 'Mitochondrial') {
         if (geneName === '12S' || geneName === '16S') return 'rRNA';
         if (geneName === 'OL' || geneName === 'OH' || geneName === 'CR' || geneName === '-') return 'misc';
-        if (geneName === 'tRNA-Met' || /^[A-Z][a-z]{2}$/.test(geneName) || /^Leu[12]$/.test(geneName) || /^Ser[12]$/.test(geneName)) {
+        if (geneName === 'tRNA-Met' || /^[A-Z][a-z]{2}$/.test(geneName) || /^Leu[-]?[12]$/.test(geneName) || /^Ser[-]?[12]$/.test(geneName)) {
             return 'tRNA';
         }
         return 'CDS';
     }
 
-    if (geneName === 'tRNA-Met' || /^[A-Z][a-z]{2}$/.test(geneName) || /^Leu[12]$/.test(geneName) || /^Ser[12]$/.test(geneName)) {
+    if (geneName === 'tRNA-Met' || /^[A-Z][a-z]{2}$/.test(geneName) || /^Leu[-]?[12]$/.test(geneName) || /^Ser[-]?[12]$/.test(geneName)) {
         return 'tRNA';
     }
     if (/^rrn/i.test(geneName)) return 'rRNA';
@@ -237,22 +333,22 @@ function resolveLeuSerFromEvidence(geneQualifier, product, anticodonRaw, note) {
     const anti = parseAnticodonValue(anticodonRaw);
 
     // Tier 1 — anticodon codon/code keywords in evidence text (DNA and RNA forms)
-    if (evidence.includes('uur') || evidence.includes('(uaa)') || evidence.includes('taa') || evidence.includes('uaa') || /trnl[-_](?:uaa|uur)/i.test(evidence)) return 'Leu1';
-    if (evidence.includes('cun') || evidence.includes('(uag)') || evidence.includes('tag') || evidence.includes('uag') || /trnl[-_](?:uag|cun)/i.test(evidence)) return 'Leu2';
-    if (evidence.includes('agn') || evidence.includes('(gct)') || evidence.includes('gcu') || evidence.includes('gct') || /trns[-_](?:gct|gcu|agn)/i.test(evidence)) return 'Ser1';
-    if (evidence.includes('ucn') || evidence.includes('(tga)') || evidence.includes('uga') || evidence.includes('tga') || /trns[-_](?:tga|uga|ucn)/i.test(evidence)) return 'Ser2';
+    if (evidence.includes('uur') || evidence.includes('(uaa)') || evidence.includes('taa') || evidence.includes('uaa') || /trnl[-_](?:uaa|uur)/i.test(evidence)) return 'Leu-1';
+    if (evidence.includes('cun') || evidence.includes('(uag)') || evidence.includes('tag') || evidence.includes('uag') || /trnl[-_](?:uag|cun)/i.test(evidence)) return 'Leu-2';
+    if (evidence.includes('agn') || evidence.includes('(gct)') || evidence.includes('gcu') || evidence.includes('gct') || /trns[-_](?:gct|gcu|agn)/i.test(evidence)) return 'Ser-1';
+    if (evidence.includes('ucn') || evidence.includes('(tga)') || evidence.includes('uga') || evidence.includes('tga') || /trns[-_](?:tga|uga|ucn)/i.test(evidence)) return 'Ser-2';
 
     // Tier 2 — explicit numbered tRNA name tags
-    if (evidence.includes('trnl1') || evidence.includes('leu1') || /\btrnl[-_]?1\b/.test(evidence)) return 'Leu1';
-    if (evidence.includes('trnl2') || evidence.includes('leu2') || /\btrnl[-_]?2\b/.test(evidence)) return 'Leu2';
-    if (evidence.includes('trns1') || evidence.includes('ser1') || /\btrns[-_]?1\b/.test(evidence)) return 'Ser1';
-    if (evidence.includes('trns2') || evidence.includes('ser2') || /\btrns[-_]?2\b/.test(evidence)) return 'Ser2';
+    if (evidence.includes('trnl1') || evidence.includes('leu1') || /\btrnl[-_]?1\b/.test(evidence)) return 'Leu-1';
+    if (evidence.includes('trnl2') || evidence.includes('leu2') || /\btrnl[-_]?2\b/.test(evidence)) return 'Leu-2';
+    if (evidence.includes('trns1') || evidence.includes('ser1') || /\btrns[-_]?1\b/.test(evidence)) return 'Ser-1';
+    if (evidence.includes('trns2') || evidence.includes('ser2') || /\btrns[-_]?2\b/.test(evidence)) return 'Ser-2';
 
     // Tier 3 — parsed anticodon qualifier value
-    if (anti === 'TAA' || anti === 'UAA') return 'Leu1';
-    if (anti === 'TAG' || anti === 'UAG') return 'Leu2';
-    if (anti === 'GCT' || anti === 'GCU' || anti === 'TCT' || anti === 'TCU') return 'Ser1';
-    if (anti === 'TGA' || anti === 'UGA' || anti === 'AGA') return 'Ser2';
+    if (anti === 'TAA' || anti === 'UAA') return 'Leu-1';
+    if (anti === 'TAG' || anti === 'UAG') return 'Leu-2';
+    if (anti === 'GCT' || anti === 'GCU' || anti === 'TCT' || anti === 'TCU') return 'Ser-1';
+    if (anti === 'TGA' || anti === 'UGA' || anti === 'AGA') return 'Ser-2';
 
     // Tier 4 — undifferentiated fallback (cannot distinguish isoform)
     if (evidence.includes('leu') || evidence.includes('trnl')) return 'Leu';
@@ -757,6 +853,12 @@ let currentGenomicData = []; // Variável global para armazenar a ordem atualiza
 let showSyntenyLinks = false;
 let syntenyMode = 'mauve'; // 'mauve' or 'trapezoid'
 let genomeLabelWidth = 220; // resizable label width (px), persists across re-renders
+let geneLabelFontSize = 13; // gene label font size in px, adjustable via Analysis Controls
+
+// Global Gene Appearance defaults — initialized early so createSVG always has them
+window._strandLineWidth = 7.5;
+window._genomeRowSpacing = 0;
+window._geneTextFormat = { style: 'normal', color: '#000000', colorChanged: true, strokeColor: '#ffffff', strokeWidth: 1.5 };
 
 function normalizedColorGeneKey(geneName) {
     const name = String(geneName || '').trim();
@@ -774,8 +876,8 @@ function normalizedColorGeneKey(geneName) {
         if (Object.prototype.hasOwnProperty.call(colorMitochondrial, trnaName)) return trnaName;
     }
 
-    if (name === 'Leu1' || name === 'Leu2') return 'tRNA-Leu';
-    if (name === 'Ser1' || name === 'Ser2') return 'tRNA-Ser';
+    if (name === 'Leu1' || name === 'Leu2' || name === 'Leu-1' || name === 'Leu-2') return 'tRNA-Leu';
+    if (name === 'Ser1' || name === 'Ser2' || name === 'Ser-1' || name === 'Ser-2') return 'tRNA-Ser';
 
     return name;
 }
@@ -796,11 +898,27 @@ function tokenizeGenome(genes, strands) {
     return (genes || []).map((gene, idx) => toSignedToken(gene, (strands || [])[idx] || '+'));
 }
 
-function needlemanWunschAlign(referenceTokens, sequenceTokens) {
-    const matchScore = 4;
-    const mismatchScore = -2;
-    const gapOpen = -4;
-    const gapExtend = -1;
+function getAlignmentParams() {
+    const el = (id, def) => {
+        const input = document.getElementById(id);
+        if (!input) return def;
+        const v = parseFloat(input.value);
+        return isNaN(v) ? def : v;
+    };
+    return {
+        matchScore:    el('nwMatchScore', 4),
+        mismatchScore: el('nwMismatchScore', -2),
+        gapOpen:       el('nwGapOpen', -4),
+        gapExtend:     el('nwGapExtend', -1)
+    };
+}
+
+function needlemanWunschAlign(referenceTokens, sequenceTokens, params) {
+    const p = params || {};
+    const matchScore    = p.matchScore   ?? 4;
+    const mismatchScore = p.mismatchScore ?? -2;
+    const gapOpen       = p.gapOpen      ?? -4;
+    const gapExtend     = p.gapExtend    ?? -1;
 
     const m = referenceTokens.length;
     const n = sequenceTokens.length;
@@ -967,7 +1085,7 @@ function pairwiseSimilarity(tokensA, tokensB) {
 
 function pairwiseNWScore(tokensA, tokensB) {
     // Quick NW score for ordering — counts matches in alignment
-    const { alignedReference, alignedSequence } = needlemanWunschAlign(tokensA, tokensB);
+    const { alignedReference, alignedSequence } = needlemanWunschAlign(tokensA, tokensB, getAlignmentParams());
     let matches = 0;
     for (let k = 0; k < alignedReference.length; k++) {
         if (alignedReference[k] !== '-' && alignedSequence[k] !== '-' && alignedReference[k] === alignedSequence[k]) {
@@ -1058,7 +1176,7 @@ function autoAlignGenomeOrders(genomicData) {
         }
 
         // Align newSeq against the profile
-        const { alignedReference: alignedProfile, alignedSequence: alignedNew } = needlemanWunschAlign(profile, newSeq);
+        const { alignedReference: alignedProfile, alignedSequence: alignedNew } = needlemanWunschAlign(profile, newSeq, getAlignmentParams());
 
         // Build new MSA by weaving together old columns and new gaps
         const newMsaCols = alignedProfile.length;
@@ -1122,7 +1240,7 @@ function normalizeSyntenyGeneName(gene) {
     return value.replace(/^tRNA-/, '').toLowerCase();
 }
 
-function buildSyntenyPairs(topGenes, bottomGenes, topCenters, bottomCenters, topLeftEdges, bottomLeftEdges, topRightEdges, bottomRightEdges) {
+function buildSyntenyPairs(topGenes, bottomGenes, topCenters, bottomCenters, topLeftEdges, bottomLeftEdges, topRightEdges, bottomRightEdges, topStrands, bottomStrands) {
     const topMap = new Map();
     const bottomMap = new Map();
 
@@ -1130,34 +1248,142 @@ function buildSyntenyPairs(topGenes, bottomGenes, topCenters, bottomCenters, top
         const key = normalizeSyntenyGeneName(gene);
         if (!key) return;
         if (!topMap.has(key)) topMap.set(key, []);
-        topMap.get(key).push({ index, gene, center: topCenters[index], left: topLeftEdges ? topLeftEdges[index] : topCenters[index], right: topRightEdges ? topRightEdges[index] : topCenters[index] });
+        topMap.get(key).push({ index, gene, center: topCenters[index], left: topLeftEdges ? topLeftEdges[index] : topCenters[index], right: topRightEdges ? topRightEdges[index] : topCenters[index], strand: topStrands ? topStrands[index] : '+' });
     });
 
     (bottomGenes || []).forEach((gene, index) => {
         const key = normalizeSyntenyGeneName(gene);
         if (!key) return;
         if (!bottomMap.has(key)) bottomMap.set(key, []);
-        bottomMap.get(key).push({ index, gene, center: bottomCenters[index], left: bottomLeftEdges ? bottomLeftEdges[index] : bottomCenters[index], right: bottomRightEdges ? bottomRightEdges[index] : bottomCenters[index] });
+        bottomMap.get(key).push({ index, gene, center: bottomCenters[index], left: bottomLeftEdges ? bottomLeftEdges[index] : bottomCenters[index], right: bottomRightEdges ? bottomRightEdges[index] : bottomCenters[index], strand: bottomStrands ? bottomStrands[index] : '+' });
     });
 
     const pairs = [];
     topMap.forEach((topEntries, key) => {
         const bottomEntries = bottomMap.get(key) || [];
-        const qty = Math.min(topEntries.length, bottomEntries.length);
-        for (let i = 0; i < qty; i++) {
-            pairs.push({
-                gene: topEntries[i].gene,
-                x1_center: topEntries[i].center,
-                x2_center: bottomEntries[i].center,
-                x1_left: topEntries[i].left,
-                x2_left: bottomEntries[i].left,
-                x1_right: topEntries[i].right,
-                x2_right: bottomEntries[i].right
+        // Many-to-many: connect every top copy to every bottom copy
+        topEntries.forEach(topEntry => {
+            bottomEntries.forEach(bottomEntry => {
+                // When the gene is on different strands, flag as inverted
+                const inverted = topEntry.strand !== bottomEntry.strand;
+                pairs.push({
+                    gene: topEntry.gene,
+                    x1_center: topEntry.center,
+                    x2_center: bottomEntry.center,
+                    x1_left: topEntry.left,
+                    x2_left: bottomEntry.left,
+                    x1_right: topEntry.right,
+                    x2_right: bottomEntry.right,
+                    inverted
+                });
             });
-        }
+        });
     });
 
     return pairs;
+}
+
+// ---------------------------------------------------------------------------
+// Puzzle piece path helper
+// ---------------------------------------------------------------------------
+// Generates a single closed SVG path that traces a clean puzzle-piece outline.
+// Tabs (right side) and notches (left side) are smooth half-circles using SVG
+// arcs, which tessellate perfectly between adjacent pieces — the tab of piece K
+// fills the notch of piece K+1, since the path of K+1 leaves the notch area
+// empty and K is rendered first underneath.
+//
+//   x, y           top-left corner of the rectangular body
+//   w, h           rectangular body width / height (the tab extends beyond w)
+//   hasLeftNotch   true to cut a half-circle into the left edge
+//   hasRightTab    true to bulge a half-circle out of the right edge
+//   r              tab/notch radius (must be ≤ h/2 so it fits the piece)
+function buildPuzzlePiecePath(x, y, w, h, hasLeftNotch, hasRightTab, r) {
+    const midY = y + h / 2;
+    let d = `M ${x},${y}`;
+    d += ` L ${x + w},${y}`;
+    if (hasRightTab) {
+        d += ` L ${x + w},${midY - r}`;
+        // sweep-flag = 1 → arc bulges outward to the right
+        d += ` A ${r} ${r} 0 0 1 ${x + w},${midY + r}`;
+        d += ` L ${x + w},${y + h}`;
+    } else {
+        d += ` L ${x + w},${y + h}`;
+    }
+    d += ` L ${x},${y + h}`;
+    if (hasLeftNotch) {
+        d += ` L ${x},${midY + r}`;
+        // sweep-flag = 0 → arc bulges inward (to the right) — that's the notch
+        d += ` A ${r} ${r} 0 0 0 ${x},${midY - r}`;
+        d += ` L ${x},${y}`;
+    } else {
+        d += ` L ${x},${y}`;
+    }
+    d += ` Z`;
+    return d;
+}
+
+// Returns white or dark text color depending on background luminance
+function getContrastTextColor(hex) {
+    if (!hex || hex.length < 4) return '#1f2937';
+    const c = hex.replace('#', '');
+    const r = parseInt(c.length === 3 ? c[0]+c[0] : c.substring(0,2), 16) / 255;
+    const g = parseInt(c.length === 3 ? c[1]+c[1] : c.substring(2,4), 16) / 255;
+    const b = parseInt(c.length === 3 ? c[2]+c[2] : c.substring(4,6), 16) / 255;
+    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return lum > 0.45 ? '#1f2937' : '#ffffff';
+}
+
+// Short amino-acid codes used for mitochondrial tRNAs after name resolution
+const MITO_TRNA_SHORT = new Set([
+    'Ala','Arg','Asn','Asp','Cys','Gln','Glu','Gly','His','Ile',
+    'Leu','Lys','Met','Phe','Pro','Ser','Thr','Trp','Tyr','Val',
+    'Leu1','Leu2','Ser1','Ser2','Leu-1','Leu-2','Ser-1','Ser-2','Sec','Pyl'
+]);
+
+// Returns true if the gene name represents a tRNA
+function isTRNAGene(name) {
+    if (!name) return false;
+    // Strip leading strand indicator for comparison
+    const clean = name.startsWith('-') ? name.slice(1) : name;
+    // Chloroplast-style: "tRNA-Xxx" or "trnX"
+    if (clean.startsWith('tRNA') || /^trn[A-Za-z]/i.test(clean)) return true;
+    // Mitochondrial-style: short amino acid code (e.g. "Phe", "Val", "Leu1")
+    return MITO_TRNA_SHORT.has(clean);
+}
+
+// Builds a circular SVG "+" insert button anchored at (cx, cy)
+function createInsertButton(svgNS, cx, cy, onClickHandler) {
+    const g = document.createElementNS(svgNS, "g");
+    g.setAttribute("class", "gene-insert-btn");
+    g.setAttribute("cursor", "pointer");
+    g.setAttribute("transform", `translate(${cx}, ${cy})`);
+
+    // Larger, easier-to-hit insert button (radius 11)
+    const circle = document.createElementNS(svgNS, "circle");
+    circle.setAttribute("cx", "0");
+    circle.setAttribute("cy", "0");
+    circle.setAttribute("r", "11");
+    circle.setAttribute("fill", "#ffffff");
+    circle.setAttribute("stroke", "#1f2937");
+    circle.setAttribute("stroke-width", "0.25");
+    g.appendChild(circle);
+
+    const plus = document.createElementNS(svgNS, "text");
+    plus.setAttribute("x", "0");
+    plus.setAttribute("y", "0");
+    // Visually centered: text baseline-shift correction (0.35 × font-size)
+    plus.setAttribute("dy", "6");
+    plus.setAttribute("text-anchor", "middle");
+    plus.setAttribute("font-size", "18px");
+    plus.setAttribute("font-weight", "700");
+    plus.setAttribute("fill", "#1f2937");
+    plus.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
+    plus.setAttribute("pointer-events", "none");
+    plus.textContent = "+";
+    g.appendChild(plus);
+
+    g.addEventListener('click', onClickHandler);
+    return g;
 }
 
 function createSVG(genomicData, geneStart, geneList, pattern = false) {
@@ -1200,20 +1426,45 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
     currentGenomicData = [...genomicData];
 
-    const pieceWidth = 100;
-    const pieceHeight = 46;
-    const tRNAWidth = 50;
+    const pieceWidth = 80;
+    const pieceHeight = 38;
+    const notchRadius = 6;
+    const baseY = 70;
+    // Pattern mode: precompute the mean length of every gene at every position across
+    // all species sharing the same gene order. Map<geneOrder, number[]> indexed by position.
+    const patternMeanLengths = new Map();
+    if (pattern) {
+        const accum = new Map();
+        currentGenomicData.forEach(() => {});
+        // Use the original (uncollapsed) data captured before pattern dedup
+        originalGenomicData.forEach(d => {
+            const key = d.geneOrder;
+            if (!accum.has(key)) accum.set(key, { sums: [], counts: [] });
+            const entry = accum.get(key);
+            (d.lengths || []).forEach((len, i) => {
+                const v = Math.abs(parseFloat(len) || 0);
+                if (!Number.isFinite(v) || v === 0) return;
+                entry.sums[i] = (entry.sums[i] || 0) + v;
+                entry.counts[i] = (entry.counts[i] || 0) + 1;
+            });
+        });
+        accum.forEach((entry, key) => {
+            const means = entry.sums.map((s, i) => entry.counts[i] ? s / entry.counts[i] : 0);
+            patternMeanLengths.set(key, means);
+        });
+    }
     let maxGeneOrderLength = 0;
     const renderedRows = [];
 
     genomicData.forEach(data => {
         const { genes } = data;
-        const geneOrderLength = genes.reduce((acc, gene) => acc + (gene.startsWith('tRNA') ? tRNAWidth : pieceWidth), 0);
+        const geneOrderLength = genes.length * pieceWidth;
         if (geneOrderLength > maxGeneOrderLength) {
             maxGeneOrderLength = geneOrderLength;
         }
     });
 
+    // +50 leaves room for the trailing "+" button and the rightmost tab overhang
     const totalWidth = maxGeneOrderLength + 50;
 
     document.querySelectorAll('.genome-row, .svg-container, .synteny-bridge, .synteny-bridge-row').forEach(el => el.remove());
@@ -1234,12 +1485,39 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             lengths = [...lengths.slice(indexInicio), ...lengths.slice(0, indexInicio)];
         }
 
+        // --- Gene Visibility Filtering ---
+        const vis = window._geneVisibility || { pcgs: true, rrnas: true, trnas: true };
+        if (!vis.pcgs || !vis.rrnas || !vis.trnas) {
+            const gType = (document.getElementById('mt') && document.getElementById('mt').checked)
+                ? 'Mitochondrial' : 'Chloroplast';
+            const keep = [];
+            for (let i = 0; i < genes.length; i++) {
+                const cat = canonicalGeneFeatureType(genes[i], gType);
+                if (cat === 'CDS' && !vis.pcgs) continue;
+                if (cat === 'rRNA' && !vis.rrnas) continue;
+                if (cat === 'tRNA' && !vis.trnas) continue;
+                keep.push(i);
+            }
+            genes = keep.map(i => genes[i]);
+            strands = keep.map(i => strands[i]);
+            lengths = keep.map(i => lengths[i]);
+            originalGeneNames = keep.map(i => originalGeneNames[i]);
+        }
+
         let svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("id", `svg-${safeVoucher}`);
 
+        // Tight viewBox: clip exactly to the strand bar positions so the
+        // synteny bridge connects flush with no visible gap.
+        // + strand bar at baseY-2=68, − strand bar at baseY+pieceHeight+2=110.
+        // With default stroke-width 7.5 the bars visually fill the gap to the piece.
+        const vbTop = baseY - 2;                         // 68
+        const vbBottom = baseY + pieceHeight + 2;        // 110
+        const vbH = vbBottom - vbTop;                    // 42
         svg.setAttribute("width", totalWidth.toString());
-        svg.setAttribute("height", "60");
-        svg.setAttribute("viewBox", `0 75 ${totalWidth} 60`);
+        svg.setAttribute("height", vbH.toString());
+        svg.setAttribute("viewBox", `0 ${vbTop} ${totalWidth} ${vbH}`);
+        svg.style.display = 'block';
 
         function adicionarElemento(index, lado, quantidade = 1) {
             $('#addGeneModal').modal('show');
@@ -1345,69 +1623,85 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         const geneRightEdges = [];
 
         genes.forEach((produto, index) => {
-            const isTRNA = produto.startsWith('tRNA') || /^trn[A-Za-z]/i.test(produto);
-            const pieceW = isTRNA ? tRNAWidth : pieceWidth;
-            const pieceH = isTRNA ? Math.round(pieceHeight * 0.5) : pieceHeight;
-            const pieceY = isTRNA ? 80 + (pieceHeight - pieceH) / 2 : 80; // center tRNA vertically
-            const s = pieceH / pieceHeight; // scale notch/tab bezier curves proportionally (vertical)
-            const h = pieceW / 100; // scale notch/tab protrusion depth proportionally (horizontal)
+            const isTRNA = isTRNAGene(produto);
+            const pieceW = pieceWidth;
+            const pieceH = pieceHeight;
+            const pieceY = baseY;
+            const hasLeftNotch = index > 0;
+            const hasRightTab = index < genes.length - 1;
 
             let path = document.createElementNS(svgNS, "path");
             path.setAttribute("data-index", index);
-            let d = `M ${currentX},${pieceY}
-                     L ${currentX + pieceW},${pieceY}
-                     L ${currentX + pieceW},${pieceY + pieceH}
-                     L ${currentX},${pieceY + pieceH} Z`;
-
-            if (index > 0) {
-                d += `M ${currentX},${pieceY}
-                      S ${currentX + 1.14 * h},${pieceY + pieceH / 2 - 10.36 * s}
-                      ${currentX - 5.86 * h},${pieceY + pieceH / 2 - 10.36 * s}
-                      S ${currentX - 20.44 * h},${pieceY + pieceH / 2 - 21.95 * s}
-                      ${currentX - 20.44 * h},${pieceY + pieceH / 2}
-                      S ${currentX - 12.86 * h},${pieceY + pieceH / 2 + 6.6 * s}
-                      ${currentX - 5.86 * h},${pieceY + pieceH / 2 + 6.6 * s}
-                      S ${currentX + 3.19 * h},${pieceY + pieceH - 5.04 * s}
-                      ${currentX},${pieceY + pieceH} `;
-            }
-
-            if (index < genes.length - 1) {
-                d += `M ${currentX + pieceW},${pieceY}
-                      S ${currentX + pieceW - 0.96 * h},${pieceY + pieceH / 2 - 10.29 * s}
-                      ${currentX + pieceW + 6.04 * h},${pieceY + pieceH / 2 - 10.29 * s}
-                      S ${currentX + pieceW + 15.07 * h},${pieceY + pieceH / 2 - 20.26 * s}
-                      ${currentX + pieceW + 15.07 * h},${pieceY + pieceH / 2}
-                      S ${currentX + pieceW + 13.04 * h},${pieceY + pieceH / 2 + 6.59 * s}
-                      ${currentX + pieceW + 6.04 * h},${pieceY + pieceH / 2 + 6.59 * s}
-                      S ${currentX + pieceW + 3.63 * h},${pieceY + pieceH - 3.55 * s}
-                      ${currentX + pieceW},${pieceY + pieceH} `;
-            }
-
-            path.setAttribute("d", d);
+            path.setAttribute("d", buildPuzzlePiecePath(currentX, pieceY, pieceW, pieceH, hasLeftNotch, hasRightTab, notchRadius));
             path.setAttribute("fill", getGeneColor(produto));
-            path.setAttribute("stroke", "#333333");
-            path.setAttribute("stroke-width", "0.8");
+            path.setAttribute("stroke", "#1f2937");
+            path.setAttribute("stroke-width", "0.25");
             path.setAttribute("stroke-linejoin", "round");
-            path.setAttribute("class", "gene-path");
+            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("class", isTRNA ? "gene-path gene-path-trna" : "gene-path");
+            path.setAttribute("data-gene", produto);
 
             if (produto && produto !== 'gap' && produto !== '-') {
-                let len = lengths[index] ? lengths[index].toString().replace('-', '') : 'N/A';
+                let tooltipBody;
+                if (pattern) {
+                    // In pattern mode each piece represents many species → show mean length
+                    const meanArr = patternMeanLengths.get(geneOrder) || [];
+                    const meanVal = meanArr[index];
+                    const speciesCount = (data && data.speciesNames)
+                        ? String(data.speciesNames).split(';').filter(s => s.trim()).length
+                        : 0;
+                    const meanStr = (meanVal && Number.isFinite(meanVal) && meanVal > 0)
+                        ? `${Math.round(meanVal)} bp`
+                        : 'N/A';
+                    tooltipBody =
+                        `Gene: <b>${produto}</b><br>` +
+                        `Mean length: <b>${meanStr}</b>` +
+                        (speciesCount ? ` <span style="color:#6b7280;">(n=${speciesCount})</span>` : '') + `<br>` +
+                        `Strand: ${strands[index] === '+' ? '<b>light (+)</b>' : '<b>heavy (−)</b>'}`;
+                } else {
+                    const len = lengths[index] ? lengths[index].toString().replace('-', '') : 'N/A';
+                    tooltipBody =
+                        `Gene: <b>${produto}</b><br>` +
+                        `Length: <b>${len} bp</b><br>` +
+                        `Strand: ${strands[index] === '+' ? '<b>light (+)</b>' : '<b>heavy (−)</b>'}`;
+                }
+                if (path._tippy) path._tippy.destroy();
                 tippy(path, {
-                    content: `Gene: <b>${produto}</b><br>Length: <b>${len} bp</b><br>Strand: ${strands[index] === '+' ? '<b>light (+)</b>' : '<b>heavy (−)</b>'}`,
-                    allowHTML: true, theme: 'light-border', placement: 'bottom', arrow: true
+                    content: tooltipBody,
+                    allowHTML: true,
+                    theme: 'pumas',
+                    placement: 'bottom',
+                    arrow: true,
+                    delay: [150, 0],
+                    hideOnClick: false,
+                    appendTo: () => document.body,
                 });
             }
 
             let text = document.createElementNS(svgNS, "text");
             text.setAttribute("x", (currentX + pieceW / 2).toString());
             text.setAttribute("y", (pieceY + pieceH / 2 + 4).toString());
-            text.setAttribute("fill", "#1a1a1a");
+            text.setAttribute("fill", getContrastTextColor(getGeneColor(produto)));
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("font-weight", "600");
+            text.setAttribute("font-weight", "400");
             text.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
-            text.setAttribute("font-size", isTRNA ? "7px" : "11px");
+            text.setAttribute("font-size", geneLabelFontSize + "px");
             text.setAttribute("class", "gene-text");
-            text.textContent = isTRNA ? produto.replace('tRNA-', '') : produto;
+            text.textContent = produto;
+
+            // Apply gene text formatting from controls
+            const fmt = window._geneTextFormat;
+            if (fmt) {
+                if (fmt.style === 'italic' || fmt.style === 'bold-italic') text.setAttribute('font-style', 'italic');
+                if (fmt.style === 'bold' || fmt.style === 'bold-italic') text.setAttribute('font-weight', '700');
+                else if (fmt.style === 'normal' || fmt.style === 'italic') text.setAttribute('font-weight', '400');
+                if (fmt.colorChanged) text.setAttribute('fill', fmt.color);
+                if (fmt.strokeWidth > 0) {
+                    text.setAttribute('stroke', fmt.strokeColor);
+                    text.setAttribute('stroke-width', fmt.strokeWidth.toString());
+                    text.setAttribute('paint-order', 'stroke');
+                }
+            }
 
             if (produto && produto !== 'gap' && produto !== '-') {
                 path.setAttribute("cursor", "pointer");
@@ -1436,67 +1730,93 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             const isPseudoGene = pseudoGenes.some(pg => pg.gene === produto);
             const isNewGene = lengths[index] === 0;
 
+            // Render small corner badges INSIDE the piece (top-right) so the row
+            // can be tightened against the synteny bridge with no vertical gap.
             if (isPseudoGene) {
-                let asterisk = document.createElementNS(svgNS, "text");
-                asterisk.setAttribute("x", (currentX + pieceW / 2).toString());
-                asterisk.setAttribute("y", '132');
-                asterisk.setAttribute("fill", "#dc2626");
-                asterisk.setAttribute("text-anchor", "middle");
-                asterisk.setAttribute("font-size", "14px");
-                asterisk.textContent = "*";
-                svg.appendChild(asterisk);
+                const badge = document.createElementNS(svgNS, "g");
+                badge.setAttribute("class", "gene-marker-asterisk");
+                const cx = currentX + pieceW - 7;
+                const cy = pieceY + 7;
+                const c = document.createElementNS(svgNS, "circle");
+                c.setAttribute("cx", cx); c.setAttribute("cy", cy); c.setAttribute("r", "5");
+                c.setAttribute("fill", "#dc2626"); c.setAttribute("stroke", "#ffffff");
+                c.setAttribute("stroke-width", "1.2");
+                badge.appendChild(c);
+                const t = document.createElementNS(svgNS, "text");
+                t.setAttribute("x", cx); t.setAttribute("y", cy + 3);
+                t.setAttribute("text-anchor", "middle"); t.setAttribute("fill", "#ffffff");
+                t.setAttribute("font-weight", "700"); t.setAttribute("font-size", "9px");
+                t.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
+                t.setAttribute("pointer-events", "none");
+                t.textContent = "*";
+                badge.appendChild(t);
+                svg.appendChild(badge);
             }
 
             if (isNewGene && produto !== '-') {
-                let hash = document.createElementNS(svgNS, "text");
-                hash.setAttribute("x", (currentX + pieceW / 2).toString());
-                hash.setAttribute("y", '132');
-                hash.setAttribute("fill", "#202020");
-                hash.setAttribute("text-anchor", "middle");
-                hash.setAttribute("font-size", "14px");
-                hash.textContent = "#";
-                hash.setAttribute("cursor", "pointer");
+                const badge = document.createElementNS(svgNS, "g");
+                badge.setAttribute("class", "gene-marker-hash");
+                badge.setAttribute("cursor", "pointer");
+                const cx = currentX + 7;
+                const cy = pieceY + 7;
+                const c = document.createElementNS(svgNS, "circle");
+                c.setAttribute("cx", cx); c.setAttribute("cy", cy); c.setAttribute("r", "5");
+                c.setAttribute("fill", "#202020"); c.setAttribute("stroke", "#ffffff");
+                c.setAttribute("stroke-width", "1.2");
+                badge.appendChild(c);
+                const t = document.createElementNS(svgNS, "text");
+                t.setAttribute("x", cx); t.setAttribute("y", cy + 3);
+                t.setAttribute("text-anchor", "middle"); t.setAttribute("fill", "#ffffff");
+                t.setAttribute("font-weight", "700"); t.setAttribute("font-size", "9px");
+                t.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
+                t.setAttribute("pointer-events", "none");
+                t.textContent = "#";
+                badge.appendChild(t);
                 if (!pattern) {
-                    tippy(hash, { content: 'New gene — click to remove', theme: 'light-border', placement: 'bottom', arrow: true });
+                    if (badge._tippy) badge._tippy.destroy();
+                    tippy(badge, {
+                        content: 'New gene — click to remove',
+                        theme: 'pumas',
+                        placement: 'bottom',
+                        arrow: true,
+                        delay: [150, 0],
+                        appendTo: () => document.body,
+                    });
                 }
-                hash.onclick = () => {
+                badge.addEventListener('click', () => {
                     if (confirm("Are you sure you want to remove this gene?")) {
-                        if (hash._tippy) hash._tippy.destroy();
+                        if (badge._tippy) badge._tippy.destroy();
                         removerElemento(index);
                     }
-                };
-                svg.appendChild(hash);
+                });
+                svg.appendChild(badge);
             }
 
-            let line = document.createElementNS(svgNS, "line");
-            line.setAttribute("x1", currentX.toString());
-            line.setAttribute("x2", (currentX + pieceW).toString());
-            line.setAttribute("stroke", "black");
-
-            if (strands[index] === '+' && produto && produto !== 'gap' && produto !== '-') {
-                line.setAttribute("y1", pieceY.toString());
-                line.setAttribute("y2", pieceY.toString());
-                line.setAttribute("stroke-width", "3");
-            } else if (produto && produto !== 'gap' && produto !== '-') {
-                line.setAttribute("y1", (pieceY + pieceH).toString());
-                line.setAttribute("y2", (pieceY + pieceH).toString());
-                line.setAttribute("stroke-width", "3");
+            // Strand indicator: thick bar above (light/+) or below (heavy/−) of the piece body
+            // with consistent spacing from the gene piece for visibility
+            if (produto && produto !== 'gap' && produto !== '-') {
+                const strandGap = 2; // small gap so thick strand bars hug the gene piece
+                let line = document.createElementNS(svgNS, "line");
+                line.setAttribute("x1", currentX.toString());
+                line.setAttribute("x2", (currentX + pieceW).toString());
+                line.setAttribute("stroke", "#1f2937");
+                line.setAttribute("stroke-width", (window._strandLineWidth || 7.5).toString());
+                line.setAttribute("stroke-linecap", "round");
+                line.setAttribute("class", "gene-strand-bar");
+                if (strands[index] === '+') {
+                    line.setAttribute("y1", (pieceY - strandGap).toString());
+                    line.setAttribute("y2", (pieceY - strandGap).toString());
+                } else {
+                    line.setAttribute("y1", (pieceY + pieceH + strandGap).toString());
+                    line.setAttribute("y2", (pieceY + pieceH + strandGap).toString());
+                }
+                svg.appendChild(line);
             }
-
-            svg.appendChild(line);
 
             if (index > 0) {
                 let quantidade = document.getElementById('quantidade').value || 1;
-                let btnEsquerda = document.createElementNS(svgNS, "text");
-                btnEsquerda.textContent = '+';
-                btnEsquerda.setAttribute("x", (currentX - 10).toString());
-                btnEsquerda.setAttribute("y", "108");
-                btnEsquerda.setAttribute("fill", "#000000");
-                btnEsquerda.setAttribute("font-weight", "bold");
-                btnEsquerda.setAttribute("text-anchor", "middle");
-                btnEsquerda.setAttribute("cursor", "pointer");
-                btnEsquerda.setAttribute("font-size", "14px");
-                btnEsquerda.onclick = () => adicionarElemento(index, 'esquerda', quantidade);
+                // Centered on the seam between pieces, vertically aligned to PCG mid-line
+                let btnEsquerda = createInsertButton(svgNS, currentX, baseY + pieceHeight / 2, () => adicionarElemento(index, 'esquerda', quantidade));
                 svg.appendChild(btnEsquerda);
             }
 
@@ -1508,16 +1828,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         });
 
         {
-            let btnFinal = document.createElementNS(svgNS, "text");
-            btnFinal.textContent = '+';
-            btnFinal.setAttribute("x", (currentX + 10).toString());
-            btnFinal.setAttribute("y", "108");
-            btnFinal.setAttribute("fill", "#000000");
-            btnFinal.setAttribute("font-weight", "bold");
-            btnFinal.setAttribute("text-anchor", "middle");
-            btnFinal.setAttribute("cursor", "pointer");
-            btnFinal.setAttribute("font-size", "14px");
-            btnFinal.onclick = () => adicionarElemento(genes.length - 1, 'direita');
+            let btnFinal = createInsertButton(svgNS, currentX, baseY + pieceHeight / 2, () => adicionarElemento(genes.length - 1, 'direita'));
             svg.appendChild(btnFinal);
         }
 
@@ -1541,21 +1852,21 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             nameEl.innerHTML = `<b>${id}</b>`;
             nameEl.style.cursor = 'pointer';
             nameEl.onclick = () => openEditPatternModal(data, patternMap, patternCounter);
-            // Show species list below pattern name
+            // Show compact species count badge; full list in tooltip
             const speciesListArr = nomeEspecie.split('; ').filter(s => s);
             if (speciesListArr.length > 0) {
-                let speciesDiv = document.createElement("div");
-                speciesDiv.style.cssText = 'font-size:0.65rem;color:#6b7280;line-height:1.3;margin-top:2px;white-space:normal;overflow:hidden;max-height:3.9em;';
-                speciesDiv.innerHTML = speciesListArr.map(s => `<i>${s}</i>`).join(', ');
-                tippy(nameEl, { content: `<b>${id}</b><br>${speciesListArr.map(s => `<i>${s}</i>`).join('<br>')}`, allowHTML: true, theme: 'light-border', placement: 'right', arrow: true, delay: [400, 0], maxWidth: 350 });
-                stickyLabel.appendChild(speciesDiv);
+                let badge = document.createElement("span");
+                badge.style.cssText = 'font-size:0.65rem;color:#6b7280;margin-left:4px;';
+                badge.textContent = `(${speciesListArr.length} spp.)`;
+                nameEl.appendChild(badge);
+                tippy(nameEl, { content: `<b>${id}</b><br>${speciesListArr.map(s => `<i>${s}</i>`).join('<br>')}`, allowHTML: true, theme: 'pumas', placement: 'right', arrow: true, delay: [400, 0], maxWidth: 350, appendTo: document.body });
             }
         } else {
             const voucherStr = Array.isArray(vouchers) ? vouchers.join(', ') : vouchers;
             nameEl.innerHTML = `<i>${nomeEspecie}</i> <a href="https://www.ncbi.nlm.nih.gov/nuccore/${voucherStr}" target="_blank" data-tippy-content="View <b>${voucherStr}</b> in GenBank"><b>(${voucherStr})</b></a>`;
         }
         if (!pattern) {
-            tippy(nameEl, { content: `<i>${nomeEspecie}</i>`, allowHTML: true, theme: 'light-border', placement: 'right', arrow: true, delay: [400, 0] });
+            tippy(nameEl, { content: `<i>${nomeEspecie}</i>`, allowHTML: true, theme: 'pumas', placement: 'right', arrow: true, delay: [400, 0] });
         }
         stickyLabel.appendChild(nameEl);
 
@@ -1564,6 +1875,22 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             dupInfo.classList.add('genome-dup-info');
             dupInfo.textContent = `Dup: ${pseudoGenes.map(pg => pg.gene.replace('tRNA-', '')).join(', ')}`;
             stickyLabel.appendChild(dupInfo);
+        }
+
+        // Show missing genes (genes in the master list but not in this genome)
+        if (!pattern && Array.isArray(geneList) && geneList.length > 0) {
+            const genomeGeneSet = new Set(
+                genes.filter(g => g && g !== '-' && g !== 'gap' && g !== 'GAP')
+            );
+            const missingGenes = geneList.filter(g =>
+                g && g !== '-' && !genomeGeneSet.has(g)
+            );
+            if (missingGenes.length > 0) {
+                let missInfo = document.createElement("div");
+                missInfo.classList.add('genome-miss-info');
+                missInfo.textContent = `Miss: ${missingGenes.map(g => g.replace('tRNA-', '')).join(', ')}`;
+                stickyLabel.appendChild(missInfo);
+            }
         }
 
         let controls = document.createElement("div");
@@ -1580,7 +1907,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 const voucherStr = Array.isArray(data.vouchers) ? data.vouchers.join(', ') : (data.vouchers || '');
                 openEditSpeciesModal(data, currentName, voucherStr, genomicData, geneStart, geneList, pattern);
             };
-            tippy(btnEdit, { content: 'Edit species name', theme: 'light-border', placement: 'top', arrow: true });
+            tippy(btnEdit, { content: 'Edit species name', theme: 'pumas', placement: 'top', arrow: true });
             controls.appendChild(btnEdit);
         }
 
@@ -1588,14 +1915,14 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         btnUp.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
         btnUp.classList.add('genome-ctrl-btn');
         btnUp.onclick = () => moveLine(dataIndex, -1);
-        tippy(btnUp, { content: 'Move genome up', theme: 'light-border', placement: 'top', arrow: true });
+        tippy(btnUp, { content: 'Move genome up', theme: 'pumas', placement: 'top', arrow: true });
         controls.appendChild(btnUp);
 
         let btnDown = document.createElement("button");
         btnDown.innerHTML = '<i class="fa-solid fa-arrow-down"></i>';
         btnDown.classList.add('genome-ctrl-btn');
         btnDown.onclick = () => moveLine(dataIndex, 1);
-        tippy(btnDown, { content: 'Move genome down', theme: 'light-border', placement: 'top', arrow: true });
+        tippy(btnDown, { content: 'Move genome down', theme: 'pumas', placement: 'top', arrow: true });
         controls.appendChild(btnDown);
 
         if (!pattern) {
@@ -1603,7 +1930,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             btnDel.innerHTML = '<i class="fa-solid fa-trash"></i>';
             btnDel.classList.add('genome-ctrl-btn', 'genome-ctrl-btn-danger');
             btnDel.onclick = () => deleteLine(dataIndex);
-            tippy(btnDel, { content: 'Delete this genome', theme: 'light-border', placement: 'top', arrow: true });
+            tippy(btnDel, { content: 'Delete this genome', theme: 'pumas', placement: 'top', arrow: true });
             controls.appendChild(btnDel);
         }
         stickyLabel.appendChild(controls);
@@ -1624,6 +1951,18 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                     lbl.style.minWidth = newW + 'px';
                     lbl.style.maxWidth = newW + 'px';
                 });
+                // Keep synteny bridge spacers in sync with the new label width
+                document.querySelectorAll('.synteny-label-spacer').forEach(sp => {
+                    sp.style.width = newW + 'px';
+                    sp.style.minWidth = newW + 'px';
+                    sp.style.maxWidth = newW + 'px';
+                });
+                // Re-sync all scroll positions so synteny bridges stay aligned
+                const first = document.querySelector('.genome-gene-scroll');
+                if (first) {
+                    const sl = first.scrollLeft;
+                    document.querySelectorAll('.genome-gene-scroll').forEach(c => { c.scrollLeft = sl; });
+                }
             }
             function onUp() {
                 document.removeEventListener('mousemove', onMove);
@@ -1648,9 +1987,11 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             dragSrcIndex = dataIndex;
             e.dataTransfer.effectAllowed = 'move';
             setTimeout(() => rowWrapper.classList.add('dragging'), 0);
+            document.getElementById('svgContainer').classList.add('is-dragging');
         });
         stickyLabel.addEventListener('dragend', () => {
             rowWrapper.classList.remove('dragging');
+            document.getElementById('svgContainer').classList.remove('is-dragging');
             document.querySelectorAll('.genome-row').forEach(r => {
                 r.classList.remove('drag-over-above', 'drag-over-below');
             });
@@ -1700,17 +2041,31 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             container: geneContainer,
             wrapper: rowWrapper,
             genes: [...genes],
+            strands: [...strands],
             centers: [...geneCenters],
             leftEdges: [...geneLeftEdges],
             rightEdges: [...geneRightEdges]
         });
-
-        syncScroll();
-
-        if (typeof tippy !== 'undefined') {
-            tippy('[data-tippy-content]', { allowHTML: true, theme: 'light-border', placement: 'top', arrow: true });
-        }
     });
+
+    syncScroll();
+
+    // Initialize tooltips for all [data-tippy-content] elements ONCE after every row
+    // is rendered. Calling this inside the per-row loop produces duplicate Tippy
+    // instances on previously rendered rows, which causes flicker / missed tooltips.
+    if (typeof tippy !== 'undefined') {
+        document.querySelectorAll('#svgContainer [data-tippy-content]').forEach(el => {
+            if (el._tippy) el._tippy.destroy();
+        });
+        tippy('#svgContainer [data-tippy-content]', {
+            allowHTML: true,
+            theme: 'pumas',
+            placement: 'top',
+            arrow: true,
+            delay: [150, 0],
+            appendTo: () => document.body,
+        });
+    }
 
     // Create / update a single shared scrollbar below all genome rows
     let masterTrack = document.getElementById('masterScrollTrack');
@@ -1721,6 +2076,18 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         masterContent.id = 'masterScrollContent';
         masterTrack.appendChild(masterContent);
         document.getElementById('svgContainer').after(masterTrack);
+
+        // Scroll hint — auto-hides on first scroll
+        if (!document.getElementById('scrollHint')) {
+            const hint = document.createElement('div');
+            hint.id = 'scrollHint';
+            hint.style.cssText = 'text-align:center;font-size:0.72rem;color:#9ca3af;padding:4px 0;user-select:none;';
+            hint.innerHTML = '<i class="fa-solid fa-arrows-left-right" style="margin-right:4px;"></i> Right-click and drag, or use Shift + scroll wheel to pan horizontally';
+            masterTrack.after(hint);
+            const hideHint = () => { hint.style.display = 'none'; };
+            masterTrack.addEventListener('scroll', hideHint, { once: true });
+            document.querySelectorAll('.genome-gene-scroll').forEach(c => c.addEventListener('scroll', hideHint, { once: true }));
+        }
 
         // When master scrollbar moves, scroll all row containers together
         masterTrack.addEventListener('scroll', () => {
@@ -1744,10 +2111,18 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
         const rawGeneName = (Array.isArray(originalGeneNames) && originalGeneNames[index]) ? originalGeneNames[index] : geneName;
         const geneLength = (Array.isArray(lengths) && lengths[index] !== undefined) ? lengths[index] : 'N/A';
         const geneColor = getGeneColor(geneName);
+        const tax = data.taxonomy || {};
+        const taxFields = [
+            { label: 'Kingdom', value: tax.kingdom },
+            { label: 'Phylum', value: tax.phylum },
+            { label: 'Class', value: tax.class },
+            { label: 'Order', value: tax.order },
+            { label: 'Family', value: tax.family },
+        ].map(f => `<span style="color:#6b7280;">${f.label}:</span> ${f.value || '-'}`).join(' &nbsp;&middot;&nbsp; ');
 
         const modalContent = `
             <div class="modal fade" id="editGeneModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
                     <div class="modal-content" style="border:none;border-radius:12px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.2);">
                         <div class="modal-header" style="background:#202020;color:#fff;padding:16px 20px;border:none;">
                             <h5 class="modal-title" style="font-weight:700;font-size:1.1rem;">
@@ -1761,6 +2136,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                                 <div><span style="color:#6b7280;">Source:</span> ${sourceFile || '-'}</div>
                                 <div><span style="color:#6b7280;">Original name:</span> ${rawGeneName || '-'}</div>
                                 <div><span style="color:#6b7280;">Gene size:</span> <b>${geneLength}</b> bp &nbsp;&middot;&nbsp; <span style="color:#6b7280;">Genome:</span> <b>${genomeSize || '-'}</b> bp</div>
+                                <div style="margin-top:6px;font-size:0.8rem;line-height:1.5;">${taxFields}</div>
                             </div>
 
                             <label for="newGeneName" style="font-weight:600;font-size:0.85rem;margin-bottom:4px;display:block;">Canonical gene name</label>
@@ -1781,7 +2157,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                                 </label>
                             </div>
                         </div>
-                        <div class="modal-footer" style="border-top:1px solid #e5e7eb;padding:12px 20px;gap:8px;">
+                        <div class="modal-footer" style="padding:12px 20px;gap:8px;">
                             <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
                             <button type="button" class="btn btn-dark" id="saveEditGeneButton" style="border-radius:8px;font-weight:600;">
                                 <i class="fa-solid fa-check me-1"></i> Save changes
@@ -1907,7 +2283,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
 
     document.querySelectorAll('.synteny-bridge, .synteny-bridge-row').forEach(bridge => bridge.remove());
     if (showSyntenyLinks && renderedRows.length > 1) {
-        const bridgeHeight = 72;
+        const bridgeHeight = 40 + (window._genomeRowSpacing || 0);
 
         for (let rowIndex = 0; rowIndex < renderedRows.length - 1; rowIndex++) {
             const topRow = renderedRows[rowIndex];
@@ -1916,7 +2292,8 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                 topRow.genes, bottomRow.genes,
                 topRow.centers, bottomRow.centers,
                 topRow.leftEdges, bottomRow.leftEdges,
-                topRow.rightEdges, bottomRow.rightEdges
+                topRow.rightEdges, bottomRow.rightEdges,
+                topRow.strands, bottomRow.strands
             );
             if (pairs.length === 0) continue;
 
@@ -1939,40 +2316,70 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             bridgeSvg.setAttribute('width', totalWidth.toString());
             bridgeSvg.setAttribute('height', bridgeHeight.toString());
             bridgeSvg.setAttribute('viewBox', `0 0 ${totalWidth} ${bridgeHeight}`);
+            bridgeSvg.style.display = 'block';
 
             pairs.forEach(pair => {
                 const color = getGeneColor(pair.gene);
+                // Each band must be EXACTLY as wide as the underlying gene piece on each side
+                const topW = pair.x1_right - pair.x1_left;
+                const bottomW = pair.x2_right - pair.x2_left;
+                const topHalf = topW / 2;
+                const bottomHalf = bottomW / 2;
+                const x1 = pair.x1_center;
+                const x2 = pair.x2_center;
+
+                // When the gene switches strand between rows, invert the bottom
+                // edges so the band visually crosses (twist), signalling the inversion.
+                const bLeft  = pair.inverted ? (x2 + bottomHalf) : (x2 - bottomHalf);
+                const bRight = pair.inverted ? (x2 - bottomHalf) : (x2 + bottomHalf);
+                const tLeft  = x1 - topHalf;
+                const tRight = x1 + topHalf;
 
                 if (syntenyMode === 'mauve') {
-                    // Mauve style: filled curved bands connecting center-to-center
-                    const bandHalfWidth = 15;
+                    // Mauve style: filled curved bands matching the full gene width
                     const path = document.createElementNS(svgNS, 'path');
-                    const x1 = pair.x1_center;
-                    const x2 = pair.x2_center;
                     path.setAttribute('d',
-                        `M ${x1 - bandHalfWidth},0 ` +
-                        `C ${x1 - bandHalfWidth},${bridgeHeight * 0.4} ${x2 - bandHalfWidth},${bridgeHeight * 0.6} ${x2 - bandHalfWidth},${bridgeHeight} ` +
-                        `L ${x2 + bandHalfWidth},${bridgeHeight} ` +
-                        `C ${x2 + bandHalfWidth},${bridgeHeight * 0.6} ${x1 + bandHalfWidth},${bridgeHeight * 0.4} ${x1 + bandHalfWidth},0 ` +
+                        `M ${tLeft},0 ` +
+                        `C ${tLeft},${bridgeHeight * 0.45} ${bLeft},${bridgeHeight * 0.55} ${bLeft},${bridgeHeight} ` +
+                        `L ${bRight},${bridgeHeight} ` +
+                        `C ${bRight},${bridgeHeight * 0.55} ${tRight},${bridgeHeight * 0.45} ${tRight},0 ` +
                         `Z`
                     );
                     path.setAttribute('fill', color);
-                    path.setAttribute('fill-opacity', '0.35');
+                    path.setAttribute('fill-opacity', pair.inverted ? '0.28' : '0.42');
                     path.setAttribute('stroke', color);
-                    path.setAttribute('stroke-width', '0.5');
-                    path.setAttribute('stroke-opacity', '0.5');
+                    path.setAttribute('stroke-width', '0.6');
+                    path.setAttribute('stroke-opacity', '0.65');
+                    path.setAttribute('data-gene', pair.gene);
+                    path.dataset.syntenyMode = 'mauve';
+                    path.dataset.topLeft = tLeft;
+                    path.dataset.topRight = tRight;
+                    path.dataset.bottomLeft = bLeft;
+                    path.dataset.bottomRight = bRight;
+                    path.classList.add('synteny-path');
+                    if (pair.inverted) path.classList.add('synteny-inverted');
                     bridgeSvg.appendChild(path);
                 } else {
-                    // Trapezoid style: left-to-left and right-to-right edges
+                    // Trapezoid style: when inverted, cross left→right and right→left
+                    const trapBL = pair.inverted ? pair.x2_right : pair.x2_left;
+                    const trapBR = pair.inverted ? pair.x2_left : pair.x2_right;
                     const path = document.createElementNS(svgNS, 'path');
                     path.setAttribute('d',
-                        `M ${pair.x1_left},0 L ${pair.x2_left},${bridgeHeight} L ${pair.x2_right},${bridgeHeight} L ${pair.x1_right},0 Z`
+                        `M ${pair.x1_left},0 L ${trapBL},${bridgeHeight} L ${trapBR},${bridgeHeight} L ${pair.x1_right},0 Z`
                     );
                     path.setAttribute('fill', color);
-                    path.setAttribute('fill-opacity', '0.25');
+                    path.setAttribute('fill-opacity', pair.inverted ? '0.22' : '0.32');
                     path.setAttribute('stroke', color);
                     path.setAttribute('stroke-width', '0.8');
-                    path.setAttribute('stroke-opacity', '0.6');
+                    path.setAttribute('stroke-opacity', '0.7');
+                    path.setAttribute('data-gene', pair.gene);
+                    path.dataset.syntenyMode = 'trapezoid';
+                    path.dataset.topLeft = pair.x1_left;
+                    path.dataset.topRight = pair.x1_right;
+                    path.dataset.bottomLeft = trapBL;
+                    path.dataset.bottomRight = trapBR;
+                    path.classList.add('synteny-path');
+                    if (pair.inverted) path.classList.add('synteny-inverted');
                     bridgeSvg.appendChild(path);
                 }
             });
@@ -1982,6 +2389,43 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             topRow.wrapper.parentNode.insertBefore(bridgeRow, topRow.wrapper.nextSibling);
         }
         syncScroll();
+
+        // Synteny click-to-highlight: clicking a synteny bridge toggles gene highlight
+        // Click once to highlight matching genes, click again to clear.
+        // This does NOT interfere with gene piece click (which opens edit modal).
+        let activeSyntenyGene = null;
+        const container = document.getElementById('svgContainer');
+        function highlightGene(geneName) {
+            activeSyntenyGene = geneName;
+            container.querySelectorAll('.gene-path, .synteny-path').forEach(el => {
+                el.style.transition = 'opacity 0.25s';
+                el.style.opacity = el.getAttribute('data-gene') === geneName ? '1' : '0.12';
+            });
+            container.querySelectorAll('.gene-text').forEach(el => {
+                el.style.transition = 'opacity 0.25s';
+                const prev = el.previousElementSibling;
+                el.style.opacity = prev && prev.getAttribute('data-gene') === geneName ? '1' : '0.12';
+            });
+        }
+        function clearHighlight() {
+            activeSyntenyGene = null;
+            container.querySelectorAll('.gene-path, .synteny-path, .gene-text').forEach(el => {
+                el.style.transition = 'opacity 0.25s';
+                el.style.opacity = '';
+            });
+        }
+        // Only synteny paths get the click-to-toggle highlight
+        container.querySelectorAll('.synteny-path[data-gene]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const gene = el.getAttribute('data-gene');
+                if (activeSyntenyGene === gene) {
+                    clearHighlight();
+                } else {
+                    highlightGene(gene);
+                }
+            });
+        });
     }
 
     function openEditPatternModal(data, patternMap, patternCounter) {
@@ -2010,7 +2454,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                             <label for="newPatternName" style="font-weight:600;font-size:0.85rem;margin-bottom:4px;display:block;">Pattern name</label>
                             <input id="newPatternName" class="form-control" type="text" value="${data.id}" style="font-size:0.95rem;">
                         </div>
-                        <div class="modal-footer" style="border-top:1px solid #e5e7eb;padding:12px 20px;gap:8px;">
+                        <div class="modal-footer" style="padding:12px 20px;gap:8px;">
                             <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
                             <button type="button" class="btn btn-dark" id="saveEditPatternButton" style="border-radius:8px;font-weight:600;">
                                 <i class="fa-solid fa-check me-1"></i> Save
@@ -2060,7 +2504,7 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
                                 <i class="fa-solid fa-circle-info me-1"></i> This change is also reflected in FASTA headers.
                             </div>
                         </div>
-                        <div class="modal-footer" style="border-top:1px solid #e5e7eb;padding:12px 20px;gap:8px;">
+                        <div class="modal-footer" style="padding:12px 20px;gap:8px;">
                             <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
                             <button type="button" class="btn btn-dark" id="saveEditSpeciesButton" style="border-radius:8px;font-weight:600;">
                                 <i class="fa-solid fa-check me-1"></i> Save
@@ -2098,10 +2542,16 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
     }
 
     function deleteLine(index) {
-        if (confirm("Are you sure you want to delete this line?")) {
+        const speciesName = Array.isArray(genomicData[index].speciesNames)
+            ? genomicData[index].speciesNames.join(', ')
+            : (genomicData[index].speciesNames || 'this genome');
+
+        document.getElementById('deleteGenomeName').innerHTML = '<i>' + speciesName + '</i>';
+        $('#deleteGenomeModal').modal('show');
+
+        $('#confirmDeleteGenomeBtn').off('click').on('click', function () {
             const scrollY = window.scrollY;
             if (pattern) {
-                // Remove all individual genomes matching this pattern from original data
                 const patternGeneOrder = genomicData[index].geneOrder;
                 for (let i = originalGenomicData.length - 1; i >= 0; i--) {
                     if (originalGenomicData[i].geneOrder === patternGeneOrder) {
@@ -2112,134 +2562,162 @@ function createSVG(genomicData, geneStart, geneList, pattern = false) {
             genomicData.splice(index, 1);
             createSVG(pattern ? originalGenomicData : genomicData, geneStart, geneList, pattern);
             requestAnimationFrame(() => window.scrollTo(0, scrollY));
-        }
+            $('#deleteGenomeModal').modal('hide');
+        });
     }
 }
 
 
 
 
-function createAndDownloadSVG(geneList, geneStart) {
+// Build a complete export-ready SVG element using the same puzzle-piece geometry
+// as the on-screen view. Used by both PNG and SVG exports for visual consistency.
+function buildExportPuzzleSVG(opts) {
     const svgNS = "http://www.w3.org/2000/svg";
-    let genomicData = [...currentGenomicData]; // Usar a ordem atualizada de currentGenomicData
-    const patternMap = new Map();
-    let patternCounter = 1;
+    const PIECE_W = 80;
+    const PIECE_H = 38;
+    const NOTCH_R = 6;
+    const ROW_GAP = 30;             // vertical gap between two genome rows
+    const TITLE_H = 26;             // space above each row for the title
+    const SIDE_PAD = 16;            // left/right padding inside the SVG
+    const TOP_PAD = 12;             // top padding
 
-    genomicData.forEach(data => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
+    let genomicData = [...currentGenomicData];
 
-        if (!patternMap.has(geneOrder)) {
-            patternMap.set(geneOrder, {
-                id: `Pattern ${toRoman(patternCounter++)}`,
-                genes: [...genes],
-                strands: [...strands],
-                lengths: [...lengths],
-                pseudoGenes: [...pseudoGenes],
-                geneOrder,
-                species: []
-            });
-        }
-        patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
-    });
+    // Collapse identical gene orders into patterns when requested
+    if (opts && opts.collapsePatterns !== false) {
+        const patternMap = new Map();
+        let patternCounter = 1;
+        genomicData.forEach(data => {
+            const { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
+            if (!patternMap.has(geneOrder)) {
+                patternMap.set(geneOrder, {
+                    id: `Pattern ${toRoman(patternCounter++)}`,
+                    genes: [...genes],
+                    strands: [...strands],
+                    lengths: [...lengths],
+                    pseudoGenes: [...pseudoGenes],
+                    geneOrder,
+                    species: []
+                });
+            }
+            patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
+        });
+        genomicData = Array.from(patternMap.values()).map(p => ({
+            speciesNames: p.species.map(s => Array.isArray(s.speciesNames) ? s.speciesNames.join(", ") : s.speciesNames).join("; "),
+            vouchers: p.species.map(s => Array.isArray(s.vouchers) ? s.vouchers.join(", ") : s.vouchers).join("; "),
+            genes: p.genes,
+            strands: p.strands,
+            lengths: p.lengths,
+            pseudoGenes: p.pseudoGenes,
+            geneOrder: p.geneOrder,
+            id: p.id
+        }));
+    }
 
-    genomicData = Array.from(patternMap.values()).map(patternData => ({
-        speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
-        vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
-        genes: patternData.genes,
-        strands: patternData.strands,
-        lengths: patternData.lengths,
-        pseudoGenes: patternData.pseudoGenes,
-        geneOrder: patternData.geneOrder,
-        id: patternData.id
-    }));
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("xmlns", svgNS);
+    let maxRowWidth = 0;
+    let cursorY = TOP_PAD;
 
-    let svg = document.createElementNS(svgNS, "svg");
-    let maxSvgWidth = 0;
-    let totalHeight = 0;
+    genomicData.forEach((data, rowIndex) => {
+        let { speciesNames, vouchers, genes, strands, lengths, id } = data;
 
-    genomicData.forEach((data, index) => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
-        const geneStartIndex = genes.indexOf(geneStart);
+        // Rotate so the configured start gene is first
+        const geneStartIndex = genes.indexOf(opts.geneStart);
         if (geneStartIndex !== -1) {
             genes = [...genes.slice(geneStartIndex), ...genes.slice(0, geneStartIndex)];
             strands = [...strands.slice(geneStartIndex), ...strands.slice(0, geneStartIndex)];
             lengths = [...lengths.slice(geneStartIndex), ...lengths.slice(0, geneStartIndex)];
         }
 
-        let rectWidth = 40;
-        let rectHeight = rectWidth * 1.25;
-        let svgWidth = genes.length * rectWidth;
-        let svgHeight = rectHeight + 25;
-
-        maxSvgWidth = Math.max(maxSvgWidth, svgWidth);
-
-        let titleText = document.createElementNS(svgNS, "text");
-        titleText.setAttribute("x", "10");
-        titleText.setAttribute("y", totalHeight + 20);
-        titleText.setAttribute("fill", "black");
-        titleText.setAttribute("font-size", "20px");
-        titleText.setAttribute("font-weight", "bold");
-        titleText.innerHTML = `Pattern ${toRoman(index + 1)}`;
+        // Row header
+        const titleText = document.createElementNS(svgNS, "text");
+        titleText.setAttribute("x", SIDE_PAD.toString());
+        titleText.setAttribute("y", (cursorY + 18).toString());
+        titleText.setAttribute("fill", "#1f2937");
+        titleText.setAttribute("font-size", "16px");
+        titleText.setAttribute("font-weight", "700");
+        titleText.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
+        const titleLabel = id || (Array.isArray(speciesNames) ? speciesNames.join(", ") : speciesNames);
+        const voucherStr = Array.isArray(vouchers) ? vouchers.join(", ") : (vouchers || "");
+        titleText.textContent = id ? titleLabel : `${titleLabel}${voucherStr ? ` (${voucherStr})` : ""}`;
         svg.appendChild(titleText);
 
-        totalHeight += 40;
+        cursorY += TITLE_H;
+        const rowPieceY = cursorY;
 
-        let xPosition = 0;
+        // Render puzzle pieces
+        let xPos = SIDE_PAD;
         genes.forEach((gene, idx) => {
-            let rect = document.createElementNS(svgNS, "rect");
-            rect.setAttribute("x", xPosition);
-            rect.setAttribute("y", totalHeight);
-            rect.setAttribute("width", rectWidth.toString());
-            rect.setAttribute("height", rectHeight.toString());
-            rect.setAttribute("fill", colorMitochondrial[gene] || "#D3D3D3");
-            rect.setAttribute("stroke", "#000000");
-            rect.setAttribute("fill-opacity", "0.50");
+            const pieceW = PIECE_W;
+            const pieceH = PIECE_H;
+            const pieceY = rowPieceY;
+            const hasLeftNotch = idx > 0;
+            const hasRightTab = idx < genes.length - 1;
 
-            let text = document.createElementNS(svgNS, "text");
-            text.setAttribute("x", xPosition + rectWidth / 2);
-            text.setAttribute("y", totalHeight + rectHeight / 2);
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", buildPuzzlePiecePath(xPos, pieceY, pieceW, pieceH, hasLeftNotch, hasRightTab, NOTCH_R));
+            path.setAttribute("fill", getGeneColor(gene));
+            path.setAttribute("stroke", "#1f2937");
+            path.setAttribute("stroke-width", "0.25");
+            path.setAttribute("stroke-linejoin", "round");
+            svg.appendChild(path);
+
+            // Strand bar
+            if (gene && gene !== '-' && gene !== 'gap' && gene !== 'GAP') {
+                const strandLine = document.createElementNS(svgNS, "line");
+                strandLine.setAttribute("x1", xPos.toString());
+                strandLine.setAttribute("x2", (xPos + pieceW).toString());
+                const yLine = strands[idx] === '+' ? pieceY : (pieceY + pieceH);
+                strandLine.setAttribute("y1", yLine.toString());
+                strandLine.setAttribute("y2", yLine.toString());
+                strandLine.setAttribute("stroke", "#1f2937");
+                strandLine.setAttribute("stroke-width", "3");
+                strandLine.setAttribute("stroke-linecap", "round");
+                svg.appendChild(strandLine);
+            }
+
+            // Gene label
+            const text = document.createElementNS(svgNS, "text");
+            text.setAttribute("x", (xPos + pieceW / 2).toString());
+            text.setAttribute("y", (pieceY + pieceH / 2 + 4).toString());
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("dominant-baseline", "middle");
-            text.setAttribute("transform", `rotate(90, ${xPosition + rectWidth / 2}, ${totalHeight + rectHeight / 2})`);
-            text.textContent = gene.replace('tRNA-', '');
-            svg.appendChild(rect);
+            text.setAttribute("font-size", "10px");
+            text.setAttribute("font-weight", "700");
+            text.setAttribute("fill", getContrastTextColor(getGeneColor(gene)));
+            text.setAttribute("font-family", "'Segoe UI', system-ui, sans-serif");
+            text.textContent = gene;
             svg.appendChild(text);
 
-            let line = document.createElementNS(svgNS, "line");
-            line.setAttribute("x1", xPosition);
-            line.setAttribute("x2", xPosition + rectWidth);
-            if (gene == '' || gene == '-' || gene == 'GAP') {
-                line.setAttribute("y1", totalHeight + 0);
-                line.setAttribute("y2", totalHeight + 0);
-                line.setAttribute("stroke", "#000000");
-                //line.setAttribute("stroke-width", "5");
-            } else {
-                line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-                line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-                line.setAttribute("stroke", "#000000");
-                line.setAttribute("stroke-width", "5");
-            }
-            svg.appendChild(line);
-
-            xPosition += rectWidth;
+            xPos += pieceW;
         });
 
-        totalHeight += rectHeight + 20;
+        const rowWidth = xPos + SIDE_PAD;
+        if (rowWidth > maxRowWidth) maxRowWidth = rowWidth;
+
+        cursorY += PIECE_H + ROW_GAP;
     });
 
-    svg.setAttribute("width", maxSvgWidth.toString());
-    svg.setAttribute("height", totalHeight.toString());
+    svg.setAttribute("width", maxRowWidth.toString());
+    svg.setAttribute("height", cursorY.toString());
+    svg.setAttribute("viewBox", `0 0 ${maxRowWidth} ${cursorY}`);
+    return svg;
+}
 
-    let serializer = new XMLSerializer();
-    let svgString = serializer.serializeToString(svg);
-    let blob = new Blob([svgString], { type: "image/svg+xml" });
-    let url = window.URL.createObjectURL(blob);
-    let a = document.createElement("a");
+function createAndDownloadSVG(geneList, geneStart) {
+    const svg = buildExportPuzzleSVG({ geneStart, collapsePatterns: true });
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    const blob = new Blob([svgString], { type: "image/svg+xml" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
     a.href = url;
     a.download = "PUMAS_CompleteGenomicData.svg";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    setTimeout(() => window.URL.revokeObjectURL(url), 1000);
 }
 
 
@@ -2332,10 +2810,20 @@ function initDragPanning() {
     document.addEventListener('mouseup', onMouseUp);
     puzzleArea.addEventListener('contextmenu', onContextMenu);
 
-    // Mouse wheel: scroll page vertically, prevent horizontal scroll on gene areas
+    // Mouse wheel: Shift+wheel pans horizontally, normal wheel scrolls page vertically
     function onWheel(e) {
         const scrollArea = e.target.closest('.genome-gene-scroll');
-        if (scrollArea) {
+        if (!scrollArea) return;
+        if (e.shiftKey) {
+            // Shift+wheel → horizontal pan across all gene rows
+            e.preventDefault();
+            const delta = e.deltaY || e.deltaX;
+            const newSL = scrollArea.scrollLeft + delta;
+            document.querySelectorAll('.genome-gene-scroll').forEach(c => { c.scrollLeft = newSL; });
+            const master = document.getElementById('masterScrollTrack');
+            if (master) master.scrollLeft = newSL;
+        } else {
+            // Normal wheel → prevent horizontal scroll on gene area, scroll page vertically
             e.preventDefault();
             window.scrollBy(0, e.deltaY);
         }
@@ -2400,6 +2888,15 @@ function ListGenes(object, typeGenome) {
 
     const ids = Object.keys(data);
 
+    // Count sequences per gene
+    const geneSeqCount = {};
+    ids.forEach(id => {
+        const seq = data[id].geneSequences || {};
+        Object.keys(seq).forEach(gene => {
+            geneSeqCount[gene] = (geneSeqCount[gene] || 0) + 1;
+        });
+    });
+
     if (typeGenome === 'Mitochondrial') {
         ids.forEach(id => {
             (data[id].genes || []).forEach(gene => {
@@ -2419,9 +2916,10 @@ function ListGenes(object, typeGenome) {
         const sortedGenes = Array.from(geneSet).sort();
         const switches = sortedGenes.map(gene => {
             const safeId = `fastaGene_${gene.replace(/[^a-zA-Z0-9]/g, '_')}`;
-            return `<div class="form-check form-switch mb-1" style="min-width:90px;">
-                <input class="form-check-input fasta-gene-toggle" type="checkbox" id="${safeId}" value="${gene}" checked>
-                <label class="form-check-label small" for="${safeId}">${gene}</label>
+            const count = geneSeqCount[gene] || 0;
+            return `<div class="form-check form-switch mb-1" style="min-width:110px;">
+                <input class="form-check-input fasta-gene-toggle" type="checkbox" role="switch" id="${safeId}" value="${gene}" checked>
+                <label class="form-check-label small" for="${safeId}">${gene} <span style="color:#9ca3af;font-size:0.75rem;">(${count})</span></label>
             </div>`;
         }).join('');
         return `<div class="mb-1 fw-semibold small text-uppercase text-muted">${groupName}</div>
@@ -2441,6 +2939,8 @@ function ListGenes(object, typeGenome) {
 
     const downloadFastaBtn = document.getElementById('downloadFasta');
     if (downloadFastaBtn) downloadFastaBtn.disabled = false;
+    const extToolsBtn = document.getElementById('openExternalToolsModal');
+    if (extToolsBtn) extToolsBtn.disabled = false;
 }
 
 
@@ -2504,42 +3004,65 @@ function showResults(dataGenomes, typeGenome) {
         $('#ViewPlotTitle').append(`Genome diagram for <i>${dataGenomes[id].speciesNames.join(", ")}</i> <b>(${dataGenomes[id].vouchers.join(", ")})</b>`);
         $('#ViewPlotFigureCaption').append(`<h6>The Colors Scheme is adapted for Color Blindness - Wong, B. (2011). Color blindness. <i>Nature Methods</i>, <i>8</i>(6), 441. https://doi.org/10.1038/nmeth.1618</h6>`);
 
-        // Create a new genomeDraw instance and store it in window object
-        window.genomeDraw = new CGV.Viewer('#LinearGenome', {
-            name: "data_LuanRabelo",
-            id: "data_LuanRabelo",
-            height: screen.height / 1.5,
-            width: screen.width / 1.25,
-            showLegend: true,
-            showRuler: true,
-            showDivider: true,
-        });
+        // Wait one frame so the modal is laid out before we measure its body
+        requestAnimationFrame(() => {
+            const linearEl = document.getElementById('LinearGenome');
+            // Use the actual modal body size — falls back to viewport-based defaults if needed
+            const rect = linearEl.getBoundingClientRect();
+            const w = Math.max(600, Math.floor(rect.width || window.innerWidth * 0.78));
+            const h = Math.max(360, Math.floor(rect.height || window.innerHeight * 0.62));
 
-        // Clear any previous drawing
-        window.genomeDraw.clear();
+            // Create a new genomeDraw instance sized to fill the modal body
+            window.genomeDraw = new CGV.Viewer('#LinearGenome', {
+                name: "data_LuanRabelo",
+                id: "data_LuanRabelo",
+                height: h,
+                width: w,
+                showLegend: true,
+                showRuler: true,
+                showDivider: true,
+            });
 
-        let dataEntry = generateLinearObject(dataGenomes[id]);
+            // Clear any previous drawing
+            window.genomeDraw.clear();
 
-        window.genomeDraw.io.loadJSON(dataEntry);
+            const dataEntry = generateLinearObject(dataGenomes[id]);
+            window.genomeDraw.io.loadJSON(dataEntry);
 
-        $('#ViewPlotColor').on('click', function () {
-            window.genomeDraw.invertColors();
-        });
+            $('#ViewPlotColor').off('click').on('click', function () {
+                window.genomeDraw.invertColors();
+            });
 
-        $('#ViewPlotFormat').on('click', function () {
-            const format = (window.genomeDraw.format == 'circular') ? 'linear' : 'circular';
-            window.genomeDraw.settings.update({ format: format });
+            $('#ViewPlotFormat').off('click').on('click', function () {
+                const format = (window.genomeDraw.format == 'circular') ? 'linear' : 'circular';
+                window.genomeDraw.settings.update({ format: format });
+                window.genomeDraw.draw();
+            });
+
+            $('#ViewPlotDownload').off('click').on('click', function () {
+                const spName = dataGenomes[id].speciesNames.join("_").replace(/\s/g, '_');
+                const height = 4000;
+                const width = window.genomeDraw.width / window.genomeDraw.height * height;
+                window.genomeDraw.io.downloadImage(width, height, `${spName}.png`);
+            });
+
             window.genomeDraw.draw();
-        });
 
-        $('#ViewPlotDownload').on('click', function () {
-            const spName = dataGenomes[id].speciesNames.join("_").replace(/\s/g, '_');
-            const height = 4000;
-            const width = window.genomeDraw.width / window.genomeDraw.height * height;
-            window.genomeDraw.io.downloadImage(width, height, `${spName}.png`);
+            // Resize the viewer when the window changes (e.g. responsive modal)
+            const onResize = () => {
+                if (!window.genomeDraw) return;
+                const r = linearEl.getBoundingClientRect();
+                const nw = Math.max(600, Math.floor(r.width || window.innerWidth * 0.78));
+                const nh = Math.max(360, Math.floor(r.height || window.innerHeight * 0.62));
+                try {
+                    window.genomeDraw.resize(nw, nh);
+                    window.genomeDraw.draw();
+                } catch (e) { /* CGV may not be ready yet */ }
+            };
+            window.addEventListener('resize', onResize);
+            // Re-resize once the modal finishes its open transition
+            setTimeout(onResize, 320);
         });
-
-        window.genomeDraw.draw();
     });
 }
 
@@ -2827,131 +3350,26 @@ async function mergeSVGsIntoPDF(svgElements) {
 
 
 function createAndDownloadPNG(geneList, geneStart) {
-    const svgNS = "http://www.w3.org/2000/svg";
-    let genomicData = [...currentGenomicData];
-    const patternMap = new Map();
-    let patternCounter = 1;
+    const svg = buildExportPuzzleSVG({ geneStart, collapsePatterns: true });
+    const svgWidth = parseFloat(svg.getAttribute("width"));
+    const svgHeight = parseFloat(svg.getAttribute("height"));
 
-    genomicData.forEach(data => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder } = data;
+    const serializer = new XMLSerializer();
+    const svgString = serializer.serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const img = new Image();
 
-        if (!patternMap.has(geneOrder)) {
-            patternMap.set(geneOrder, {
-                id: `Pattern ${toRoman(patternCounter++)}`,
-                genes: [...genes],
-                strands: [...strands],
-                lengths: [...lengths],
-                pseudoGenes: [...pseudoGenes],
-                geneOrder,
-                species: []
-            });
-        }
-        patternMap.get(geneOrder).species.push({ speciesNames, vouchers });
-    });
-
-    genomicData = Array.from(patternMap.values()).map(patternData => ({
-        speciesNames: patternData.species.map(speciesData => Array.isArray(speciesData.speciesNames) ? speciesData.speciesNames.join(", ") : speciesData.speciesNames).join("; "),
-        vouchers: patternData.species.map(speciesData => Array.isArray(speciesData.vouchers) ? speciesData.vouchers.join(", ") : speciesData.vouchers).join("; "),
-        genes: patternData.genes,
-        strands: patternData.strands,
-        lengths: patternData.lengths,
-        pseudoGenes: patternData.pseudoGenes,
-        geneOrder: patternData.geneOrder,
-        id: patternData.id
-    }));
-
-    let svg = document.createElementNS(svgNS, "svg");
-    let maxSvgWidth = 0;
-    let totalHeight = 0;
-
-    genomicData.forEach((data, index) => {
-        let { speciesNames, vouchers, genes, strands, lengths, pseudoGenes, geneOrder, id } = data;
-        const geneStartIndex = genes.indexOf(geneStart);
-        if (geneStartIndex !== -1) {
-            genes = [...genes.slice(geneStartIndex), ...genes.slice(0, geneStartIndex)];
-            strands = [...strands.slice(geneStartIndex), ...strands.slice(0, geneStartIndex)];
-            lengths = [...lengths.slice(geneStartIndex), ...lengths.slice(0, geneStartIndex)];
-        }
-
-        let rectWidth = 40;
-        let rectHeight = rectWidth * 1.25;
-        let svgWidth = genes.length * rectWidth;
-        let svgHeight = rectHeight + 25;
-
-        maxSvgWidth = Math.max(maxSvgWidth, svgWidth);
-
-        let titleText = document.createElementNS(svgNS, "text");
-        titleText.setAttribute("x", "10");
-        titleText.setAttribute("y", totalHeight + 20);
-        titleText.setAttribute("fill", "black");
-        titleText.setAttribute("font-size", "20px");
-        titleText.setAttribute("font-weight", "bold");
-        titleText.innerHTML = `Pattern ${toRoman(index + 1)}`;
-        svg.appendChild(titleText);
-
-        totalHeight += 40;
-
-        let xPosition = 0;
-        genes.forEach((gene, idx) => {
-            let rect = document.createElementNS(svgNS, "rect");
-            rect.setAttribute("x", xPosition);
-            rect.setAttribute("y", totalHeight);
-            rect.setAttribute("width", rectWidth.toString());
-            rect.setAttribute("height", rectHeight.toString());
-            rect.setAttribute("fill", colorMitochondrial[gene] || "#D3D3D3");
-            rect.setAttribute("stroke", "#000000");
-            rect.setAttribute("fill-opacity", "0.50");
-
-            let text = document.createElementNS(svgNS, "text");
-            text.setAttribute("x", xPosition + rectWidth / 2);
-            text.setAttribute("y", totalHeight + rectHeight / 2);
-            text.setAttribute("text-anchor", "middle");
-            text.setAttribute("dominant-baseline", "middle");
-            text.setAttribute("transform", `rotate(90, ${xPosition + rectWidth / 2}, ${totalHeight + rectHeight / 2})`);
-            text.textContent = gene.replace('tRNA-', '');
-            svg.appendChild(rect);
-            svg.appendChild(text);
-
-            let line = document.createElementNS(svgNS, "line");
-            line.setAttribute("x1", xPosition);
-            line.setAttribute("x2", xPosition + rectWidth);
-            if (gene == '' || gene == '-' || gene == 'GAP') {
-                line.setAttribute("y1", totalHeight + 0);
-                line.setAttribute("y2", totalHeight + 0);
-                line.setAttribute("stroke", "#000000");
-                //line.setAttribute("stroke-width", "5");
-            } else {
-                line.setAttribute("y1", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-                line.setAttribute("y2", totalHeight + (strands[idx] === '+' ? 0 : rectHeight));
-                line.setAttribute("stroke", "#000000");
-                line.setAttribute("stroke-width", "5");
-            }
-            svg.appendChild(line);
-
-            xPosition += rectWidth;
-        });
-
-        totalHeight += rectHeight + 20;
-    });
-
-    svg.setAttribute("width", maxSvgWidth.toString());
-    svg.setAttribute("height", totalHeight.toString());
-
-    // Convert SVG to PNG with 300 DPI and white background
-    let serializer = new XMLSerializer();
-    let svgString = serializer.serializeToString(svg);
-    let canvas = document.createElement("canvas");
-    let context = canvas.getContext("2d");
-    let img = new Image();
-
-    canvas.width = maxSvgWidth * 2.5;
-    canvas.height = totalHeight * 2.5;
-    context.fillStyle = "#FFFFFF"; // Fundo branco
+    // ~300 DPI export — scale up by 2.5×
+    const scale = 2.5;
+    canvas.width = svgWidth * scale;
+    canvas.height = svgHeight * scale;
+    context.fillStyle = "#FFFFFF";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     img.onload = function () {
         context.drawImage(img, 0, 0, canvas.width, canvas.height);
-        let a = document.createElement("a");
+        const a = document.createElement("a");
         a.href = canvas.toDataURL("image/png");
         a.download = "PUMAS_CompleteGenomicData.png";
         document.body.appendChild(a);
@@ -2959,7 +3377,8 @@ function createAndDownloadPNG(geneList, geneStart) {
         document.body.removeChild(a);
     };
 
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgString);
+    // unescape/encodeURIComponent handles Unicode strings safely for btoa
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
 }
 
 function createAndDownloadText(geneList, geneStart) {
@@ -3048,7 +3467,7 @@ function PUMASDownload(dataObject) {
             if (timeSave._tippy) {
                 timeSave._tippy.setContent(tooltipText);
             } else if (typeof tippy !== 'undefined') {
-                tippy(timeSave, { content: tooltipText, theme: 'light-border', placement: 'top', arrow: true });
+                tippy(timeSave, { content: tooltipText, theme: 'pumas', placement: 'top', arrow: true });
             }
             // Change background color if more than 5 minutes have passed
             if (diffMins > 5) {
